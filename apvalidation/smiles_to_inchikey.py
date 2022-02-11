@@ -2,7 +2,7 @@ from rdkit import Chem
 from rdkit.Chem import inchi
 
 
-def smiles_to_inchi(smiles):
+def to_inchikey(smiles):
     """
     convert a smiles string to an inchi key
     :param smiles: smiles string
