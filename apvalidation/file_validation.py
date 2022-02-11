@@ -1,6 +1,6 @@
 from apvalidation import extract as extractor
-from simple_file_finder import MetaFinder
-from extract_core import extract_core_file
+from apvalidation.simple_file_finder import MetaFinder
+from apvalidation.extract_core import extract_core_file
 
 # Django import version
 # from .paramExtract.packages import extract as extractor
