@@ -1,7 +1,6 @@
-from cmath import asin
 from rdkit import Chem
 from rdkit.Chem import Draw
-from .smiles_to_inchikey import smiles_to_inchi
+from apvalidation.smiles_to_inchikey import to_inchikey
 
 
 def validate_struct(smiles, img_path, asInchiKey=False):
@@ -24,7 +23,7 @@ def validate_struct(smiles, img_path, asInchiKey=False):
         Draw.MolToFile(mol, generated_img_path, size=(200, 200), fitImage=True)
         return smiles, generated_img_path
     elif mol is not None and asInchiKey == True:
-        inchi = smiles_to_inchi(smiles)
+        inchi = to_inchikey(smiles)
         generated_img_path = f"{img_path}\{inchi}.png"
         Draw.MolToFile(mol, generated_img_path, size=(200, 200), fitImage=True)
         return smiles, generated_img_path
