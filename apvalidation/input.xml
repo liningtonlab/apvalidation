@@ -1,0 +1,23 @@
+<PCT-Data>
+  <PCT-Data_input>
+    <PCT-InputData>
+      <PCT-InputData_standardize>
+        <PCT-Standardize>
+          <PCT-Standardize_structure>
+            <PCT-Structure>
+              <PCT-Structure_structure>
+                <PCT-Structure_structure_string>CC(O)C</PCT-Structure_structure_string>
+              </PCT-Structure_structure>
+              <PCT-Structure_format>
+                <PCT-StructureFormat value="smiles" />
+              </PCT-Structure_format>
+            </PCT-Structure>
+          </PCT-Standardize_structure>
+          <PCT-Standardize_oformat>
+            <PCT-StructureFormat value="smiles" />
+          </PCT-Standardize_oformat>
+        </PCT-Standardize>
+      </PCT-InputData_standardize>
+    </PCT-InputData>
+  </PCT-Data_input>
+</PCT-Data>
