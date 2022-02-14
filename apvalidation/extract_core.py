@@ -7,10 +7,9 @@ import os
 varian = ["fid", "procpar", "log", "text", "log 2", "procpar 2", "text 2"]
 bruker = ["fid", "ser", "acqu", "acqu2", "acqus", "acqu2s"]
 jcamp = ["jdx"]
-dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
-def extract_core_file(input_zip, target_exp, vendor, folder_name):
+def extract_core_file(input_zip, target_exp, vendor, folder_name, parent_dir):
     with ZipFile(input_zip, 'r') as zipObject:
         all_paths = zipObject.namelist()
 
@@ -32,13 +31,13 @@ def extract_core_file(input_zip, target_exp, vendor, folder_name):
         elif vendor == "JEOL":
             extract_files = search_keyword(all_paths, target_exp, jcamp)
 
-        extract_to_folder(extract_files, zipObject, folder_name)
+        extract_to_folder(extract_files, zipObject, folder_name, parent_dir)
 
 
-def extract_to_folder(extract_files, zipObject, folder_name):
+def extract_to_folder(extract_files, zipObject, folder_name, parent_dir):
 
-    os.makedirs(os.path.join(dir_path, folder_name), exist_ok=True)
-    target_path = os.path.join(dir_path, folder_name)
+    os.makedirs(os.path.join(parent_dir, folder_name), exist_ok=True)
+    target_path = os.path.join(parent_dir, folder_name)
 
     for unzip in extract_files:
         member = zipObject.open(unzip)

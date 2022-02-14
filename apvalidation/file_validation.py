@@ -57,7 +57,7 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 params = extractor.Jcampdx.find_params(param_dict)
 
             res_dict[file_root[i]] = params
-
+            res_dict[file_root[i]]["vendor"] = vendor_type[i]
             # Select core files and extract under name_format directory
             # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
             two_d_name = res_dict[file_root[i]]["nuc_2"] + "_" if res_dict[file_root[i]]["nuc_2"] else ""
