@@ -19,12 +19,12 @@ def validate_struct(smiles, img_path, asInchiKey=False):
     smiles = "".join(smiles.split())
     mol = Chem.MolFromSmiles(smiles)
     if mol is not None and asInchiKey == False:
-        generated_img_path = f"{img_path}\{smiles}.png"
+        generated_img_path = f"{img_path}/{smiles}.png"
         Draw.MolToFile(mol, generated_img_path, size=(200, 200), fitImage=True)
         return smiles, generated_img_path
     elif mol is not None and asInchiKey == True:
-        inchi = to_inchikey(smiles)
-        generated_img_path = f"{img_path}\{inchi}.png"
+        inchikey = to_inchikey(smiles)
+        generated_img_path = f"{img_path}/{inchikey}.png"
         Draw.MolToFile(mol, generated_img_path, size=(200, 200), fitImage=True)
         return smiles, generated_img_path
     else:
