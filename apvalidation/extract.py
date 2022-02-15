@@ -178,7 +178,7 @@ class Varian:
             freq_val = (freq1, freq2)
         else:
             freq_val = round(float(param_dict['reffrq']['values'][0]), 2)
-        return freq_val
+        return list(freq_val)
 
     @staticmethod
     def find_nuc(param_dict, exp_dim):
@@ -406,7 +406,7 @@ class Bruker:
             freq1 = round(float(param_dict['SFO1']), 2)
             freq2 = round(float(param_dict['SFO2']), 2)
             freq_val = (freq1, freq2)
-        return freq_val
+        return list(freq_val)
 
     @staticmethod
     def find_nuc(param_dict, exp_dim):
@@ -577,7 +577,7 @@ class Jcampdx:
         else:
             freq = round(float(param_dict['$XFREQ'][0]), 2)
 
-        return freq
+        return list(freq)
 
     @staticmethod
     def find_nuc(param_dict, exp_dim):
