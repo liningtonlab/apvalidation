@@ -402,11 +402,12 @@ class Bruker:
         """
         if exp_dim == '1D':
             freq_val = round(float(param_dict['SFO1']), 2)
+            return [freq_val]
         else:
             freq1 = round(float(param_dict['SFO1']), 2)
             freq2 = round(float(param_dict['SFO2']), 2)
             freq_val = (freq1, freq2)
-        return [freq_val]
+            return freq_val
 
     @staticmethod
     def find_nuc(param_dict, exp_dim):
