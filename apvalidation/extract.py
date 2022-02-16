@@ -575,10 +575,11 @@ class Jcampdx:
             freq1 = round(float(param_dict['$XFREQ'][0]), 2)
             freq2 = round(float(param_dict['$YFREQ'][0]), 2)
             freq = (freq1, freq2)
+            return freq
         else:
             freq = round(float(param_dict['$XFREQ'][0]), 2)
 
-        return [freq]
+            return [freq]
 
     @staticmethod
     def find_nuc(param_dict, exp_dim):
