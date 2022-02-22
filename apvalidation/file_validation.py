@@ -1,6 +1,10 @@
-from apvalidation import extract as extractor
-from apvalidation.simple_file_finder import MetaFinder
-from apvalidation.extract_core import extract_core_file
+# from apvalidation import extract as extractor
+# from apvalidation.simple_file_finder import MetaFinder
+# from apvalidation.extract_core import extract_core_file
+
+import extract as extractor
+from simple_file_finder import MetaFinder
+from extract_core import extract_core_file
 
 # Django import version
 # from .paramExtract.packages import extract as extractor
@@ -67,8 +71,8 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
             else:
                 one_d_name = ""
             folder_name = one_d_name + two_d_name + res_dict[file_root[i]]["experiment_type"]
-
-            # extract_core_file(submitted_zip_file, file_root[i], vendor_type[i], folder_name)
+            parent_dir = os.getcwd()
+            extract_core_file(submitted_zip_file, file_root[i], vendor_type[i], folder_name, parent_dir)
 
             os.unlink(tf.name) # Delete temporary file
 
