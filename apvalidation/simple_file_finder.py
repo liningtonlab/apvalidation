@@ -77,16 +77,16 @@ class MetaFinder:
 
     def __varian_validation(self, all_path_list: str, individual_folder_path: str):
         fid_path = self.key_file_finder(all_path_list, "fid", individual_folder_path)
-        assert fid_path, "fid file is missing"
+        assert fid_path, f"{individual_folder_path} : fid file is missing"
 
     def __bruker_validation(self, all_path_list: str, individual_folder_path: str):
         fid_path = self.key_file_finder(all_path_list, "fid", individual_folder_path)
         ser_path = self.key_file_finder(all_path_list, "ser", individual_folder_path)
-        assert fid_path+ser_path, "fid file is missing"
+        assert fid_path+ser_path, f"{individual_folder_path} : fid file is missing"
 
     def __jeol_validation(self, all_path_list: str, individual_folder_path: str):
         jdx_path = self.key_file_finder(all_path_list, "jdx", individual_folder_path)
-        assert jdx_path, ".jdf is not supported. Convert to .jdx file"
+        assert jdx_path, f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx file"
 
 
 if __name__ == '__main__':
