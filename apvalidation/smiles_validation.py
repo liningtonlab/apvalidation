@@ -28,5 +28,5 @@ def validate_struct(smiles, img_path, asInchiKey=False):
         Draw.MolToFile(mol, generated_img_path, size=(200, 200), fitImage=True)
         return smiles, generated_img_path
     else:
-        generated_img_path = "{img_path}/Invalid Smiles.png"
+        generated_img_path = f"{img_path}/Invalid Smiles.png"
         return "", generated_img_path
