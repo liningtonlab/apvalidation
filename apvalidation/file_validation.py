@@ -72,7 +72,7 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 one_d_name = ""
             folder_name = one_d_name + two_d_name + res_dict[file_root[i]]["experiment_type"]
             parent_dir = os.getcwd()
-            extract_core_file(submitted_zip_file, file_root[i], vendor_type[i], folder_name, parent_dir)
+            # extract_core_file(submitted_zip_file, file_root[i], vendor_type[i], folder_name, parent_dir)
 
             os.unlink(tf.name) # Delete temporary file
 
