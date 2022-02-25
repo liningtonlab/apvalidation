@@ -30,3 +30,16 @@ def validate_struct(smiles, img_path, asInchiKey=False):
     else:
         generated_img_path = f"{img_path}/Invalid Smiles.png"
         return "", generated_img_path
+
+# def convert_structure(inp: str, fmt: Format = Format.sdf, get3d: bool = False):
+#     try:
+#         out = chem.convert(structure=inp, fmt=fmt, get3d=get3d)
+#     except:
+#         raise APIException(400, detail="Structure could not be converted")
+#     if fmt == Format.sdf:
+#         return StreamingResponse(
+#             io.BytesIO(out.encode()), media_type="chemical/x-mdl-sdfile"
+#         )
+#     if fmt == Format.svg:
+#         return StreamingResponse(io.BytesIO(out.encode()), media_type="image/svg+xml")
+#     return
