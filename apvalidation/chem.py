@@ -12,8 +12,8 @@ def convert(structure: str) -> str:
     m_canon.SetProp("_Name", AllChem.CalcMolFormula(m_canon))
     structure_svg = mol_to_svg(m_canon)
     structure_svg = io.BytesIO(structure_svg.encode())
-    print(base64.b64encode(structure_svg.getvalue()))
-    return mol_to_svg(m_canon)
+    string_structure_svg = base64.b64encode(structure_svg.getvalue())
+    return string_structure_svg
 
 
 def mol_to_svg(m: Chem.Mol, size=(300, 300)) -> str:
