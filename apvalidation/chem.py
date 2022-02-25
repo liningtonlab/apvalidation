@@ -5,8 +5,7 @@ from rdkit.Chem.Draw import rdMolDraw2D
 
 def convert(structure: str) -> str:
     """Convenience function for conversion"""
-    print("Converting")
-    m_canon = rdkit_atom_order(smi_to_mol(structure))
+    m_canon = rdkit_atom_order(structure)
     m_canon.SetProp("_Name", AllChem.CalcMolFormula(m_canon))
     print(mol_to_svg(m_canon))
     return mol_to_svg(m_canon)
