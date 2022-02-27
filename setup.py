@@ -26,7 +26,7 @@ requirements = ["anytree==2.8.0",
 
 setuptools.setup(
     name='apvalidation',
-    version='0.1.8',
+    version='0.1.9',
     author='liningtonlabs',
     author_email='liningtonlabstest@gmail.com',
     description='Testing installation of Package',

@@ -1,11 +1,9 @@
 from rdkit import Chem
 from rdkit.Chem import Draw
 from apvalidation.smiles_to_inchikey import to_inchikey
-from apvalidation.chem import convert
-import io
-from PIL import Image
 
-def validate_struct(smiles):
+
+def validate_struct(smiles, img_path, asInchiKey=False):
     """
     Check to see if the smiles string is valid by attempting to convert it to a mol object.
     If the smiles is valid then create a structure image and return the filepath to the image along
@@ -20,17 +18,18 @@ def validate_struct(smiles):
 
     smiles = "".join(smiles.split())
     mol = Chem.MolFromSmiles(smiles)
-    if mol is not None:
-        svg_text = convert(mol)
-        img = Draw.MolToImage(mol)
-        output = io.BytesIO()
-        img.save(output, format="PNG")
-        img_text = output.getvalue()
-        return img_text ,output, output.read()
+    if mol is not None and asInchiKey == False:
+        generated_img_path = f"{img_path}/{smiles}.png"
+        Draw.MolToFile(mol, generated_img_path, size=(200, 200), fitImage=True)
+        return smiles, generated_img_path
+    elif mol is not None and asInchiKey == True:
+        inchikey = to_inchikey(smiles)
+        generated_img_path = f"{img_path}/{inchikey}.png"
+        Draw.MolToFile(mol, generated_img_path, size=(200, 200), fitImage=True)
+        return smiles, generated_img_path
     else:
-        # return the svg text of an error image
-
-        return ""
+        generated_img_path = f"{img_path}/Invalid Smiles.png"
+        return "", generated_img_path
 
 # def convert_structure(inp: str, fmt: Format = Format.sdf, get3d: bool = False):
 #     try:
