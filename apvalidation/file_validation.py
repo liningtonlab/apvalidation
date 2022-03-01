@@ -1,15 +1,11 @@
-from apvalidation import extract as extractor
-from apvalidation.simple_file_finder import MetaFinder
-from apvalidation.extract_core import extract_core_file
+# from apvalidation import extract as extractor
+# from apvalidation.simple_file_finder import MetaFinder
+# from apvalidation.extract_core import extract_core_file
 
-# import extract as extractor
-# from simple_file_finder import MetaFinder
-# from extract_core import extract_core_file
-
-# Django import version
-# from .paramExtract.packages import extract as extractor
-# from .file_finder.simple_file_finder import MetaFinder
-# from .name_format.extract_core import extract_core_file
+# Local Test Import
+import extract as extractor
+from simple_file_finder import MetaFinder
+from extract_core import extract_core_file
 
 import sys
 import os
@@ -37,18 +33,6 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
             core_file_read = zipObj.read(file_root[i])
             tf = create_temporary_file(core_file_read)
 
-            # Below Python 3.10 doesn't support match case
-            # match vendor_type[i]:
-            #     case "Varian":
-            #         param_dict = paramExtract.extract.Varian.read(tf.name)
-            #         params = paramExtract.extract.Varian.find_params(param_dict)
-            #     case "Bruker":
-            #         param_dict = paramExtract.extract.Bruker.read(tf.name)
-            #         params = paramExtract.extract.Bruker.find_params(param_dict)
-            #     case "JEOL":
-            #         param_dict = paramExtract.extract.Jcampdx.read(tf.name)
-            #         params = paramExtract.extract.Jcampdx.find_params(param_dict)
-
             # Get param according to the vendor name
             if vendor_type[i] == "Varian":
                 param_dict = extractor.Varian.read(tf.name)
@@ -62,16 +46,18 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
 
             res_dict[file_root[i]] = params
             res_dict[file_root[i]]["vendor"] = vendor_type[i]
-            # Select core files and extract under name_format directory
-            # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
-            two_d_name = res_dict[file_root[i]]["nuc_2"] + "_" if res_dict[file_root[i]]["nuc_2"] else ""
-            #NULL value is replaced by an empty string
-            if res_dict[file_root[i]]["nuc_1"]:
-                one_d_name = res_dict[file_root[i]]["nuc_1"] + "_"
-            else:
-                one_d_name = ""
-            folder_name = one_d_name + two_d_name + res_dict[file_root[i]]["experiment_type"]
-            parent_dir = os.getcwd()
+            
+            # # Select core files and extract under name_format directory
+            # # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
+            # two_d_name = res_dict[file_root[i]]["nuc_2"] + "_" if res_dict[file_root[i]]["nuc_2"] else ""
+            # #NULL value is replaced by an empty string
+            # if res_dict[file_root[i]]["nuc_1"]:
+            #     one_d_name = res_dict[file_root[i]]["nuc_1"] + "_"
+            # else:
+            #     one_d_name = ""
+                
+            # folder_name = one_d_name + two_d_name + res_dict[file_root[i]]["experiment_type"]
+            # parent_dir = os.getcwd()
             # extract_core_file(submitted_zip_file, file_root[i], vendor_type[i], folder_name, parent_dir)
 
             os.unlink(tf.name) # Delete temporary file

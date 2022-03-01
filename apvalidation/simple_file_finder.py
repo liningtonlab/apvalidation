@@ -19,7 +19,14 @@ class MetaFinder:
     def find_meta(self, input_zip: str) -> dict:
         input_zip = os.path.normpath(input_zip)
         submitted_zip = ZipFile(input_zip)
-        all_path_list = submitted_zip.namelist()
+        path_in_zip = submitted_zip.namelist()
+        
+        #MAC zip saves some files that interrupt nmr glue
+        all_path_list = []
+        for path in path_in_zip:
+            if re.search("__MACOSX",path) is None:
+                all_path_list.append(path)
+        
         meta_file_name_list = list(MetaFinder.meta_name_by_vendor.keys())
 
         # Search for a meta data file names
@@ -77,12 +84,12 @@ class MetaFinder:
 
     def __varian_validation(self, all_path_list: str, individual_folder_path: str):
         fid_path = self.key_file_finder(all_path_list, "fid", individual_folder_path)
-        assert fid_path, f"{individual_folder_path} : fid file is missing"
+        assert fid_path, f"{individual_folder_path} : Fid file is missing"
 
     def __bruker_validation(self, all_path_list: str, individual_folder_path: str):
         fid_path = self.key_file_finder(all_path_list, "fid", individual_folder_path)
         ser_path = self.key_file_finder(all_path_list, "ser", individual_folder_path)
-        assert fid_path+ser_path, f"{individual_folder_path} : fid file is missing"
+        assert fid_path+ser_path, f"{individual_folder_path} : Fid/Ser file is missing"
 
     def __jeol_validation(self, all_path_list: str, individual_folder_path: str):
         jdx_path = self.key_file_finder(all_path_list, "jdx", individual_folder_path)
