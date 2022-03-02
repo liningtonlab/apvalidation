@@ -1,11 +1,11 @@
-from apvalidation import extract as extractor
-from apvalidation.simple_file_finder import MetaFinder
-from apvalidation.extract_core import extract_core_file
+# from apvalidation import extract as extractor
+# from apvalidation.simple_file_finder import MetaFinder
+# from apvalidation.extract_core import extract_core_file
 
 # Local Test Import
-# import extract as extractor
-# from simple_file_finder import MetaFinder
-# from extract_core import extract_core_file
+import extract as extractor
+from simple_file_finder import MetaFinder
+from extract_core import extract_core_file
 
 import sys
 import os
@@ -21,7 +21,9 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
     :return: Experiment parameters
     """
 
-    meta_file = MetaFinder(submitted_zip_file).meta_info
+    meta = MetaFinder(submitted_zip_file)
+    assert meta.error_message == [], meta.error_message  
+    meta_file = meta.meta_info
     vendor_type = meta_file["vendor_name"]
     file_root = meta_file["meta_file"]
 
