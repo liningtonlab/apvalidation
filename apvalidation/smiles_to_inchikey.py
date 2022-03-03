@@ -8,7 +8,10 @@ def to_inchikey(smiles):
     :param smiles: smiles string
     :return: inchi key
     """
+    if smiles == "":
+        return smiles
 
     mol = Chem.MolFromSmiles(smiles)
     inchi_key = inchi.MolToInchiKey(mol)
+
     return inchi_key
