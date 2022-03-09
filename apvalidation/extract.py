@@ -155,7 +155,10 @@ class Varian:
                     exp_type = type_str
                     return exp_type
         elif exp_dim == '1D':
-            exp_type = '1D'
+            for type_str in exp_list:
+                if type_str in exp_type.upper():
+                    exp_type = type_str
+            exp_type = f'1D-{exp_type}'
             return exp_type
         else:
             exp_type = None
