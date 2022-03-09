@@ -143,6 +143,8 @@ class Varian:
         :return: type of experiment in string. (1D experiments are not given a type)
         """
         exp_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'DOSY', 'ROESY', 'NOESY']
+        # assume the experiment type is 1D and change from there 
+        exp_type = '1D'
         if exp_dim == '2D':
             try:
                 exp_type = param_dict['explist']['values'][0]
@@ -380,7 +382,8 @@ class Bruker:
         """
         exp_str = param_dict['EXP']
         exp_2d_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'ROESY', 'NOESY', 'DOSY']
-
+        # assume exp_type is 1D and change from there 
+        exp_type = '1D'
         if exp_dim == '2D':
             for entry in exp_2d_list:
                 if entry in exp_str:
