@@ -386,7 +386,10 @@ class Bruker:
             exp_type = None
             return exp_type
         else:
-            exp_type = '1D'
+            for entry in exp_2d_list:
+                if entry in exp_str:
+                    exp_type = entry
+            exp_type = f'1D-{exp_type}'
             return exp_type
 
     @staticmethod
