@@ -144,10 +144,11 @@ class Varian:
         """
         exp_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'DOSY', 'ROESY', 'NOESY']
         # assume the experiment type is 1D and change from there 
-        exp_type = '1D'
+        exp_type = ''
         if exp_dim == '2D':
             try:
                 exp_type = param_dict['explist']['values'][0]
+                print(f"THe explist value is: {exp_type}")
             except KeyError:
                 exp_type = ""
             if exp_type == "":
@@ -160,6 +161,7 @@ class Varian:
             for type_str in exp_list:
                 if type_str in exp_type.upper():
                     exp_type = type_str
+                    break
             exp_type = f'1D-{exp_type}'
             return exp_type
         else:
@@ -300,7 +302,7 @@ class Bruker:
         exp_temp = Bruker.find_temp(param_dict)
 
         pref_params = {'experiment_type': exp_type, 'nuc_1': exp_nuc1, 'nuc_2': exp_nuc2, 'frequency': exp_freq,
-                       'solvent': exp_solv.upper(), 'temperature': exp_temp}
+                       'solvent': exp_solv, 'temperature': exp_temp}
 
         return pref_params
 
@@ -383,7 +385,7 @@ class Bruker:
         exp_str = param_dict['EXP']
         exp_2d_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'ROESY', 'NOESY', 'DOSY']
         # assume exp_type is 1D and change from there 
-        exp_type = '1D'
+        exp_type = ''
         if exp_dim == '2D':
             for entry in exp_2d_list:
                 if entry in exp_str:
@@ -395,6 +397,7 @@ class Bruker:
             for entry in exp_2d_list:
                 if entry in exp_str:
                     exp_type = entry
+                    break
             exp_type = f'1D-{exp_type}'
             return exp_type
 
