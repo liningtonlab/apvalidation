@@ -93,12 +93,13 @@ class Varian:
         }
         try:
             solv_str = param_dict['solvent']['values'][0]
+            solv_str = solv_str.upper()
         except KeyError:
             solv_str = None
 
-        if solv_str.upper() in all_solvents.keys():
-            exp_solv = all_solvents[solv_str.upper()]
-        elif solv_str.upper() in all_solvents.values():
+        if solv_str in all_solvents.keys():
+            exp_solv = all_solvents[solv_str]
+        elif solv_str in all_solvents.values():
             exp_solv = solv_str
         else:
             exp_solv = None
