@@ -93,7 +93,8 @@ class Varian:
         }
         try:
             solv_str = param_dict['solvent']['values'][0]
-            solv_str = solv_str.upper()
+            if solv_str is not None:
+                solv_str = solv_str.upper()
         except KeyError:
             solv_str = None
 
