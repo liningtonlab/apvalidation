@@ -51,7 +51,7 @@ class Varian:
                        'nuc_1': exp_nuc1,
                        'nuc_2': exp_nuc2,
                        'frequency': exp_freq,
-                       'solvent': exp_solv.upper(),
+                       'solvent': exp_solv,
                        'temperature': exp_temp
                        }
         return pref_params
@@ -98,9 +98,9 @@ class Varian:
             solv_str = None
 
         if solv_str in all_solvents.keys():
-            exp_solv = all_solvents[solv_str]
+            exp_solv = all_solvents[solv_str].upper()
         elif solv_str in all_solvents.values():
-            exp_solv = solv_str
+            exp_solv = solv_str.upper()
         else:
             exp_solv = None
         return exp_solv
