@@ -13,17 +13,7 @@ def extract_core_file(input_zip : str, indiv_exp_path, vendor, folder_name, pare
     with ZipFile(input_zip, 'r') as zipObject:
         all_paths = zipObject.namelist()
 
-        # Below Python 3.10 doesn't support match case
-        # match vendor:
-        #     case "Varian":
-        #         extract_files = search_keyword(all_paths, indiv_exp_path, varian)
-        #     case "Bruker":
-        #         extract_files = search_keyword(all_paths, indiv_exp_path, bruker)
-        #     case "JEOL":
-        #         extract_files = search_keyword(all_paths, indiv_exp_path, jcamp)
-
         # Get paths of necessary files
-
         if vendor == "Varian":
             extract_files = search_keyword(all_paths, indiv_exp_path, varian)
         elif vendor == "Bruker":

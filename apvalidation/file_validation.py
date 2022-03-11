@@ -23,6 +23,7 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
 
     meta = MetaFinder(submitted_zip_file)
     assert meta.error_message == [], meta.error_message  
+    
     meta_file = meta.meta_info
     vendor_type = meta_file["vendor_name"]
     file_root = meta_file["meta_file"]
