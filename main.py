@@ -13,15 +13,15 @@ VARIAN TESTS
 """
 for filename in os.listdir("./test_files/Lobosamide C"):
     print(filename)
-    varian_dict = Varian.read(f"test_files/Lobosamide C/{filename}/procpar")
+    varian_dict = Varian.read([f"test_files/Lobosamide C/{filename}/procpar"])
     output = Varian.find_params(varian_dict)
     print(output)
 print("\n2nd folder ---------------------------------------------------------------------------------------\n")
-# for filename in os.listdir("./test_files/Borrelidin analog"):
-#     print(filename)
-#     varian_dict = Varian.read(f"test_files/Borrelidin analog/{filename}/procpar")
-#     output = Varian.find_params(varian_dict)
-#     print(output)
+for filename in os.listdir("./test_files/Borrelidin analog"):
+    print(filename)
+    varian_dict = Varian.read([f"test_files/Borrelidin analog/{filename}/procpar"])
+    output = Varian.find_params(varian_dict)
+    print(output)
 
 
 

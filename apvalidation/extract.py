@@ -13,7 +13,7 @@ class Varian:
         pass
 
     @staticmethod
-    def read(filepath):
+    def read(filepath_list):
         """
         Read the file to retrieve a dictionary of experiment parameters.
 
@@ -21,16 +21,24 @@ class Varian:
         :return: dictionary containing all parameters found in the procpar file OR
                 'Empty File' if the file is empty
         """
-        assert os.path.isfile(filepath)
-        param_dict = ng.varian.read_procpar(filename=filepath)
+        param_dict_list = []
+        for filepath in filepath_list:
+            assert os.path.isfile(filepath)
+            param_dict = ng.varian.read_procpar(filename=filepath)
+            param_dict_list.append(param_dict)
+        
+        return param_dict_list
 
-        if len(param_dict) > 0:
-            return param_dict
-        else:
-            return "Empty File"
+        # assert os.path.isfile(filepath)
+        # param_dict = ng.varian.read_procpar(filename=filepath)
+
+        # if len(param_dict) > 0:
+        #     return param_dict
+        # else:
+        #     return "Empty File"
 
     @staticmethod
-    def find_params(param_dict):
+    def find_params(param_dict_list):
         """
         Searches a dictionary of all the parameters from a given experiment to find specific parameters needed
         to fill the database. The parameters needed are experiment_type, nucleus 1 and 2 frequency,
@@ -41,7 +49,7 @@ class Varian:
         :return: dictionary containing only the preferred parameters
         """
         
-
+        param_dict = param_dict_list[0]
         exp_dim = Varian.find_dim(param_dict)
         exp_type = Varian.find_exp_type(param_dict, exp_dim)
         exp_freq = Varian.find_freq(param_dict, exp_dim)
@@ -167,21 +175,21 @@ class Varian:
         if exp_dim == '2D':
             try:
                 exp_type = param_dict['explist']['values'][0]
-                print(f"THe explist value is: {exp_type}")
+                # print(f"THe explist value is: {exp_type}")
             except KeyError:
                 exp_type = ""
             if exp_type == "":
                 exp_type = param_dict['apptype']['values'][0]
             for type_str in exp_list:
-                if type_str in exp_type.upper() or backup_exp_type.upper():
+                if type_str in exp_type.upper() or type_str in backup_exp_type.upper():
                     exp_type = type_str
                     return exp_type
         elif exp_dim == '1D':
             for type_str in exp_list:
-                if type_str in exp_type.upper() or backup_exp_type.upper():
+                if type_str in exp_type.upper() or type_str in backup_exp_type.upper():
                     exp_type = type_str
                     break
-            exp_type = f'1D-{exp_type}'
+            exp_type = f'1D {exp_type}'
             return exp_type
         else:
             exp_type = None
@@ -453,7 +461,7 @@ class Bruker:
                 if entry in possible_exp_str_1 or entry in possible_exp_str_2:
                     exp_type = entry
                     break
-            exp_type = f'1D-{exp_type}'
+            exp_type = f'1D {exp_type}'
             return exp_type
 
     @staticmethod
@@ -525,7 +533,7 @@ class Jcampdx:
         pass
 
     @staticmethod
-    def read(filepath):
+    def read(filepath_list):
         """
         Given the raw file path to a parameter file, read the file
         and return a python dictionary with all the parameters.
@@ -533,15 +541,23 @@ class Jcampdx:
         :param filepath: string formatted filepath to the acqu file
         :return: dictionary containing all parameters found in the acqu file
         """
-        assert os.path.isfile(filepath)
-        param_dict = ng.jcampdx.read(filename=filepath)
-        try:
-            return param_dict[0]['_datatype_NMRSPECTRUM'][0]
-        except KeyError:
-            return param_dict[0]
+
+        param_dict_list = []
+        for filepath in filepath_list:
+            assert os.path.isfile(filepath)
+            param_dict = ng.jcampdx.read(filename=filepath)
+            param_dict_list.append(param_dict)
+        
+        return param_dict_list
+        # assert os.path.isfile(filepath)
+        # param_dict = ng.jcampdx.read(filename=filepath)
+        # try:
+        #     return param_dict[0]['_datatype_NMRSPECTRUM'][0]
+        # except KeyError:
+        #     return param_dict[0]
 
     @staticmethod
-    def find_params(param_dict):
+    def find_params(param_dict_list):
         """
         Searches a dictionary of all the parameters from a given experiment to find specific parameters needed
         to fill the database. The parameters needed are experiment_type, nucleus 1 and 2 frequency,
@@ -550,6 +566,7 @@ class Jcampdx:
         :param param_dict: dictionary containing all the parameters retrieved from the file
         :return: dictionary containing only those parameters that are preferred
         """
+        param_dict = param_dict_list[0]
         exp_dim = Jcampdx.find_dim(param_dict)
         exp_freq = Jcampdx.find_freq(param_dict, exp_dim)
         exp_nuc_1, exp_nuc_2 = Jcampdx.find_nuc(param_dict, exp_dim)
