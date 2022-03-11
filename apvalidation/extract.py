@@ -40,6 +40,8 @@ class Varian:
                             Probably returned from the read method.
         :return: dictionary containing only the preferred parameters
         """
+        
+
         exp_dim = Varian.find_dim(param_dict)
         exp_type = Varian.find_exp_type(param_dict, exp_dim)
         exp_freq = Varian.find_freq(param_dict, exp_dim)
@@ -143,8 +145,24 @@ class Varian:
         :param exp_dim: dimension of the experiment
         :return: type of experiment in string. (1D experiments are not given a type)
         """
+        """
+        CHANGES WERE MADE TO THIS FUNCTION IN ORDER TO CATCH SOME MISSING EXPERIMENT TYPES:
+        1. Lines 156 to 159 were added to add an alternative source from which to take the experiment type string.
+            This was added due to the lack of information in the other key on some files. 
+            An example of where this helps is in Lobosamide C for the HMBC and the HSQC. 
+
+        2. IMPORTANT UPDATE: The above does not work. Try running the main and find that all the experiments are now labelled 
+            as HSQCTCOSY even for those that are not. Confusion. Try again lol.
+        """
+
         exp_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'DOSY', 'ROESY', 'NOESY']
         # assume the experiment type is 1D and change from there 
+
+        long_string = param_dict['ap']['values'][0]
+        start_indicator = long_string.find('pwx:3;1:')+len('pwx:3;1:')
+        end_indicator = long_string.find(':j1xh:')
+        backup_exp_type = long_string[start_indicator:end_indicator]
+
         exp_type = ''
         if exp_dim == '2D':
             try:
@@ -155,12 +173,12 @@ class Varian:
             if exp_type == "":
                 exp_type = param_dict['apptype']['values'][0]
             for type_str in exp_list:
-                if type_str in exp_type.upper():
+                if type_str in exp_type.upper() or backup_exp_type.upper():
                     exp_type = type_str
                     return exp_type
         elif exp_dim == '1D':
             for type_str in exp_list:
-                if type_str in exp_type.upper():
+                if type_str in exp_type.upper() or backup_exp_type.upper():
                     exp_type = type_str
                     break
             exp_type = f'1D-{exp_type}'

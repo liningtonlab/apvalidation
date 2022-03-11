@@ -7,11 +7,23 @@ import nmrglue as ng
 import numpy as np
 
 
-# for filename in os.listdir("./test_files/Lobosamide C"):
+
+"""
+VARIAN TESTS
+"""
+for filename in os.listdir("./test_files/Lobosamide C"):
+    print(filename)
+    varian_dict = Varian.read(f"test_files/Lobosamide C/{filename}/procpar")
+    output = Varian.find_params(varian_dict)
+    print(output)
+print("\n2nd folder ---------------------------------------------------------------------------------------\n")
+# for filename in os.listdir("./test_files/Borrelidin analog"):
 #     print(filename)
-#     varian_dict = Varian.read(f"test_files/Lobosamide C/{filename}/procpar")
+#     varian_dict = Varian.read(f"test_files/Borrelidin analog/{filename}/procpar")
 #     output = Varian.find_params(varian_dict)
 #     print(output)
+
+
 
 # dict, data = ng.varian.read_fid("./test_files/Lobosamide C/Lobos9512D_A_2_gHMBCAD_DMSO_600MHz_5mmShigemi.fid/fid 2")
 # data_1D = np.array(data)
@@ -25,24 +37,28 @@ import numpy as np
 
 # check = data_1D==data_2D
 # print(False in check)
-for filename in os.listdir("./test_files/Granaticin_D"):
-    print(filename)
-    if os.path.exists(f"test_files/Granaticin_D/{filename}/acqu2"):
-        file_list = [f"test_files/Granaticin_D/{filename}/acqu", f"test_files/Granaticin_D/{filename}/acqu2"]
-    else:
-        file_list = [f"test_files/Granaticin_D/{filename}/acqu"]
-    dict_list = Bruker.read(file_list)
-    params = Bruker.find_params(dict_list)
-    print(params)
 
-print("\n2nd folder ---------------------------------------------------------------------------------------\n")
+"""
+BRUKER TESTS
+"""
+# for filename in os.listdir("./test_files/Granaticin_D"):
+#     print(filename)
+#     if os.path.exists(f"test_files/Granaticin_D/{filename}/acqu2"):
+#         file_list = [f"test_files/Granaticin_D/{filename}/acqu", f"test_files/Granaticin_D/{filename}/acqu2"]
+#     else:
+#         file_list = [f"test_files/Granaticin_D/{filename}/acqu"]
+#     dict_list = Bruker.read(file_list)
+#     params = Bruker.find_params(dict_list)
+#     print(params)
 
-for filename in os.listdir("./test_files/Demethoxy-cornuside"):
-    print(filename)
-    if os.path.exists(f"test_files/Demethoxy-cornuside/{filename}/acqu2"):
-        file_list = [f"test_files/Demethoxy-cornuside/{filename}/acqu", f"test_files/Demethoxy-cornuside/{filename}/acqu2"]
-    else:
-        file_list = [f"test_files/Demethoxy-cornuside/{filename}/acqu"]
-    dict_list = Bruker.read(file_list)
-    params = Bruker.find_params(dict_list)
-    print(params)
+# print("\n2nd folder ---------------------------------------------------------------------------------------\n")
+
+# for filename in os.listdir("./test_files/Demethoxy-cornuside"):
+#     print(filename)
+#     if os.path.exists(f"test_files/Demethoxy-cornuside/{filename}/acqu2"):
+#         file_list = [f"test_files/Demethoxy-cornuside/{filename}/acqu", f"test_files/Demethoxy-cornuside/{filename}/acqu2"]
+#     else:
+#         file_list = [f"test_files/Demethoxy-cornuside/{filename}/acqu"]
+#     dict_list = Bruker.read(file_list)
+#     params = Bruker.find_params(dict_list)
+#     print(params)
