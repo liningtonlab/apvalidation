@@ -126,6 +126,11 @@ class Varian:
                             Probably returned from the read method.
         :return: dimension of the experiment
         """
+
+        if 'plt2Darg' in param_dict.keys():
+                exp_dim = '2D'
+                return exp_dim
+
         try:
             exp_dim = param_dict['apptype']['values'][0][-2:]
         except KeyError:
@@ -133,11 +138,13 @@ class Varian:
 
         if exp_dim in ['1D', '2D']:
             return exp_dim
-        else:
+
+        elif exp_dim not in ['1D', '2D']:
             try:
                 exp_dim = str(param_dict['procdim']['values'][0]) + "D"
             except KeyError:
                 exp_dim = None
+            
 
         if exp_dim not in ["1D", "2D", None]:
             exp_dim = None
