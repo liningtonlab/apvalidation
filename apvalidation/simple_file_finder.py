@@ -48,14 +48,7 @@ class MetaFinder:
             parent_dir = re.search("^(.+)/([^/]+)$", meta_info["meta_file"][i])
             target_exp = parent_dir[1] if parent_dir is not None else ""
 
-            # match meta_info["vendor_name"][i]:
-            #     case "Varian":
-            #         self.__varian_validation(all_path_list, target_exp)
-            #     case "Bruker":
-            #         self.__bruker_validation(all_path_list, target_exp)
-            #     case "JEOL":
-            #         self.__jeol_validation(all_path_list, target_exp)
-
+          
             if meta_info["vendor_name"][i] == "Varian":
                 self.__varian_validation(all_path_list, target_exp)
             elif meta_info["vendor_name"][i] == "Bruker":
