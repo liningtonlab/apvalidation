@@ -10,7 +10,7 @@ class MetaFinder:
     """
 
     meta_name_by_vendor = {
-        ".jdf": "JEOL", ".jdx": "JEOL", "acqu": "Bruker", "procpar": "Varian"
+        ".jdf": "JEOL", ".jdx": "JEOL", "acqu": "Bruker", "procpar": "Varian", "acqu2": "Bruker"
     }
 
     def __init__(self, input_zip: str):
@@ -22,7 +22,7 @@ class MetaFinder:
         submitted_zip = ZipFile(input_zip)
         path_in_zip = submitted_zip.namelist()
         
-        #MAC zip saves some files that interrupt nmr glue
+        # MAC zip saves some files that interrupt nmr glue, this script exclude the interrupting files
         all_path_list = []
         for path in path_in_zip:
             if re.search("__MACOSX",path) is None:
@@ -32,11 +32,13 @@ class MetaFinder:
 
         # Search for a meta data file names
         vendor_list = []
-        param_path_list = []
+        param_path_list= []
+        core_path_dict = {}
         for name in meta_file_name_list:
-            lst = self.param_file_finder(all_path_list, name)
-            vendor_list += lst[0]
-            param_path_list += lst[1]
+            lst = self.param_file_finder(all_path_list, name, core_path_dict)
+            if lst:
+                vendor_list += lst
+        param_path_list = list(core_path_dict.values())         
         meta_info = {"vendor_name": vendor_list, "meta_file": param_path_list}
 
         # If meta data file is not found, raise an assertion
@@ -45,7 +47,7 @@ class MetaFinder:
         # Based on found meta data, go through file validation
         # for vendor in meta_info["vendor_name"]:
         for i in range(len(meta_info["vendor_name"])):
-            parent_dir = re.search("^(.+)/([^/]+)$", meta_info["meta_file"][i])
+            parent_dir = re.search("^(.+)/([^/]+)$", meta_info["meta_file"][i][0])
             target_exp = parent_dir[1] if parent_dir is not None else ""
 
           
@@ -59,14 +61,19 @@ class MetaFinder:
         return meta_info
 
     @staticmethod
-    def param_file_finder(path_list: str, keyword: str) -> list:
-        core_path_list = []
+    def param_file_finder(path_list: str, keyword: str, core_path_dict: dict) -> list:
         vendor_list = []
         for path in path_list:
             if path.endswith(keyword):
-                vendor_list.append(MetaFinder.meta_name_by_vendor[keyword])
-                core_path_list.append(path)
-        return [vendor_list, core_path_list]
+                parent_dir = re.search("^(.+)/([^/]+)$", path)[1]
+                try:
+                    core_path_dict[parent_dir]
+                    core_path_dict[parent_dir].append(path)
+                except:
+                    core_path_dict[parent_dir] = [path]
+                    vendor_list.append(MetaFinder.meta_name_by_vendor[keyword])
+                    
+        return vendor_list
 
     @staticmethod
     def key_file_finder(path_list: str, keyword: str, start_with: str) -> list:

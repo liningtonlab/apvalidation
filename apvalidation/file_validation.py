@@ -32,23 +32,27 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
         # Extract all the contents of zip file in current directory
         res_dict = {}
         # for params_path, vendor in file_root, vendor_type:
-        for i in range(len(file_root)):
-            core_file_read = zipObj.read(file_root[i])
-            tf = create_temporary_file(core_file_read)
+        for i, path_list in enumerate(file_root):
+            unzipped_path_name = []
+            for path in path_list:
+                core_file_read = zipObj.read(path)
+                tf = create_temporary_file(core_file_read)
+                unzipped_path_name.append(tf.name)
+                
 
             # Get param according to the vendor name
             if vendor_type[i] == "Varian":
-                param_dict = extractor.Varian.read(tf.name)
+                param_dict = extractor.Varian.read(unzipped_path_name)
                 params = extractor.Varian.find_params(param_dict)
             elif vendor_type[i] == "Bruker":
-                param_dict = extractor.Bruker.read(tf.name)
+                param_dict = extractor.Bruker.read(unzipped_path_name)
                 params = extractor.Bruker.find_params(param_dict)
             elif vendor_type[i] == "JEOL":
-                param_dict = extractor.Jcampdx.read(tf.name)
+                param_dict = extractor.Jcampdx.read(unzipped_path_name)
                 params = extractor.Jcampdx.find_params(param_dict)
 
-            res_dict[file_root[i]] = params
-            res_dict[file_root[i]]["vendor"] = vendor_type[i]
+            res_dict[file_root[i][0]] = params
+            res_dict[file_root[i][0]]["vendor"] = vendor_type[i]
             
             # # Select core files and extract under name_format directory
             # # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
