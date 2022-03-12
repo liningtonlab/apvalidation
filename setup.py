@@ -3,13 +3,13 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-requirements = ["anytree==2.8.0",
+requirements = [
 "atomicwrites==1.4.0",
 "attrs==21.4.0",
 "colorama==0.4.4",
 "iniconfig==1.1.1",
 "nmrglue==0.8",
-"numpy==1.22.2",
+"numpy==1.21.4",
 "packaging==21.3",
 "pandas==1.4.0",
 "pluggy==1.0.0",
