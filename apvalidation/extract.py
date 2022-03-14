@@ -200,18 +200,19 @@ class Varian:
 
         exp_loc_list = [exp_type_loc1, exp_type_loc2, exp_type_loc3, exp_type_loc4]
         exp_loc_list = [x.upper() for x in exp_loc_list]
-
+        
         print(f"DIMENSION: {exp_dim}")
+        # print(exp_loc_list)
         exp_type = ''
         if exp_dim == '2D':
-            for type_str in exp_list:
-                for exp_loc in exp_loc_list:
+            for exp_loc in exp_loc_list:
+                for type_str in exp_list:
                     if type_str in exp_loc:
                         exp_type = type_str
                         return exp_type
         elif exp_dim == '1D':
-            for type_str in exp_list:
-                for exp_loc in exp_loc_list:
+            for exp_loc in exp_loc_list:
+                for type_str in exp_list:
                     if type_str in exp_loc:
                         exp_type = type_str
                     break

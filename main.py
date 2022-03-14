@@ -24,12 +24,12 @@ for filename in os.listdir("./test_files/Borrelidin analog"):
     varian_dict = Varian.read([f"test_files/Borrelidin analog/{filename}/procpar"])
     output = Varian.find_params(varian_dict)
     print(f"{output}\n")
-# print("\nOUTPUT FOR 1353_Day3_A1_B---------------------------------------------------------------------------------------\n")
-# for filename in os.listdir("./test_files/1353_Day3_A1_B"):
-#     print(filename)
-#     varian_dict = Varian.read([f"test_files/1353_Day3_A1_B/{filename}/procpar"])
-#     output = Varian.find_params(varian_dict)
-#     print(f"{output}\n")
+print("\nOUTPUT FOR 1353_Day3_A1_B---------------------------------------------------------------------------------------\n")
+for filename in os.listdir("./test_files/1353_Day3_A1_B"):
+    print(filename)
+    varian_dict = Varian.read([f"test_files/1353_Day3_A1_B/{filename}/procpar"])
+    output = Varian.find_params(varian_dict)
+    print(f"{output}\n")
 # print("\nOUTPUT FOR 1353_SYP Original Fill Data Set---------------------------------------------------------------------------------------\n")
 # for filename in os.listdir("./test_files/1353_SYP Original Full Data Set"):
 #     print(filename)
@@ -37,6 +37,36 @@ for filename in os.listdir("./test_files/Borrelidin analog"):
 #     output = Varian.find_params(varian_dict)
 #     print(f"{output}\n")
 
+print("\nOUTPUT FOR Aspochalasin I Data Set---------------------------------------------------------------------------------------\n")
+for filename in os.listdir("./test_files/Aspochalasin I"):
+    print(filename)
+    varian_dict = Varian.read([f"test_files/Aspochalasin I/{filename}/procpar"])
+    output = Varian.find_params(varian_dict)
+    print(f"{output}\n")
+print("\nOUTPUT FOR echinulin Data Set---------------------------------------------------------------------------------------\n")
+for filename in os.listdir("./test_files/echinulin"):
+    print(filename)
+    varian_dict = Varian.read([f"test_files/echinulin/{filename}/procpar"])
+    output = Varian.find_params(varian_dict)
+    print(f"{output}\n")
+print("\nOUTPUT FOR emerimicin V Data Set---------------------------------------------------------------------------------------\n")
+for filename in os.listdir("./test_files/emerimicin V"):
+    print(filename)
+    varian_dict = Varian.read([f"test_files/emerimicin V/{filename}/procpar"])
+    output = Varian.find_params(varian_dict)
+    print(f"{output}\n")
+print("\nOUTPUT FOR MB0593C-BAC-AA Data Set---------------------------------------------------------------------------------------\n")
+for filename in os.listdir("./test_files/MB0593C-BAC-AA"):
+    print(filename)
+    varian_dict = Varian.read([f"test_files/MB0593C-BAC-AA/{filename}/procpar"])
+    output = Varian.find_params(varian_dict)
+    print(f"{output}\n")
+print("\nOUTPUT FOR MB0593E-BAC-DD Data Set---------------------------------------------------------------------------------------\n")
+for filename in os.listdir("./test_files/MB0593E-BAC-DD"):
+    print(filename)
+    varian_dict = Varian.read([f"test_files/MB0593E-BAC-DD/{filename}/procpar"])
+    output = Varian.find_params(varian_dict)
+    print(f"{output}\n")
 
 
 # dict, data = ng.varian.read_fid("./test_files/Lobosamide C/Lobos9512D_A_2_gHMBCAD_DMSO_600MHz_5mmShigemi.fid/fid 2")
@@ -66,29 +96,41 @@ for filename in os.listdir("./test_files/Granaticin_D"):
     params = Bruker.find_params(dict_list)
     print(params)
 
-# print("\nOUTPUT FOR Demethoxy-cornuside---------------------------------------------------------------------------------------\n")
+print("\nOUTPUT FOR Demethoxy-cornuside---------------------------------------------------------------------------------------\n")
 
-# for filename in os.listdir("./test_files/Demethoxy-cornuside"):
-#     print(filename)
-#     if os.path.exists(f"test_files/Demethoxy-cornuside/{filename}/acqu2"):
-#         file_list = [f"test_files/Demethoxy-cornuside/{filename}/acqu", f"test_files/Demethoxy-cornuside/{filename}/acqu2"]
-#     else:
-#         file_list = [f"test_files/Demethoxy-cornuside/{filename}/acqu"]
-#     dict_list = Bruker.read(file_list)
-#     params = Bruker.find_params(dict_list)
-#     print(params)
+for filename in os.listdir("./test_files/Demethoxy-cornuside"):
+    print(filename)
+    if os.path.exists(f"test_files/Demethoxy-cornuside/{filename}/acqu2"):
+        file_list = [f"test_files/Demethoxy-cornuside/{filename}/acqu", f"test_files/Demethoxy-cornuside/{filename}/acqu2"]
+    else:
+        file_list = [f"test_files/Demethoxy-cornuside/{filename}/acqu"]
+    dict_list = Bruker.read(file_list)
+    params = Bruker.find_params(dict_list)
+    print(params)
 
-# print("\nOUTPUT FOR SL_RLUS-2152D-1-1---------------------------------------------------------------------------------------\n")
+print("\nOUTPUT FOR Tetronasin---------------------------------------------------------------------------------------\n")
 
-# for filename in os.listdir("./test_files/SL_RLUS-2152D-1-1"):
-#     print(filename)
-#     if os.path.exists(f"test_files/SL_RLUS-2152D-1-1/{filename}/acqu2"):
-#         file_list = [f"test_files/SL_RLUS-2152D-1-1/{filename}/acqu", f"test_files/SL_RLUS-2152D-1-1/{filename}/acqu2"]
-#     else:
-#         file_list = [f"test_files/SL_RLUS-2152D-1-1/{filename}/acqu"]
-#     dict_list = Bruker.read(file_list)
-#     params = Bruker.find_params(dict_list)
-#     print(params)
+for filename in os.listdir("./test_files/Tetronasin"):
+    print(filename)
+    if os.path.exists(f"test_files/Tetronasin/{filename}/acqu2"):
+        file_list = [f"test_files/Tetronasin/{filename}/acqu", f"test_files/Tetronasin/{filename}/acqu2"]
+    else:
+        file_list = [f"test_files/Tetronasin/{filename}/acqu"]
+    dict_list = Bruker.read(file_list)
+    params = Bruker.find_params(dict_list)
+    print(params)
+
+print("\nOUTPUT FOR SL_RLUS-2152D-1-1---------------------------------------------------------------------------------------\n")
+
+for filename in os.listdir("./test_files/SL_RLUS-2152D-1-1"):
+    print(filename)
+    if os.path.exists(f"test_files/SL_RLUS-2152D-1-1/{filename}/acqu2"):
+        file_list = [f"test_files/SL_RLUS-2152D-1-1/{filename}/acqu", f"test_files/SL_RLUS-2152D-1-1/{filename}/acqu2"]
+    else:
+        file_list = [f"test_files/SL_RLUS-2152D-1-1/{filename}/acqu"]
+    dict_list = Bruker.read(file_list)
+    params = Bruker.find_params(dict_list)
+    print(params)
 
 
 """
