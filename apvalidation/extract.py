@@ -155,6 +155,9 @@ class Varian:
         """
         Helper function.
         Determine the type of experiment that was conducted. Ex. COSY, HSQC etc...
+        The first bit of the function constructs a list of possible locations in the parameter
+        file which could house the name of the experiment being conducted.
+        These locations are then searched one of the keywords that denote an experiment.
 
         :param param_dict: dictionary containing all the parameter data
         :param exp_dim: dimension of the experiment
@@ -171,30 +174,46 @@ class Varian:
         """
 
         exp_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'DOSY', 'ROESY', 'NOESY']
-        # assume the experiment type is 1D and change from there 
+        # construct a list of possible locations in which the experiment type could be. 
+        try:
+            exp_type_loc1 = param_dict['explist']['values'][0]
+            # print(f"THe explist value is: {exp_type}")
+        except KeyError:
+            exp_type_loc1 = ""
 
-        long_string = param_dict['ap']['values'][0]
-        start_indicator = long_string.find('pwx:3;1:')+len('pwx:3;1:')
-        end_indicator = long_string.find(':j1xh:')
-        backup_exp_type = long_string[start_indicator:end_indicator]
+        try:
+            exp_type_loc2 = param_dict['apptype']['values'][0]
+        except KeyError:
+            exp_type_loc2 = ""
+        try:
+            long_string = param_dict['ap']['values'][0]
+            start_indicator = long_string.find('pwx:3;1:')+len('pwx:3;1:')
+            end_indicator = long_string.find(':j1xh:')
+            exp_type_loc3 = long_string[start_indicator:end_indicator]
+        except KeyError:
+            exp_type_loc3 = ""
 
+        try:
+            exp_type_loc4 = param_dict['pslabel']['values'][0]
+        except KeyError:
+            exp_type_loc4 = ""
+
+        exp_loc_list = [exp_type_loc1, exp_type_loc2, exp_type_loc3, exp_type_loc4]
+        exp_loc_list = [x.upper() for x in exp_loc_list]
+
+        print(f"DIMENSION: {exp_dim}")
         exp_type = ''
         if exp_dim == '2D':
-            try:
-                exp_type = param_dict['explist']['values'][0]
-                # print(f"THe explist value is: {exp_type}")
-            except KeyError:
-                exp_type = ""
-            if exp_type == "":
-                exp_type = param_dict['apptype']['values'][0]
             for type_str in exp_list:
-                if type_str in exp_type.upper() or type_str in backup_exp_type.upper():
-                    exp_type = type_str
-                    return exp_type
+                for exp_loc in exp_loc_list:
+                    if type_str in exp_loc:
+                        exp_type = type_str
+                        return exp_type
         elif exp_dim == '1D':
             for type_str in exp_list:
-                if type_str in exp_type.upper() or type_str in backup_exp_type.upper():
-                    exp_type = type_str
+                for exp_loc in exp_loc_list:
+                    if type_str in exp_loc:
+                        exp_type = type_str
                     break
             exp_type = f'1D {exp_type}'
             return exp_type
@@ -573,7 +592,8 @@ class Jcampdx:
         :param param_dict: dictionary containing all the parameters retrieved from the file
         :return: dictionary containing only those parameters that are preferred
         """
-        param_dict = param_dict_list[0]
+        
+        param_dict = param_dict_list[0][0]
         exp_dim = Jcampdx.find_dim(param_dict)
         exp_freq = Jcampdx.find_freq(param_dict, exp_dim)
         exp_nuc_1, exp_nuc_2 = Jcampdx.find_nuc(param_dict, exp_dim)
@@ -638,6 +658,7 @@ class Jcampdx:
                             Probably returned from the read method.
         :return: dimension of the experiment.
         """
+
         exp_dim = param_dict['NUMDIM'][0] + 'D'
         return exp_dim
 
