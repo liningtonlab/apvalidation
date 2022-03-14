@@ -11,6 +11,8 @@ images/
 
 # Distribution / packaging
 my_env/
+myenv/
+test_files/
 Pipfile
 Pipfile.lock
 .Python
