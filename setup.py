@@ -3,7 +3,7 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-requirements = ["anytree==2.8.0",
+requirements = [
 "atomicwrites==1.4.0",
 "attrs==21.4.0",
 "colorama==0.4.4",
@@ -26,7 +26,7 @@ requirements = ["anytree==2.8.0",
 
 setuptools.setup(
     name='apvalidation',
-    version='0.2.4',
+    version='0.2.3',
     author='liningtonlabs',
     author_email='liningtonlabstest@gmail.com',
     description='Testing installation of Package',
