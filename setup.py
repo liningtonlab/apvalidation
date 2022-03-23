@@ -9,7 +9,7 @@ requirements = [
 "colorama==0.4.4",
 "iniconfig==1.1.1",
 "nmrglue==0.8",
-"numpy==1.21.4",
+"numpy==1.22.2",
 "packaging==21.3",
 "pandas==1.4.0",
 "pluggy==1.0.0",
@@ -26,7 +26,7 @@ requirements = [
 
 setuptools.setup(
     name='apvalidation',
-    version='0.2.5',
+    version='0.2.6',
     author='liningtonlabs',
     author_email='liningtonlabstest@gmail.com',
     description='Testing installation of Package',
