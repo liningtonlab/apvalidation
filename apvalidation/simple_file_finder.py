@@ -52,11 +52,11 @@ class MetaFinder:
 
           
             if meta_info["vendor_name"][i] == "Varian":
-                self.__varian_validation(all_path_list, target_exp)
+                self._varian_validation(all_path_list, target_exp)
             elif meta_info["vendor_name"][i] == "Bruker":
-                self.__bruker_validation(all_path_list, target_exp)
+                self._bruker_validation(all_path_list, target_exp)
             elif meta_info["vendor_name"][i] == "JEOL":
-                self.__jeol_validation(all_path_list, target_exp)
+                self._jeol_validation(all_path_list, target_exp)
 
         return meta_info
 
@@ -83,20 +83,20 @@ class MetaFinder:
                 key_path_list.append(path)
         return key_path_list
 
-    def __varian_validation(self, all_path_list: str, individual_folder_path: str):
+    def _varian_validation(self, all_path_list: str, individual_folder_path: str):
         fid_path = self.key_file_finder(all_path_list, "fid", individual_folder_path)
         # assert fid_path, f"{individual_folder_path} : Fid file is missing"
         if not fid_path : self.error_message.append(f"{individual_folder_path} : Fid file is missing")
         
 
-    def __bruker_validation(self, all_path_list: str, individual_folder_path: str):
+    def _bruker_validation(self, all_path_list: str, individual_folder_path: str):
         fid_path = self.key_file_finder(all_path_list, "fid", individual_folder_path)
         ser_path = self.key_file_finder(all_path_list, "ser", individual_folder_path)
         # assert fid_path+ser_path, f"{individual_folder_path} : Fid/Ser file is missing"
         if not fid_path and not ser_path : self.error_message.append(f"{individual_folder_path} : Fid file is missing")
 
 
-    def __jeol_validation(self, all_path_list: str, individual_folder_path: str):
+    def _jeol_validation(self, all_path_list: str, individual_folder_path: str):
         jdx_path = self.key_file_finder(all_path_list, "jdx", individual_folder_path)
         # assert jdx_path, f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx file"
         if not jdx_path : self.error_message.append(f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx file")

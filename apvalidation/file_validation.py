@@ -12,6 +12,7 @@ import os
 import zipfile
 import tempfile
 import json
+from pathlib import Path
 
 
 def find_path_and_extract(submitted_zip_file: str) -> json:
@@ -51,8 +52,9 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 param_dict = extractor.Jcampdx.read(unzipped_path_name)
                 params = extractor.Jcampdx.find_params(param_dict)
 
-            res_dict[file_root[i][0]] = params
-            res_dict[file_root[i][0]]["vendor"] = vendor_type[i]
+            file_root_without_file_name = str(Path(path).parent.absolute())
+            res_dict[file_root_without_file_name] = params
+            res_dict[file_root_without_file_name]["vendor"] = vendor_type[i]
             
             # # Select core files and extract under name_format directory
             # # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
