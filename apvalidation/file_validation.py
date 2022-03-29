@@ -52,7 +52,7 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 param_dict = extractor.Jcampdx.read(unzipped_path_name)
                 params = extractor.Jcampdx.find_params(param_dict)
 
-            file_root_without_file_name = str(Path(path).parent.absolute())
+            file_root_without_file_name = str(Path(path).parent)
             res_dict[file_root_without_file_name] = params
             res_dict[file_root_without_file_name]["vendor"] = vendor_type[i]
             
