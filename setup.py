@@ -21,12 +21,12 @@ requirements = [
 "scipy==1.7.3",
 "six==1.12.0",
 "toml==0.10.2",
-"rdkit-pypi==2021.9.4",
+"rdkit-pypi>=2021.9.4",
 "requests==2.27.1"]
 
 setuptools.setup(
     name='apvalidation',
-    version='0.2.7',
+    version='0.2.10',
     author='liningtonlabs',
     author_email='liningtonlabstest@gmail.com',
     description='Testing installation of Package',

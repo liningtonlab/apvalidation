@@ -12,7 +12,8 @@ import os
 import zipfile
 import tempfile
 import json
-
+from pathlib import Path
+import re
 
 def find_path_and_extract(submitted_zip_file: str) -> json:
     """
@@ -27,6 +28,7 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
     meta_file = meta.meta_info
     vendor_type = meta_file["vendor_name"]
     file_root = meta_file["meta_file"]
+    existing_folder_names = []
 
     with zipfile.ZipFile(submitted_zip_file, 'r') as zipObj:
         # Extract all the contents of zip file in current directory
@@ -51,21 +53,30 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 param_dict = extractor.JEOL.read(unzipped_path_name)
                 params = extractor.JEOL.find_params(param_dict)
 
-            res_dict[file_root[i][0]] = params
-            res_dict[file_root[i][0]]["vendor"] = vendor_type[i]
+            file_root_without_file_name = str(Path(path).parent)
+            res_dict[file_root_without_file_name] = params
+            res_dict[file_root_without_file_name]["vendor"] = vendor_type[i]
             
             # # Select core files and extract under name_format directory
             # # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
-            # two_d_name = res_dict[file_root[i]]["nuc_2"] + "_" if res_dict[file_root[i]]["nuc_2"] else ""
+            # two_d_name = res_dict[file_root_without_file_name]["nuc_2"] + "_" if res_dict[file_root_without_file_name]["nuc_2"] else ""
             # #NULL value is replaced by an empty string
-            # if res_dict[file_root[i]]["nuc_1"]:
-            #     one_d_name = res_dict[file_root[i]]["nuc_1"] + "_"
+            # if res_dict[file_root_without_file_name]["nuc_1"]:
+            #     one_d_name = res_dict[file_root_without_file_name]["nuc_1"] + "_"
             # else:
             #     one_d_name = ""
                 
-            # folder_name = one_d_name + two_d_name + res_dict[file_root[i]]["experiment_type"]
+            # folder_name = one_d_name + two_d_name + res_dict[file_root_without_file_name]["experiment_type"]
+            # repeat_exp_num = existing_folder_names.count(folder_name)
+            # existing_folder_names.append(folder_name)
+            # if repeat_exp_num >= 1:
+            #     folder_name = folder_name + " ({})".format(repeat_exp_num)
+                        
             # parent_dir = os.getcwd()
-            # extract_core_file(submitted_zip_file, file_root[i], vendor_type[i], folder_name, parent_dir)
+            # indiv_exp_path = str(re.search("^(.+)/([^/]+)$", file_root[i][0])[1])
+            # print("path")
+            # print(indiv_exp_path)
+            # extract_core_file(submitted_zip_file, indiv_exp_path, vendor_type[i], folder_name, parent_dir)
 
             os.unlink(tf.name) # Delete temporary file
 
