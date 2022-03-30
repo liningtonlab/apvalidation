@@ -48,8 +48,8 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 param_dict = extractor.Bruker.read(unzipped_path_name)
                 params = extractor.Bruker.find_params(param_dict)
             elif vendor_type[i] == "JEOL":
-                param_dict = extractor.Jcampdx.read(unzipped_path_name)
-                params = extractor.Jcampdx.find_params(param_dict)
+                param_dict = extractor.JEOL.read(unzipped_path_name)
+                params = extractor.JEOL.find_params(param_dict)
 
             res_dict[file_root[i][0]] = params
             res_dict[file_root[i][0]]["vendor"] = vendor_type[i]
