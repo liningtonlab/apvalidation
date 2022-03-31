@@ -1,0 +1,15 @@
+
+
+**dict.fromkeys(['DMSO'], 'C2D6OS'),
+**dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D'], 'CDCL3'),
+**dict.fromkeys(['TETRAHYDROFURAN'], 'C2D6OS'),
+**dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE'], 'CD2CL2'),
+**dict.fromkeys(['ACETONE'], 'C3D6O'),
+**dict.fromkeys(['METHANOL', 'DEUTERATED-METHANOL', 'MEOD'], 'CD3OD'),
+**dict.fromkeys(['TOLUENE'], 'C7D8'),
+**dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O'], 'D2O'),
+**dict.fromkeys(['TRIFLUOROACETIC-ACID'], 'C2DF3O2'),
+**dict.fromkeys(['PYRIDINE'], 'C5D5N'),
+**dict.fromkeys(['METHYLENE-CHLORIDE', 'METHYLENE-CHLORI'], 'CD2CL2'),
+**dict.fromkeys(['ACETONITRILE'], 'C2D3N'),          
+**dict.fromkeys(['BENZENE'], 'C6D6'),

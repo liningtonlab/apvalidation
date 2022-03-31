@@ -1,7 +1,8 @@
 import os
-
+import re
 import nmrglue as ng
 import pandas as pd
+import numpy as np
 
 
 class Varian:
@@ -28,14 +29,6 @@ class Varian:
             param_dict_list.append(param_dict)
         
         return param_dict_list
-
-        # assert os.path.isfile(filepath)
-        # param_dict = ng.varian.read_procpar(filename=filepath)
-
-        # if len(param_dict) > 0:
-        #     return param_dict
-        # else:
-        #     return "Empty File"
 
     @staticmethod
     def find_params(param_dict_list):
@@ -86,20 +79,18 @@ class Varian:
         :return: a string containing the chemical formula of the solvent used.
         """
         all_solvents = {
-            **dict.fromkeys(['DMSO'], 'C2D6OS'),
-            **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D'], 'CDCL3'),
-            **dict.fromkeys(['TETRAHYDROFURAN'], 'C2D6OS'),
-            **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE'], 'CD2CL2'),
+            **dict.fromkeys(['DMSO', 'DIMETHYL SULFOXIDE', 'DIMETHYL-SULFOXIDE', 'DMSO-D6', 'dmso-d6', 'd6-dmso', 'D6-DMSO'], 'C2D6OS'),
+            **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D', 'DEUTEROCHLOROFORM'], 'CDCL3'),
+            **dict.fromkeys(['TETRAHYDROFURAN', 'THF', 'D6-THF', 'THF-D6'], 'C2D6OS'),
+            **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE', 'METHYLENE CHLORIDE', 'METHYLENE-CHLORIDE', 'METHYLENE-CHLORI'], 'CD2CL2'),
             **dict.fromkeys(['ACETONE'], 'C3D6O'),
             **dict.fromkeys(['METHANOL', 'DEUTERATED-METHANOL', 'MEOD'], 'CD3OD'),
             **dict.fromkeys(['TOLUENE'], 'C7D8'),
-            **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O'], 'D2O'),
-            **dict.fromkeys(['TRIFLUOROACETIC-ACID'], 'C2DF3O2'),
+            **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O', 'DEUTERIUM OXIDE'], 'D2O'),
+            **dict.fromkeys(['TRIFLUOROACETIC-ACID', 'TRIFLUOROACETIC ACID'], 'C2DF3O2'),
             **dict.fromkeys(['PYRIDINE'], 'C5D5N'),
-            **dict.fromkeys(['METHYLENE-CHLORIDE', 'METHYLENE-CHLORI'], 'CD2CL2'),
             **dict.fromkeys(['ACETONITRILE'], 'C2D3N'),
             **dict.fromkeys(['BENZENE'], 'C6D6'),
-            **dict.fromkeys(['URINE_KEY'], 'URINE'),
         }
         try:
             solv_str = param_dict['solvent']['values'][0]
@@ -383,7 +374,7 @@ class Bruker:
 
     @staticmethod
     def find_temp(param_dict):
-        temp_number = param_dict['TE']
+        temp_number = round(float(param_dict['TE']))
         if temp_number >= 250:
             return temp_number
         else:
@@ -400,20 +391,18 @@ class Bruker:
         """
 
         all_solvents = {
-            **dict.fromkeys(['DMSO'], 'C2D6OS'),
-            **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D'], 'CDCL3'),
-            **dict.fromkeys(['TETRAHYDROFURAN'], 'C2D6OS'),
-            **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE'], 'CD2CL2'),
+            **dict.fromkeys(['DMSO', 'DIMETHYL SULFOXIDE', 'DIMETHYL-SULFOXIDE', 'DMSO-D6', 'dmso-d6', 'd6-dmso', 'D6-DMSO'], 'C2D6OS'),
+            **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D', 'DEUTEROCHLOROFORM'], 'CDCL3'),
+            **dict.fromkeys(['TETRAHYDROFURAN', 'THF', 'D6-THF', 'THF-D6'], 'C2D6OS'),
+            **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE', 'METHYLENE CHLORIDE', 'METHYLENE-CHLORIDE', 'METHYLENE-CHLORI'], 'CD2CL2'),
             **dict.fromkeys(['ACETONE'], 'C3D6O'),
             **dict.fromkeys(['METHANOL', 'DEUTERATED-METHANOL', 'MEOD'], 'CD3OD'),
             **dict.fromkeys(['TOLUENE'], 'C7D8'),
-            **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O'], 'D2O'),
-            **dict.fromkeys(['TRIFLUOROACETIC-ACID'], 'C2DF3O2'),
+            **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O', 'DEUTERIUM OXIDE'], 'D2O'),
+            **dict.fromkeys(['TRIFLUOROACETIC-ACID', 'TRIFLUOROACETIC ACID'], 'C2DF3O2'),
             **dict.fromkeys(['PYRIDINE'], 'C5D5N'),
-            **dict.fromkeys(['METHYLENE-CHLORIDE', 'METHYLENE-CHLORI'], 'CD2CL2'),
             **dict.fromkeys(['ACETONITRILE'], 'C2D3N'),
             **dict.fromkeys(['BENZENE'], 'C6D6'),
-            **dict.fromkeys(['URINE_KEY'], 'URINE'),
         }
 
         solv_str = param_dict['SOLVENT']
@@ -447,16 +436,6 @@ class Bruker:
         elif len(param_dict_list) == 1:
             exp_dim = '1D'
 
-        # exp_2d_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'ROESY', 'NOESY', 'DOSY']
-        # exp_str = param_dict['EXP']
-        # exp_dim = exp_str[0:2].upper()
-
-        # if exp_dim not in ['1D', '2D']:
-        #     for entry in exp_2d_list:
-        #         if entry in exp_str.upper():
-        #             exp_dim = '2D'
-        #             return exp_dim
-        #     exp_dim = '1D'
         return exp_dim
 
     @staticmethod
@@ -537,23 +516,12 @@ class Bruker:
             exp_nuc1 = None
 
         return exp_nuc1, exp_nuc2
-        
-        # exp_nuc2 = None
-        # if exp_dim == '1D':
-        #     exp_nuc1 = param_dict['NUC1']
-        # elif param_dict['NUC2'] != 'off':
-        #     exp_nuc1 = param_dict['NUC1']
-        #     exp_nuc2 = param_dict['NUC2']
-        # else:
-        #     exp_nuc1 = param_dict['NUC1']
-        #     exp_nuc2 = param_dict['NUC1']
-        # return exp_nuc1, exp_nuc2
 
 
-class Jcampdx:
+class JEOL:
     """
     A class containing the methods to help with the extraction of
-    experiment parameters from NMR data from jdx format.
+    experiment parameters from NMR data from JEOL format.
     """
 
     def __init__(self):
@@ -576,12 +544,6 @@ class Jcampdx:
             param_dict_list.append(param_dict)
         
         return param_dict_list
-        # assert os.path.isfile(filepath)
-        # param_dict = ng.jcampdx.read(filename=filepath)
-        # try:
-        #     return param_dict[0]['_datatype_NMRSPECTRUM'][0]
-        # except KeyError:
-        #     return param_dict[0]
 
     @staticmethod
     def find_params(param_dict_list):
@@ -595,12 +557,12 @@ class Jcampdx:
         """
         
         param_dict = param_dict_list[0][0]
-        exp_dim = Jcampdx.find_dim(param_dict)
-        exp_freq = Jcampdx.find_freq(param_dict, exp_dim)
-        exp_nuc_1, exp_nuc_2 = Jcampdx.find_nuc(param_dict, exp_dim)
-        exp_type = Jcampdx.find_exp_type(param_dict, exp_dim)
-        exp_solv = Jcampdx.find_solvent(param_dict)
-        exp_temp = Jcampdx.find_temp(param_dict)
+        exp_dim = JEOL.find_dim(param_dict)
+        exp_freq = JEOL.find_freq(param_dict, exp_dim)
+        exp_nuc_1, exp_nuc_2 = JEOL.find_nuc(param_dict, exp_dim)
+        exp_type = JEOL.find_exp_type(param_dict, exp_dim)
+        exp_solv = JEOL.find_solvent(param_dict)
+        exp_temp = JEOL.find_temp(param_dict)
 
         pref_params = {'experiment_type': exp_type, 'nuc_1': exp_nuc_1, 'nuc_2': exp_nuc_2, 'frequency': exp_freq,
                        'solvent': exp_solv.upper(), 'temperature': exp_temp}
@@ -625,20 +587,18 @@ class Jcampdx:
         :return: The solvent in string format.
         """
         all_solvents = {
-            **dict.fromkeys(['DMSO'], 'C2D6OS'),
-            **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D'], 'CDCL3'),
-            **dict.fromkeys(['TETRAHYDROFURAN'], 'C2D6OS'),
-            **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE'], 'CD2CL2'),
+            **dict.fromkeys(['DMSO', 'DIMETHYL SULFOXIDE', 'DIMETHYL-SULFOXIDE', 'DMSO-D6', 'dmso-d6', 'd6-dmso', 'D6-DMSO'], 'C2D6OS'),
+            **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D', 'DEUTEROCHLOROFORM'], 'CDCL3'),
+            **dict.fromkeys(['TETRAHYDROFURAN', 'THF', 'D6-THF', 'THF-D6'], 'C2D6OS'),
+            **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE', 'METHYLENE CHLORIDE', 'METHYLENE-CHLORIDE', 'METHYLENE-CHLORI'], 'CD2CL2'),
             **dict.fromkeys(['ACETONE'], 'C3D6O'),
             **dict.fromkeys(['METHANOL', 'DEUTERATED-METHANOL', 'MEOD'], 'CD3OD'),
             **dict.fromkeys(['TOLUENE'], 'C7D8'),
-            **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O'], 'D2O'),
-            **dict.fromkeys(['TRIFLUOROACETIC-ACID'], 'C2DF3O2'),
+            **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O', 'DEUTERIUM OXIDE'], 'D2O'),
+            **dict.fromkeys(['TRIFLUOROACETIC-ACID', 'TRIFLUOROACETIC ACID'], 'C2DF3O2'),
             **dict.fromkeys(['PYRIDINE'], 'C5D5N'),
-            **dict.fromkeys(['METHYLENE-CHLORIDE', 'METHYLENE-CHLORI'], 'CD2CL2'),
             **dict.fromkeys(['ACETONITRILE'], 'C2D3N'),
             **dict.fromkeys(['BENZENE'], 'C6D6'),
-            **dict.fromkeys(['URINE_KEY'], 'URINE'),
         }
         solv_str = param_dict['$SOLVENT'][0]
         if solv_str in all_solvents.keys():
@@ -729,3 +689,232 @@ class Jcampdx:
             nuc_2 = None
 
         return nuc_1, nuc_2
+
+
+class Jcampdx_Handler:
+
+    """
+    A class containing the methods to help with the extraction of
+    experiment parameters from NMR data from jdx format.
+    """
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def read(filepath_list):
+        """
+        Given the raw file path to a parameter file, read the file
+        and return a python dictionary with all the parameters.
+
+        :param filepath: string formatted filepath to the acqu file
+        :return: dictionary containing all parameters found in the acqu file
+        """
+        param_dict_list = []
+        for filepath in filepath_list:
+            assert os.path.isfile(filepath)
+            param_dict = ng.jcampdx.read(filename=filepath)
+            param_dict_list.append(param_dict)
+        
+        return param_dict_list
+
+    @staticmethod
+    def find_manuf(param_dict_list):
+
+        # try to find the key which indicates the manufacturer.
+        try:
+            manuf_name = param_dict_list[0][0]["_datatype_LINK"][0]["$ORIGINALFORMAT"][0]
+            print(manuf_name)
+        except KeyError:
+            manuf_name = "Not found"
+        if manuf_name == "Not found":
+            try:
+                manuf_name = param_dict_list[0][0]["$ORIGINALFORMAT"][0]
+            except KeyError:
+                manuf_name = "Not found"
+
+        # check to see which manufacturer is 
+        if manuf_name == "Varian":
+            print("This is Varian!")
+            return manuf_name
+        elif "Bruker" in manuf_name:
+            print("This is Bruker!")
+            manuf_name = "Bruker"
+            return manuf_name
+        else:
+            manuf_name = "Not found"
+            return manuf_name
+
+    @staticmethod
+    def find_params(param_dict_list):
+        """
+        Searches a dictionary of all the parameters from a given experiment to find specific parameters needed
+        to fill the database. The parameters needed are experiment_type, nucleus 1 and 2, frequency,
+        solvent, and temperature.
+
+        :param param_dict: dictionary containing all the parameters retrieved from the file
+        :return: dictionary containing only those parameters that are preferred
+        """
+        output_dict = {}
+        manuf = Jcampdx_Handler.find_manuf(param_dict_list)
+        
+        if manuf == "Varian":
+            varian_structured_dict_list = Jcampdx_Handler.format_for_varian(param_dict_list)
+            output_dict = Varian.find_params(varian_structured_dict_list)
+        elif manuf == "Bruker":
+            bruker_structured_dict_list = Jcampdx_Handler.format_for_bruker(param_dict_list)
+            output_dict = Bruker.find_params(bruker_structured_dict_list)
+        
+        return output_dict
+        
+    @staticmethod
+    def format_for_varian(param_dict_list):
+        # create a short list of the required keys for Varian methods.
+        varian_key_list = ['temp', 'solvent', 'reffrq', 'reffrq1', 'tn', 'plt2Darg',
+                            'apptype', 'procdim', 'explist', 'apptype', 'ap', 'pslabel']
+        return_list = []
+
+        # only one element will appear in this list when jdx is read.
+        param_dict = param_dict_list[0]
+
+        short_param_dict = {}
+        varian_list = param_dict[0]["_datatype_LINK"][0]["_comments"]
+        # execute for each line in the procpar list
+        for index, line in enumerate(varian_list):
+            line_list = line.split(' ')
+            # if the first word in the line is a required key then save the next two elements to be added as values later.
+            if line_list[0] in varian_key_list:
+                short_param_dict[line_list[0]] = [varian_list[index+1], varian_list[index+2]]
+        # for all the keys that were found, pair them with the values and put them into the return list.
+        for key in short_param_dict.keys():
+            short_param_dict[key] = {"values": [short_param_dict[key][0].replace("1 ", "").replace('"', "")]}
+        return_list.append(short_param_dict)
+        return return_list
+
+    def format_for_bruker(param_dict_list):
+
+        # keep a list of the needed keys from Bruker
+        bruker_key_list = ["TE", "SOLVENT", "EXP", "PULPROG", "SFO1", "SFO2", "NUC1"]
+
+        return_list = []
+        print("FORMAT BRUKER RAN")
+
+        # only one element will appear in this list when the jdx is read.
+        param_dict = param_dict_list[0]
+
+        # define the important part of the file (part with parameters)
+        bruker_list = []
+        try: 
+            bruker_list = param_dict[0]['_comments']
+        except KeyError:
+            bruker_list = "Not found"
+        if bruker_list == "Not found":
+            try: 
+                bruker_list = param_dict[0]["_datatype_LINK"][0]["_comments"]
+            except KeyError:
+                bruker_list = "Not found"
+
+        
+        # define list to keep track of the start and stop indices for each separate file (acqus and acqu2s)
+        file_seps = []
+        print("Made it by tries")
+        # loop through each element in the bruker list to check for file start/stop points
+        for index, item in enumerate(bruker_list):
+            # if there is TITLE then thats the start of a file, if END then thats the end of a file
+            if "##TITLE= " in item:
+                file_seps.append([index,0])
+            if "##END=" in item:
+                # this takes the last item of the list (references top of stack)
+                matching_list = file_seps[-1]
+                matching_list[1] = index+1
+
+        # split the bruker list into separate sub-lists representing each file in the folder.
+        print(file_seps)
+        file_list = []
+        for curr_file in file_seps:
+            file_list.append(bruker_list[curr_file[0]:curr_file[1]])
+
+        # print(f"{file_list[0]} \n\n {file_list[1]} \n\n {file_list[2]}")
+
+        # check to see if acqu2s exists by checking for 1 or 2 Parameter type files at beginning of list.
+        if 'Parameter file' in file_list[1][0]:
+            dim = "2D"
+        else:
+            dim = "1D"
+        
+        if dim == "1D":
+            return_list = []
+            acqus_file = file_list[0]
+            short_param_dict = {}
+            for line in acqus_file:
+                if "=" in line:
+                    line_items = line.split("=")
+                    line_key = line_items[0][3:]
+                    line_value = line_items[1]
+                    for key in bruker_key_list:
+                        if key == line_key:
+                            line_value = re.sub("[< | >]*", "", line_value)
+                            short_param_dict[key] = line_value
+            return_list.append(short_param_dict)
+        elif dim == "2D":
+            return_list = []
+            acqu2s_file = file_list[0]
+            acqus_file = file_list[1]
+            short_param_dict = {}
+            for line in acqus_file:
+                if "=" in line:
+                    line_items = line.split("=")
+                    line_key = line_items[0][3:]
+                    line_value = line_items[1]
+                    for key in bruker_key_list:
+                        if key == line_key:
+                            line_value = re.sub("[< | >]*", "", line_value)
+                            short_param_dict[key] = line_value
+            return_list.append(short_param_dict)
+            short_param_dict = {}
+            for line in acqu2s_file:
+                if "=" in line:
+                    line_items = line.split("=")
+                    line_key = line_items[0][3:]
+                    line_value = line_items[1]
+                    for key in bruker_key_list:
+                        if key == line_key:
+                            line_value = re.sub("[< | >]*", "", line_value)
+                            short_param_dict[key] = line_value
+            return_list.append(short_param_dict)
+
+        # THE ISSUES ARE THE THE INTS ARE ACTUALLY SSTRINGS IN THE OUTPUT AND ALSO YOU NEED TO COMMENT ALL THIS CODE, IT IS UNREADBALE.
+        print(return_list)
+        return return_list
+
+
+
+
+
+
+            
+
+        
+
+
+
+
+            # for index, line in enumerate(bruker_list):
+            #     if "acqu2s" in line:
+            #         acqu_indexs.append(index)
+            #         is2D = True
+            #     elif "acqus" in line:
+            #         acqu_indexs.append(index)
+                    
+            # if is2D:
+            #     for index in range(acqu_indexs[0],acqu_indexs[1]):
+            #         for key in bruker_key_list:
+            #             if key in bruker_list[index]:
+            #                 print(f"{key}\n")
+            #     for index in range(acqu_indexs[1],len(bruker_list)):
+            #         for key in bruker_key_list:
+            #             if key in bruker_list[index]:
+            #                 print(f"{key}\n")
+
+            # print(acqu_indexs)
+           
