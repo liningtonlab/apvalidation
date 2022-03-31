@@ -26,7 +26,8 @@ def extract_core_file(input_zip : str, indiv_exp_path, vendor, folder_name, pare
 
 def extract_to_folder(extract_files, zipObject, folder_name, parent_dir):
 
-    target_path = create_dir(parent_dir, folder_name, -1)
+    # target_path = create_dir(parent_dir, folder_name, -1)
+    target_path = over_write_create_dir(parent_dir, folder_name)
 
     for unzip in extract_files:
         member = zipObject.open(unzip)
@@ -58,6 +59,13 @@ def create_dir(parent_dir, folder_name, index):
        target_path = os.path.join(parent_dir, folder_name)
     except:
         create_dir(parent_dir, folder_name, index)
+    return target_path
+
+def over_write_create_dir(parent_dir, folder_name, index=0):
+    target_path = os.path.join(parent_dir, folder_name)
+    if os.path.exists(target_path):
+        shutil.rmtree(target_path)
+    os.makedirs(target_path, exist_ok=True)
     return target_path
 
 if __name__ == '__main__':
