@@ -1,11 +1,13 @@
 from apvalidation import extract as extractor
 from apvalidation.simple_file_finder import MetaFinder
 from apvalidation.extract_core import extract_core_file
+from apvalidation.patoolutil import is_zip, repack_to_zip
 
 # Local Test Import
 # import extract as extractor
 # from simple_file_finder import MetaFinder
 # from extract_core import extract_core_file
+# from patoolutil import is_zip, repack_to_zip
 
 import sys
 import os
@@ -21,7 +23,10 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
     :param submitted_zip_file: user submitted zip file path
     :return: Experiment parameters
     """
-
+    
+    if not is_zip(submitted_zip_file):
+        submitted_zip_file = repack_to_zip(submitted_zip_file)
+    
     meta = MetaFinder(submitted_zip_file)
     assert meta.error_message == [], meta.error_message  
     
