@@ -9,6 +9,7 @@ import pandas as pd
 import nmrglue as ng
 import numpy as np
 import json
+import nmrglue as ng
 
 
 
@@ -152,31 +153,60 @@ JEOL DATA
 """
 JDX testing
 """
-print("\nOUTPUT Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx ---------------------------------------------------------------------------------------\n")
-# varian_dict = Varian.read(["test_files/Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx"])
-# jcamp_dict = Jcampdx_Handler.read(["test_files/Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx"])
-# find_params_output = Jcampdx_Handler.find_params(jcamp_dict)
-# print(find_params_output)
+# print("\nOUTPUT Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx ---------------------------------------------------------------------------------------\n")
 
-# jcamp_dict = Jcampdx_Handler.read(["test_files/Granaticin_C_Proton.jdx"])
-# find_params_output = Jcampdx_Handler.find_params(jcamp_dict)
-# print(find_params_output)
+jcamp_dict = Jcampdx_Handler.read(["test_files/Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx"])
+find_params_output = Jcampdx_Handler.find_params(jcamp_dict)
+print(find_params_output)
 
-print("FIRST FILE ------\n\n")
+jcamp_dict = Jcampdx_Handler.read(["test_files/Granaticin_C_Proton.jdx"])
+find_params_output = Jcampdx_Handler.find_params(jcamp_dict)
+print(find_params_output)
+
+print("FIRST BRUKER FILE ------\n\n")
 jcamp_dict = Jcampdx_Handler.read(["test_files/Bruker_HMBC.jdx"])
 output = Jcampdx_Handler.find_params(jcamp_dict)
+print(output)
 
 
-print("SECOND FILE ------\n\n")
+print("SECOND BRUKER FILE ------\n\n")
 jcamp_dict2 = Jcampdx_Handler.read(["test_files/bruker_j.jdx"])
 with open("./test_1d.json", "w") as f:
     json.dump(jcamp_dict2[0][0], f)
 output2 = Jcampdx_Handler.find_params(jcamp_dict2)
-
-
-print("FINAL OUTPUTS!!!")
-print(output)
 print(output2)
+
+
+
+# test = ng.fileio.bruker.read_jcamp(filename="test_files/Bruker_HMBC.jdx")
+# print(ng.fileio.bruker.parse_jcamp_value(test))
+# param_list = []
+# with open("test_files/Bruker_HMBC.jdx", "w") as f:
+#     Lines = f.readlines()
+#     for line in Lines:
+#         param_list.append(ng.fileio.bruker.parse_jcamp_line(line, f))
+
+# print("JEOL Normal -------------------- \n\n")
+# jeol_normal_dict = JEOL.read(["test_files/JEOL/RGL1617G1B cosy.jdx"])
+# output_normal = JEOL.find_params(jeol_normal_dict)
+# print(output_normal)
+
+# print("JEOL Mnova 1D-------------------- \n\n")
+# jeol_mnova_dict = Jcampdx_Handler.read(["test_files/JEOL/Mnova_JDX/JEOL_CARBON.jdx"])
+# output_mnova = Jcampdx_Handler.find_params(jeol_mnova_dict)
+# print(output_mnova)
+
+# print("JEOL Mnova 2D COSY-------------------- \n\n")
+# jeol_mnova_dict = Jcampdx_Handler.read(["test_files/JEOL/Mnova_JDX/JEOL_COSY.jdx"])
+# output_mnova = Jcampdx_Handler.find_params(jeol_mnova_dict)
+# print(output_mnova)
+
+# print("JEOL Mnova 2D HMBC-------------------- \n\n")
+# jeol_mnova_dict = Jcampdx_Handler.read(["test_files/JEOL/Mnova_JDX/JEOL_HMBC.jdx"])
+# output_mnova = Jcampdx_Handler.find_params(jeol_mnova_dict)
+# print(output_mnova)
+
+
 # print(jcamp_dict[0][0]["_datatype_LINK"][0]['_comments'])
 
 
