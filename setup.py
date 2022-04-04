@@ -22,11 +22,12 @@ requirements = [
 "six==1.12.0",
 "toml==0.10.2",
 "rdkit-pypi>=2021.9.4",
-"requests==2.27.1"]
+"requests==2.27.1",
+"patool==1.12"]
 
 setuptools.setup(
     name='apvalidation',
-    version='0.2.10',
+    version='0.2.13',
     author='liningtonlabs',
     author_email='liningtonlabstest@gmail.com',
     description='Testing installation of Package',
