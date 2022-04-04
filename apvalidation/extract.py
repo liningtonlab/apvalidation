@@ -192,7 +192,7 @@ class Varian:
         exp_loc_list = [exp_type_loc1, exp_type_loc2, exp_type_loc3, exp_type_loc4]
         exp_loc_list = [x.upper() for x in exp_loc_list]
         
-        print(f"DIMENSION: {exp_dim}")
+        # print(f"DIMENSION: {exp_dim}")
         # print(exp_loc_list)
         exp_type = ''
         if exp_dim == '2D':
@@ -462,7 +462,6 @@ class Bruker:
             exp_type = None
             return exp_type
         else:
-            print("This experiment is 1D!")
             for entry in exp_2d_list:
                 if entry in possible_exp_str_1 or entry in possible_exp_str_2:
                     exp_type = entry
@@ -555,8 +554,16 @@ class JEOL:
         :param param_dict: dictionary containing all the parameters retrieved from the file
         :return: dictionary containing only those parameters that are preferred
         """
-        
-        param_dict = param_dict_list[0][0]
+        try:
+            param_dict = param_dict_list[0][0]
+        except:
+            param_dict = param_dict_list[0]
+        # try to parse the 2D version of the param_dict
+        try:
+            param_dict = param_dict['_datatype_NMRSPECTRUM'][0]
+        except KeyError:
+            param_dict = param_dict
+
         exp_dim = JEOL.find_dim(param_dict)
         exp_freq = JEOL.find_freq(param_dict, exp_dim)
         exp_nuc_1, exp_nuc_2 = JEOL.find_nuc(param_dict, exp_dim)
@@ -620,7 +627,17 @@ class JEOL:
         :return: dimension of the experiment.
         """
 
-        exp_dim = param_dict['NUMDIM'][0] + 'D'
+        
+        try:
+            exp_dim = param_dict['NUMDIM'][0] + 'D'
+        except KeyError:
+            exp_dim = None
+        if exp_dim == None:
+            try:
+                exp_dim = param_dict['$DIMENSIONS'][0] + 'D'
+            except KeyError:
+                exp_dim = None
+
         return exp_dim
 
     @staticmethod
@@ -660,6 +677,7 @@ class JEOL:
         :param exp_dim: the dimension of the experiment
         :return: a single float or a tuple of floats depending on the dimension
         """
+        
         if exp_dim == '2D':
             freq1 = round(float(param_dict['$XFREQ'][0]), 2)
             freq2 = round(float(param_dict['$YFREQ'][0]), 2)
@@ -682,8 +700,16 @@ class JEOL:
         :return: nucleus 1 and nucleus 2 in string format
         """
         if exp_dim == '2D':
-            nuc_1 = param_dict['.NUCLEUS'][0].split(', ')[1]
-            nuc_2 = param_dict['.NUCLEUS'][0].split(', ')[0]
+            try:
+                nuc_1 = param_dict['.NUCLEUS'][0].split(', ')[1]
+                nuc_2 = param_dict['.NUCLEUS'][0].split(', ')[0]
+            except: 
+                pass
+            try:
+                nuc_1 = param_dict['.NUCLEUS'][0].split(',')[1]
+                nuc_2 = param_dict['.NUCLEUS'][0].split(',')[0]
+            except:
+                pass
         else:
             nuc_1 = param_dict['.OBSERVENUCLEUS'][0][1:]
             nuc_2 = None
@@ -695,7 +721,11 @@ class Jcampdx_Handler:
 
     """
     A class containing the methods to help with the extraction of
-    experiment parameters from NMR data from jdx format.
+    experiment parameters from NMR data from jdx format. This class handles jcamps 
+    by following these steps:
+    1. Classify the file as Bruker, Varian, or JEOL.
+    2. Format the jdx file to match the nmrglue read outputs.
+    3. 
     """
 
     def __init__(self):
@@ -720,11 +750,15 @@ class Jcampdx_Handler:
 
     @staticmethod
     def find_manuf(param_dict_list):
+        """
+        find the manufacturer that produced the data file that is being inspected.
 
+        :param param_dict_list: a list of dictionaries read in from the read function
+        :return: the name of the manufacturer 
+        """
         # try to find the key which indicates the manufacturer.
         try:
             manuf_name = param_dict_list[0][0]["_datatype_LINK"][0]["$ORIGINALFORMAT"][0]
-            print(manuf_name)
         except KeyError:
             manuf_name = "Not found"
         if manuf_name == "Not found":
@@ -735,11 +769,12 @@ class Jcampdx_Handler:
 
         # check to see which manufacturer is 
         if manuf_name == "Varian":
-            print("This is Varian!")
             return manuf_name
         elif "Bruker" in manuf_name:
-            print("This is Bruker!")
             manuf_name = "Bruker"
+            return manuf_name
+        elif manuf_name in ["JCAMP-DX NMR", "JEOL Delta"]:
+            manuf_name = "JEOL"
             return manuf_name
         else:
             manuf_name = "Not found"
@@ -764,11 +799,20 @@ class Jcampdx_Handler:
         elif manuf == "Bruker":
             bruker_structured_dict_list = Jcampdx_Handler.format_for_bruker(param_dict_list)
             output_dict = Bruker.find_params(bruker_structured_dict_list)
-        
+        elif manuf == "JEOL":
+            jeol_structured_dict_list = Jcampdx_Handler.format_for_jeol(param_dict_list)
+            output_dict = JEOL.find_params(jeol_structured_dict_list)
         return output_dict
         
     @staticmethod
     def format_for_varian(param_dict_list):
+        """
+        Re-format the data read from a varian jdx file. The format must mirror the format accepted
+        in the original Varian, Bruker and JEOL classes. Ex. [{key: [data]}, {key: [data]}]
+
+        :param param_dict: dictionary containing all the parameters retrieved from the file
+        :return: a list of the data in the correct format. (see Ex. above)
+        """
         # create a short list of the required keys for Varian methods.
         varian_key_list = ['temp', 'solvent', 'reffrq', 'reffrq1', 'tn', 'plt2Darg',
                             'apptype', 'procdim', 'explist', 'apptype', 'ap', 'pslabel']
@@ -792,12 +836,16 @@ class Jcampdx_Handler:
         return return_list
 
     def format_for_bruker(param_dict_list):
+        """
+        Re-format the data read from a bruker jdx file. The format must mirror the format accepted
+        in the original Varian, Bruker and JEOL classes. Ex. [{key: [data]}, {key: [data]}]
 
+        :param param_dict: dictionary containing all the parameters retrieved from the file
+        :return: a list of the data in the correct format. (see Ex. above)
+        """
         # keep a list of the needed keys from Bruker
         bruker_key_list = ["TE", "SOLVENT", "EXP", "PULPROG", "SFO1", "SFO2", "NUC1"]
-
         return_list = []
-        print("FORMAT BRUKER RAN")
 
         # only one element will appear in this list when the jdx is read.
         param_dict = param_dict_list[0]
@@ -817,7 +865,6 @@ class Jcampdx_Handler:
         
         # define list to keep track of the start and stop indices for each separate file (acqus and acqu2s)
         file_seps = []
-        print("Made it by tries")
         # loop through each element in the bruker list to check for file start/stop points
         for index, item in enumerate(bruker_list):
             # if there is TITLE then thats the start of a file, if END then thats the end of a file
@@ -829,12 +876,9 @@ class Jcampdx_Handler:
                 matching_list[1] = index+1
 
         # split the bruker list into separate sub-lists representing each file in the folder.
-        print(file_seps)
         file_list = []
         for curr_file in file_seps:
             file_list.append(bruker_list[curr_file[0]:curr_file[1]])
-
-        # print(f"{file_list[0]} \n\n {file_list[1]} \n\n {file_list[2]}")
 
         # check to see if acqu2s exists by checking for 1 or 2 Parameter type files at beginning of list.
         if 'Parameter file' in file_list[1][0]:
@@ -842,6 +886,7 @@ class Jcampdx_Handler:
         else:
             dim = "1D"
         
+        # If the dim is 1D then extract key, value pairs from the first Param file
         if dim == "1D":
             return_list = []
             acqus_file = file_list[0]
@@ -856,6 +901,7 @@ class Jcampdx_Handler:
                             line_value = re.sub("[< | >]*", "", line_value)
                             short_param_dict[key] = line_value
             return_list.append(short_param_dict)
+        # If the dim is 2D then extract key, value pairs from both the first and 2nd param files
         elif dim == "2D":
             return_list = []
             acqu2s_file = file_list[0]
@@ -882,39 +928,60 @@ class Jcampdx_Handler:
                             line_value = re.sub("[< | >]*", "", line_value)
                             short_param_dict[key] = line_value
             return_list.append(short_param_dict)
-
-        # THE ISSUES ARE THE THE INTS ARE ACTUALLY SSTRINGS IN THE OUTPUT AND ALSO YOU NEED TO COMMENT ALL THIS CODE, IT IS UNREADBALE.
-        print(return_list)
         return return_list
 
 
+    def format_for_jeol(param_dict_list):
+        jeol_key_list = ["$TEMPSET", "$SOLVENT", "NUMDIM", "$DIMENSIONS",
+                        ".PULSESEQUENCE", "$X_FREQ", "$Y_FREQ", ".NUCLEUS",
+                        ".OBSERVENUCLEUS", "$TEMP_SET"]
+        jeol_numeric_keys = ["$TEMPSET", "$TEMP_SET", "$X_FREQ", "$Y_FREQ",
+                            "NUMDIM", "$DIMENSIONS"]
 
-
-
-
-            
-
+        param_dict = param_dict_list
+        try:
+            param_dict = param_dict[0][0]["_comments"]
+        except KeyError:
+            param_dict = param_dict_list
+        if param_dict == param_dict_list:
+            try:
+                param_dict = param_dict[0][0]['_datatype_LINK'][0]["_comments"]
+            except KeyError:
+                param_dict = param_dict_list
         
+        # print(param_dict)
+        return_list = []
+        short_param_dict = {}
+        for line in param_dict:
+            if "=" in line:
+                line = line.replace("#","").replace(' ', "")
+                line_list = line.split("=")
+                line_key = line_list[0]
+                line_value = line_list[1]
+                for key in jeol_key_list:
+                    if key == line_key:
+                        short_param_dict[line_key] = [line_value]
+                        if key in jeol_numeric_keys:
+                            line_value_strip_chars = ''.join(c for c in line_value if c.isdigit() or c == ".")
+                            short_param_dict[line_key] = [line_value_strip_chars]
 
 
-
-
-            # for index, line in enumerate(bruker_list):
-            #     if "acqu2s" in line:
-            #         acqu_indexs.append(index)
-            #         is2D = True
-            #     elif "acqus" in line:
-            #         acqu_indexs.append(index)
-                    
-            # if is2D:
-            #     for index in range(acqu_indexs[0],acqu_indexs[1]):
-            #         for key in bruker_key_list:
-            #             if key in bruker_list[index]:
-            #                 print(f"{key}\n")
-            #     for index in range(acqu_indexs[1],len(bruker_list)):
-            #         for key in bruker_key_list:
-            #             if key in bruker_list[index]:
-            #                 print(f"{key}\n")
-
-            # print(acqu_indexs)
-           
+        # change the all keys to resemble those found in other form of JEOl.
+        try:
+            short_param_dict['$XFREQ'] = short_param_dict['$X_FREQ']
+            del short_param_dict['$X_FREQ']
+        except:
+            pass
+        try:
+            short_param_dict['$YFREQ'] = short_param_dict['$Y_FREQ']
+            del short_param_dict['$Y_FREQ']
+        except:
+            pass
+        try:
+            short_param_dict['$TEMPSET'] = short_param_dict['$TEMP_SET']
+            del short_param_dict['$TEMP_SET']
+        except:
+            pass
+        # THIS FUNCTION DOES NOT WORK YET SINCE IT DOES NOT GRAB ALL THE KEYS FROM THE DICTIONARY.
+        return_list.append(short_param_dict)
+        return return_list
