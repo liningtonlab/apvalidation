@@ -9,7 +9,6 @@ from apvalidation.patoolutil import is_zip, repack_to_zip
 # from extract_core import extract_core_file
 # from patoolutil import is_zip, repack_to_zip
 
-import clamd
 import sys
 import os
 import zipfile
@@ -24,16 +23,7 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
     :param submitted_zip_file: user submitted zip file path
     :return: Experiment parameters
     """
-    virus_found = False
-    try:
-        cd = clamd.ClamdUnixSocket()
-        clamd_scan = cd.scan(submitted_zip_file)
-        if clamd_scan[submitted_zip_file][0] == 'FOUND':
-            virus_found = True
-    except Exception as e:
-        print(e)
-    assert virus_found == False, ["Virus Found! Please submit the file after removing the virus"]
-        
+       
     
     if not is_zip(submitted_zip_file):
         submitted_zip_file = repack_to_zip(submitted_zip_file)
