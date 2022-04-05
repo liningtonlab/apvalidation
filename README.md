@@ -11,6 +11,19 @@ The code in this repository has three main functionalities.
 
 ## 1. Traversing the ZIP Files.
 
+simple_file_finder.py 
+
+MetaFinder class has three main components; finding a vendor for each experiment, finding a parameter file path, and searching for errors if exist. 
+find_meta function returns a dictionary with vendor and parameter file paths. 
+
+#### Example Return
+```
+MetaFinder.find_meta("/Downloads/NMR/Aspochalasin I.zip")
+{ 'vendor_name': ['bruker','bruker','bruker'], 'meta_file': [['/nrm/1/acqu',/nrm/1/acqu2'],['/nrm/2'],['/nrm/3']]}
+```
+
+validator function append found error to error_message. If a new error is found, update private functions to handle the error
+
 ## 2. Reading the Parameter Files.
 
 Once the parameter file is retrieved from the code in section (1.), some information from this file must be extracted. The experiment parameters that are needed from this file are the following.
@@ -42,4 +55,16 @@ The following chart shows the execution of the parameter extraction scripts from
 To get a full view of the flowchart please download the image and view it locally.
 ![text](https://github.com/liningtonlab/ap_validation/blob/main/NP%20Validation%20extract.py.png)
 
-## 3. Displaying the Compound Structures.
+## 3. Unzip files.
+extract_core.py
+
+extract_core_file function finds a necessary file in the submitted zip file and extracts them
+ 
+```
+necessary file list
+varian = ["fid", "procpar", "log", "text", "log 2", "procpar 2", "text 2"]
+bruker = ["fid", "ser", "acqu", "acqu2", "acqus", "acqu2s"]
+jcamp = ["jdx"]
+```
+
+Directory name convention : {f1_nucleus}_{f2_nucleus}_{experiment_type}
