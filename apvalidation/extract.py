@@ -718,6 +718,7 @@ class JEOL:
 
 
 class Jcampdx_Handler:
+    # THIS PACKAGE HAS NOT BEEN TESTED PROPERLY DON'T USE YET
 
     """
     A class containing the methods to help with the extraction of
@@ -985,3 +986,26 @@ class Jcampdx_Handler:
         # THIS FUNCTION DOES NOT WORK YET SINCE IT DOES NOT GRAB ALL THE KEYS FROM THE DICTIONARY.
         return_list.append(short_param_dict)
         return return_list
+
+
+class nmrML:
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def read(filepath_list):
+        """
+        Given the raw file path to a parameter file, read the file
+        and return a python dictionary with all the parameters.
+
+        :param filepath: string formatted filepath to the acqu file
+        :return: dictionary containing all parameters found in the acqu file
+        """
+        param_dict_list = []
+        for filepath in filepath_list:
+            assert os.path.isfile(filepath)
+            param_dict, data_array = ng.fileio.nmrml.read(filename=filepath)
+            param_dict_list.append(param_dict)
+        
+        return param_dict_list

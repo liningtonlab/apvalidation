@@ -1,0 +1,16 @@
+
+Collected from 1D Proton Experiment:
+
+    Temperature: sampleAcquisitionTemperature
+
+
+
+    Of interest:
+
+    acquisitionNucleus
+    irradiationFrequency
+
+
+Collected from 2D HMBD Experiment:
+
+    

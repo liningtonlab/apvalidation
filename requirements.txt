@@ -17,9 +17,10 @@ pyparsing==3.0.7
 pytest==6.2.5
 python-dateutil==2.8.2
 pytz==2021.3
-rdkit-pypi==2021.9.4
+rdkit-pypi==2021.9.5.1
 requests==2.27.1
 scipy==1.7.3
 six==1.12.0
 toml==0.10.2
 urllib3==1.26.8
+xmltodict==0.12.0

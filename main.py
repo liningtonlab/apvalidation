@@ -1,7 +1,7 @@
 from ast import Assert
 # from apvalidation.smiles_validation import validate_struct
 # from apvalidation import smiles_to_inchikey
-from apvalidation.extract import Varian, Bruker, JEOL, Jcampdx_Handler
+from apvalidation.extract import Varian, Bruker, JEOL, Jcampdx_Handler, nmrML
 from apvalidation.smiles_validation import validate_struct
 from rdkit import Chem
 import os
@@ -155,89 +155,45 @@ JDX testing
 """
 # print("\nOUTPUT Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx ---------------------------------------------------------------------------------------\n")
 
-jcamp_dict = Jcampdx_Handler.read(["test_files/Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx"])
-find_params_output = Jcampdx_Handler.find_params(jcamp_dict)
-print(find_params_output)
-
-jcamp_dict = Jcampdx_Handler.read(["test_files/Granaticin_C_Proton.jdx"])
-find_params_output = Jcampdx_Handler.find_params(jcamp_dict)
-print(find_params_output)
-
-print("FIRST BRUKER FILE ------\n\n")
-jcamp_dict = Jcampdx_Handler.read(["test_files/Bruker_HMBC.jdx"])
-output = Jcampdx_Handler.find_params(jcamp_dict)
-print(output)
-
-
-print("SECOND BRUKER FILE ------\n\n")
-jcamp_dict2 = Jcampdx_Handler.read(["test_files/bruker_j.jdx"])
-with open("./test_1d.json", "w") as f:
-    json.dump(jcamp_dict2[0][0], f)
-output2 = Jcampdx_Handler.find_params(jcamp_dict2)
-print(output2)
-
-
-
-# test = ng.fileio.bruker.read_jcamp(filename="test_files/Bruker_HMBC.jdx")
-# print(ng.fileio.bruker.parse_jcamp_value(test))
-# param_list = []
-# with open("test_files/Bruker_HMBC.jdx", "w") as f:
-#     Lines = f.readlines()
-#     for line in Lines:
-#         param_list.append(ng.fileio.bruker.parse_jcamp_line(line, f))
-
-# print("JEOL Normal -------------------- \n\n")
-# jeol_normal_dict = JEOL.read(["test_files/JEOL/RGL1617G1B cosy.jdx"])
-# output_normal = JEOL.find_params(jeol_normal_dict)
-# print(output_normal)
-
-# print("JEOL Mnova 1D-------------------- \n\n")
-# jeol_mnova_dict = Jcampdx_Handler.read(["test_files/JEOL/Mnova_JDX/JEOL_CARBON.jdx"])
-# output_mnova = Jcampdx_Handler.find_params(jeol_mnova_dict)
-# print(output_mnova)
-
-# print("JEOL Mnova 2D COSY-------------------- \n\n")
-# jeol_mnova_dict = Jcampdx_Handler.read(["test_files/JEOL/Mnova_JDX/JEOL_COSY.jdx"])
-# output_mnova = Jcampdx_Handler.find_params(jeol_mnova_dict)
-# print(output_mnova)
-
-# print("JEOL Mnova 2D HMBC-------------------- \n\n")
-# jeol_mnova_dict = Jcampdx_Handler.read(["test_files/JEOL/Mnova_JDX/JEOL_HMBC.jdx"])
-# output_mnova = Jcampdx_Handler.find_params(jeol_mnova_dict)
-# print(output_mnova)
-
-
-# print(jcamp_dict[0][0]["_datatype_LINK"][0]['_comments'])
-
-
-# with open("./dump.json", "w") as f:
-#     json.dump(jcamp_dict[0][0]["_datatype_LINK"][0], f)
-
-
-
+# jcamp_dict = Jcampdx_Handler.read(["test_files/Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx"])
 # find_params_output = Jcampdx_Handler.find_params(jcamp_dict)
-# print("This is the output for the Bruker file.")
 # print(find_params_output)
-# jcamp_string = '\n'.join(list_of_data).split('\n')
-# print(jcamp_string)
-# with open("/workspaces/apvalidation/test_files/fake_procpar.txt", "w") as f:
-#     f.write(jcamp_string)
-#     f.close()
-# varian_dict = Varian.read(["/workspaces/apvalidation/test_files/fake_procpar.txt"])
-# print(varian_dict)
 
+# jcamp_dict = Jcampdx_Handler.read(["test_files/Granaticin_C_Proton.jdx"])
+# find_params_output = Jcampdx_Handler.find_params(jcamp_dict)
+# print(find_params_output)
 
-# print(dict(zip(list_of_data[::2], list_of_data[1::2])))
+# print("FIRST BRUKER FILE ------\n\n")
+# jcamp_dict = Jcampdx_Handler.read(["test_files/Bruker_HMBC.jdx"])
 # output = Jcampdx_Handler.find_params(jcamp_dict)
 # print(output)
-# print(jcamp_dict)
-# print(jcamp_dict[0][0]["_datatype_LINK"][0]["$ORIGINALFORMAT"])
-# afile = open(r'/workspaces/apvalidation/json_dump', 'w', encoding='utf8')
-# json.dump(jcamp_dict, afile)
 
-# print(Chem.MolFromSmiles("C[C@H]1C[C@H](C[C@@H]([C@H](/C(=C\C=C\C[C@H](OC(=O)C[C@@H]([C@H](C1)C)O)[C@@H]2CCC[C@H]2C(=O)O)/C#N)O)C)C"))
-# validate_struct(smiles="C[C@H]1C[C@H](C[C@@H]([C@H](/C(=C\C=C\C[C@H](OC(=O)C[C@@H]([C@H](C1)C)O)[C@@H]2CCC[C@H]2C(=O)O)/C#N)O)C)C", img_path=".", asInchiKey=True)
 
+# print("SECOND BRUKER FILE ------\n\n")
+# jcamp_dict2 = Jcampdx_Handler.read(["test_files/bruker_j.jdx"])
+# with open("./test_1d.json", "w") as f:
+#     json.dump(jcamp_dict2[0][0], f)
+# output2 = Jcampdx_Handler.find_params(jcamp_dict2)
+# print(output2)
+
+
+"""
+NMRML Testing
+"""
+nmrml_dict = nmrML.read(["/workspaces/apvalidation/test_files/nmrml/FAM013_AHTM.PROTON_04.nmrML"])
+
+with open("/workspaces/apvalidation/nmrml_dump.json", "w") as f:
+    json.dump(nmrml_dict,f)
+
+
+nmrml_dict2 = nmrML.read(["/workspaces/apvalidation/test_files/nmrml/HMDB00005.nmrML"])
+
+with open("/workspaces/apvalidation/nmrml_dump_2d.json", "w") as f:
+    json.dump(nmrml_dict2,f)
+
+
+
+# print(nmrML.read([]))
 
 
 
