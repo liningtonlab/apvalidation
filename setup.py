@@ -23,8 +23,8 @@ requirements = [
 "toml==0.10.2",
 "rdkit-pypi>=2021.9.4",
 "requests==2.27.1",
-"patool==1.12",
-"clamd==1.0.2"]
+"patool==1.12"
+]
 
 setuptools.setup(
     name='apvalidation',
