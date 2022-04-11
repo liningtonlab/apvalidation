@@ -807,6 +807,12 @@ class Jcampdx_Handler:
         
     @staticmethod
     def format_varian(jdx_read_output):
+        """
+        Take the output produced from Jcamp read and format it to be passed into the Varian Class methods.
+
+        :param jdx_read_output: a nested list object, the output from the Jcamp read method.
+        :return: list of dictionaries, these are formatted for the Varian Class methods.
+        """
         errored = False
         try:
             line_list = jdx_read_output[0][0]["_datatype_LINK"][0]["_comments"]
@@ -843,7 +849,13 @@ class Jcampdx_Handler:
 
     @staticmethod
     def format_bruker(read_jdx_output):
-    # line_list = jcamp_dict2[0][0]["_datatype_LINK"][0]["_comments"]
+        """
+        Take the output produced from Jcamp read and format it to be passed into the Bruker Class methods.
+        This function needs to separate parts of the this output to find 2 acqu files if there are 2 of them.
+
+        :param jdx_read_output: a nested list object, the output from the Jcamp read method.
+        :return: list of dictionaries, these are formatted for the Bruker Class methods.
+        """
 
         param_dict = read_jdx_output[0]
 
@@ -859,7 +871,6 @@ class Jcampdx_Handler:
             except KeyError:
                 line_list = "Not found"
 
-        
         # define list to keep track of the start and stop indices for each separate file (acqus and acqu2s)
         file_seps = []
         # loop through each element in the bruker list to check for file start/stop points
