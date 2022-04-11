@@ -231,7 +231,7 @@ class Varian:
             freq_val = (freq1, freq2)
         else:
             freq_val = round(float(param_dict['reffrq']['values'][0]), 2)
-        return [freq_val]
+        return freq_val
 
     @staticmethod
     def find_nuc(param_dict, exp_dim):
@@ -795,79 +795,75 @@ class Jcampdx_Handler:
         manuf = Jcampdx_Handler.find_manuf(param_dict_list)
         
         if manuf == "Varian":
-            varian_structured_dict_list = Jcampdx_Handler.format_for_varian(param_dict_list)
+            varian_structured_dict_list = Jcampdx_Handler.format_varian(param_dict_list)
             output_dict = Varian.find_params(varian_structured_dict_list)
         elif manuf == "Bruker":
-            bruker_structured_dict_list = Jcampdx_Handler.format_for_bruker(param_dict_list)
+            bruker_structured_dict_list = Jcampdx_Handler.format_bruker(param_dict_list)
             output_dict = Bruker.find_params(bruker_structured_dict_list)
         elif manuf == "JEOL":
-            jeol_structured_dict_list = Jcampdx_Handler.format_for_jeol(param_dict_list)
+            jeol_structured_dict_list = Jcampdx_Handler.format_jeol(param_dict_list)
             output_dict = JEOL.find_params(jeol_structured_dict_list)
         return output_dict
         
     @staticmethod
-    def format_for_varian(param_dict_list):
-        """
-        Re-format the data read from a varian jdx file. The format must mirror the format accepted
-        in the original Varian, Bruker and JEOL classes. Ex. [{key: [data]}, {key: [data]}]
+    def format_varian(jdx_read_output):
+        errored = False
+        try:
+            line_list = jdx_read_output[0][0]["_datatype_LINK"][0]["_comments"]
+        except KeyError:
+            errored = True
+        if errored == True:
+            try:
+                line_list = jdx_read_output[0][0]["_comments"]
+            except KeyError:
+                pass
 
-        :param param_dict: dictionary containing all the parameters retrieved from the file
-        :return: a list of the data in the correct format. (see Ex. above)
-        """
-        # create a short list of the required keys for Varian methods.
-        varian_key_list = ['temp', 'solvent', 'reffrq', 'reffrq1', 'tn', 'plt2Darg',
-                            'apptype', 'procdim', 'explist', 'apptype', 'ap', 'pslabel']
-        return_list = []
+        key_holder = None
+        param_dict = {}
+        value_stack = []
 
-        # only one element will appear in this list when jdx is read.
-        param_dict = param_dict_list[0]
+        for line in line_list:
+            line = line.replace("\n", "")
+            if line[0].isalpha():
+                key = line.split(" ")[0]
 
-        short_param_dict = {}
-        varian_list = param_dict[0]["_datatype_LINK"][0]["_comments"]
-        # execute for each line in the procpar list
-        for index, line in enumerate(varian_list):
-            line_list = line.split(' ')
-            # if the first word in the line is a required key then save the next two elements to be added as values later.
-            if line_list[0] in varian_key_list:
-                short_param_dict[line_list[0]] = [varian_list[index+1], varian_list[index+2]]
-        # for all the keys that were found, pair them with the values and put them into the return list.
-        for key in short_param_dict.keys():
-            short_param_dict[key] = {"values": [short_param_dict[key][0].replace("1 ", "").replace('"', "")]}
-        return_list.append(short_param_dict)
-        return return_list
+                if key_holder is None:
+                    key_holder = key
+                else:
+                    value_dict = {"values": value_stack}
+                    param_dict[key_holder] = value_dict
+                    value_stack = []
+                    key_holder = key
+            else:
+                line = line[2:]
+                line = line.replace('"', '')
+                value_stack.append(line)
 
-    def format_for_bruker(param_dict_list):
-        """
-        Re-format the data read from a bruker jdx file. The format must mirror the format accepted
-        in the original Varian, Bruker and JEOL classes. Ex. [{key: [data]}, {key: [data]}]
+        return [param_dict]
 
-        :param param_dict: dictionary containing all the parameters retrieved from the file
-        :return: a list of the data in the correct format. (see Ex. above)
-        """
-        # keep a list of the needed keys from Bruker
-        bruker_key_list = ["TE", "SOLVENT", "EXP", "PULPROG", "SFO1", "SFO2", "NUC1"]
-        return_list = []
+    @staticmethod
+    def format_bruker(read_jdx_output):
+    # line_list = jcamp_dict2[0][0]["_datatype_LINK"][0]["_comments"]
 
-        # only one element will appear in this list when the jdx is read.
-        param_dict = param_dict_list[0]
+        param_dict = read_jdx_output[0]
 
         # define the important part of the file (part with parameters)
-        bruker_list = []
+        line_list = []
         try: 
-            bruker_list = param_dict[0]['_comments']
+            line_list = param_dict[0]['_comments']
         except KeyError:
-            bruker_list = "Not found"
-        if bruker_list == "Not found":
+            line_list = "Not found"
+        if line_list == "Not found":
             try: 
-                bruker_list = param_dict[0]["_datatype_LINK"][0]["_comments"]
+                line_list = param_dict[0]["_datatype_LINK"][0]["_comments"]
             except KeyError:
-                bruker_list = "Not found"
+                line_list = "Not found"
 
         
         # define list to keep track of the start and stop indices for each separate file (acqus and acqu2s)
         file_seps = []
         # loop through each element in the bruker list to check for file start/stop points
-        for index, item in enumerate(bruker_list):
+        for index, item in enumerate(line_list):
             # if there is TITLE then thats the start of a file, if END then thats the end of a file
             if "##TITLE= " in item:
                 file_seps.append([index,0])
@@ -879,7 +875,7 @@ class Jcampdx_Handler:
         # split the bruker list into separate sub-lists representing each file in the folder.
         file_list = []
         for curr_file in file_seps:
-            file_list.append(bruker_list[curr_file[0]:curr_file[1]])
+            file_list.append(line_list[curr_file[0]:curr_file[1]])
 
         # check to see if acqu2s exists by checking for 1 or 2 Parameter type files at beginning of list.
         if 'Parameter file' in file_list[1][0]:
@@ -887,125 +883,52 @@ class Jcampdx_Handler:
         else:
             dim = "1D"
         
-        # If the dim is 1D then extract key, value pairs from the first Param file
         if dim == "1D":
-            return_list = []
-            acqus_file = file_list[0]
-            short_param_dict = {}
-            for line in acqus_file:
-                if "=" in line:
-                    line_items = line.split("=")
-                    line_key = line_items[0][3:]
-                    line_value = line_items[1]
-                    for key in bruker_key_list:
-                        if key == line_key:
-                            line_value = re.sub("[< | >]*", "", line_value)
-                            short_param_dict[key] = line_value
-            return_list.append(short_param_dict)
-        # If the dim is 2D then extract key, value pairs from both the first and 2nd param files
+            line_list = file_list[0]
+            param_dict = {}
+            for line in line_list:
+                    # line = line.replace("\n", "")
+                    if line.startswith("##"):
+                        split_line = line.split("=")
+                        key = split_line[0]
+                        value = split_line[1]
+
+                        key = key.replace("#", "")
+                        key = key.replace("$", "")
+                        value = re.sub("[< | >]*", "", value)
+
+                        param_dict[key] = value
+        
+            return [param_dict]
+
         elif dim == "2D":
-            return_list = []
-            acqu2s_file = file_list[0]
-            acqus_file = file_list[1]
-            short_param_dict = {}
-            for line in acqus_file:
-                if "=" in line:
-                    line_items = line.split("=")
-                    line_key = line_items[0][3:]
-                    line_value = line_items[1]
-                    for key in bruker_key_list:
-                        if key == line_key:
-                            line_value = re.sub("[< | >]*", "", line_value)
-                            short_param_dict[key] = line_value
-            return_list.append(short_param_dict)
-            short_param_dict = {}
-            for line in acqu2s_file:
-                if "=" in line:
-                    line_items = line.split("=")
-                    line_key = line_items[0][3:]
-                    line_value = line_items[1]
-                    for key in bruker_key_list:
-                        if key == line_key:
-                            line_value = re.sub("[< | >]*", "", line_value)
-                            short_param_dict[key] = line_value
-            return_list.append(short_param_dict)
-        return return_list
+            # find the param_dict for both of these files and arrange them in [dim1, dim2] list of dicts
+            dim_1_line_list = file_list[1]
+            dim_2_line_list = file_list[0]
+            param_dict_dim1 = {}
+            param_dict_dim2 = {}
 
+            for line in dim_1_line_list:
+                if line.startswith("##"):
+                    split_line = line.split("=")
+                    key = split_line[0]
+                    value = split_line[1]
 
-    def format_for_jeol(param_dict_list):
-        jeol_key_list = ["$TEMPSET", "$SOLVENT", "NUMDIM", "$DIMENSIONS",
-                        ".PULSESEQUENCE", "$X_FREQ", "$Y_FREQ", ".NUCLEUS",
-                        ".OBSERVENUCLEUS", "$TEMP_SET"]
-        jeol_numeric_keys = ["$TEMPSET", "$TEMP_SET", "$X_FREQ", "$Y_FREQ",
-                            "NUMDIM", "$DIMENSIONS"]
+                    key = key.replace("#", "")
+                    key = key.replace("$", "")
+                    value = re.sub("[< | >]*", "", value)
 
-        param_dict = param_dict_list
-        try:
-            param_dict = param_dict[0][0]["_comments"]
-        except KeyError:
-            param_dict = param_dict_list
-        if param_dict == param_dict_list:
-            try:
-                param_dict = param_dict[0][0]['_datatype_LINK'][0]["_comments"]
-            except KeyError:
-                param_dict = param_dict_list
-        
-        # print(param_dict)
-        return_list = []
-        short_param_dict = {}
-        for line in param_dict:
-            if "=" in line:
-                line = line.replace("#","").replace(' ', "")
-                line_list = line.split("=")
-                line_key = line_list[0]
-                line_value = line_list[1]
-                for key in jeol_key_list:
-                    if key == line_key:
-                        short_param_dict[line_key] = [line_value]
-                        if key in jeol_numeric_keys:
-                            line_value_strip_chars = ''.join(c for c in line_value if c.isdigit() or c == ".")
-                            short_param_dict[line_key] = [line_value_strip_chars]
+                    param_dict_dim1[key] = value
+            for line in dim_2_line_list:
+                if line.startswith("##"):
+                    split_line = line.split("=")
+                    key = split_line[0]
+                    value = split_line[1]
 
+                    key = key.replace("#", "")
+                    key = key.replace("$", "")
+                    value = re.sub("[< | >]*", "", value)
 
-        # change the all keys to resemble those found in other form of JEOl.
-        try:
-            short_param_dict['$XFREQ'] = short_param_dict['$X_FREQ']
-            del short_param_dict['$X_FREQ']
-        except:
-            pass
-        try:
-            short_param_dict['$YFREQ'] = short_param_dict['$Y_FREQ']
-            del short_param_dict['$Y_FREQ']
-        except:
-            pass
-        try:
-            short_param_dict['$TEMPSET'] = short_param_dict['$TEMP_SET']
-            del short_param_dict['$TEMP_SET']
-        except:
-            pass
-        # THIS FUNCTION DOES NOT WORK YET SINCE IT DOES NOT GRAB ALL THE KEYS FROM THE DICTIONARY.
-        return_list.append(short_param_dict)
-        return return_list
+                    param_dict_dim2[key] = value
+            return [param_dict_dim1, param_dict_dim2]
 
-
-class nmrML:
-
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def read(filepath_list):
-        """
-        Given the raw file path to a parameter file, read the file
-        and return a python dictionary with all the parameters.
-
-        :param filepath: string formatted filepath to the acqu file
-        :return: dictionary containing all parameters found in the acqu file
-        """
-        param_dict_list = []
-        for filepath in filepath_list:
-            assert os.path.isfile(filepath)
-            param_dict, data_array = ng.fileio.nmrml.read(filename=filepath)
-            param_dict_list.append(param_dict)
-        
-        return param_dict_list
