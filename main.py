@@ -227,7 +227,6 @@ for filename in os.listdir("test_files/MNOVA_jdx/Bruker/Tetronasin"):
     print(params)
 
 print("VARIAN #############################################################################################################################################")
-
 print("MB0593C-BAC-AA ------------------------------")
 for filename in os.listdir("test_files/MNOVA_jdx/Varian/MB0593C-BAC-AA"):
     file = f"test_files/MNOVA_jdx/Varian/MB0593C-BAC-AA/{filename}"
@@ -257,6 +256,13 @@ for filename in os.listdir("test_files/MNOVA_jdx/Varian/Aspochalasin I"):
     params = Jcampdx_Handler.find_params(dict_list)
     print(params)
 
+
+print("JEOL ####################################################################################################################################################")
+for filename in os.listdir("test_files/Raw/JEOL"):
+    file = f"test_files/Raw/JEOL/{filename}"
+    dict_list = JEOL.read([file])
+    params = JEOL.find_params(dict_list)
+    print(params)
 # with open("./test_varian_jdx.json", "w") as f:
 #     comment_list = jcamp_dict_varian2d[0][0]["_datatype_LINK"][0]["_comments"]
 #     for item in comment_list:
