@@ -18,7 +18,7 @@ def extract_core_file(input_zip : str, indiv_exp_path, vendor, folder_name, pare
             extract_files = search_keyword(all_paths, indiv_exp_path, varian)
         elif vendor == "Bruker":
             extract_files = search_keyword(all_paths, indiv_exp_path, bruker)
-        elif vendor == "JEOL":
+        elif vendor == "Jcampdx":
             extract_files = search_keyword(all_paths, indiv_exp_path, jcamp)
 
         extract_to_folder(extract_files, zipObject, folder_name, parent_dir)
