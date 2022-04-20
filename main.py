@@ -154,30 +154,32 @@ JEOL DATA
 """
 JDX testing
 """
-print("REFERENCE FILES OUTPUT--------------------")
-for filename in os.listdir("test_files/Granaticin_C"):
-    print(filename)
-    if filename == '.DS_Store':
-        continue
-    if os.path.exists(f"test_files/Granaticin_C/{filename}/acqu2"):
-        file_list = [f"test_files/Granaticin_C/{filename}/acqu", f"test_files/Granaticin_C/{filename}/acqu2"]
-    else:
-        file_list = [f"test_files/Granaticin_C/{filename}/acqu"]
-    print(file_list)
-    dict_list = Bruker.read(file_list)
-    params = Bruker.find_params(dict_list)
-    print(params)
+# print("REFERENCE FILES OUTPUT--------------------")
+# for filename in os.listdir("test_files/Granaticin_C"):
+#     print(filename)
+#     if filename == '.DS_Store':
+#         continue
+#     if os.path.exists(f"test_files/Granaticin_C/{filename}/acqu2"):
+#         file_list = [f"test_files/Granaticin_C/{filename}/acqu", f"test_files/Granaticin_C/{filename}/acqu2"]
+#     else:
+#         file_list = [f"test_files/Granaticin_C/{filename}/acqu"]
+#     print(file_list)
+#     dict_list = Bruker.read(file_list)
+#     params = Bruker.find_params(dict_list)
+#     print(params)
 
 
 
 print("JDX FILES OUTPUT--------------------------")
 print("VARIAN 2D:")
 jcamp_dict_varian2d = Jcampdx_Handler.read(["test_files/Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx"])
+
 print(Jcampdx_Handler.find_params(jcamp_dict_varian2d))
 
 print("BRUKER #################################################################################################################################################")
 print("BRUKER 1D--------------------------")
 jcamp_dict_bruker1d = Jcampdx_Handler.read(["test_files/bruker_j.jdx"])
+print(f"Length of the dict.keys() is: {jcamp_dict_bruker1d[0].keys()} ")
 print(Jcampdx_Handler.find_params(jcamp_dict_bruker1d))
 
 print("BRUKER 2D--------------------------")
@@ -279,13 +281,18 @@ for filename in os.listdir("test_files/Raw/JEOL"):
 #         f.write(item+"\n")
 
 
+print("BRUKER COMBINED FILES ##############################################################################################################################")
+
+read_output = Jcampdx_Handler.read(["test_files/MNOVA_jdx/Combined Test Bruker/combinedGranaticinD.jdx"])
+params = Jcampdx_Handler.find_params(read_output)
+print(params)
 
 
-    
+print("VARIAN COMBINED FILES ##############################################################################################################################")
 
-
-
-        
+read_output = Jcampdx_Handler.read(["test_files/MNOVA_jdx/Combined jdx Varian/combinedvarian.jdx"])
+params = Jcampdx_Handler.find_params(read_output)
+print(params)    
         
         
         
