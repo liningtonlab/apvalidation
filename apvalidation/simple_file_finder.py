@@ -11,7 +11,7 @@ class MetaFinder:
     """
 
     meta_name_by_vendor = {
-        ".jdf": "JEOL", ".jdx": "JEOL", "acqu": "Bruker", "procpar": "Varian", "acqu2": "Bruker"
+        ".jdf": "Jcampdx", ".jdx": "Jcampdx", "acqu": "Bruker", "procpar": "Varian", "acqu2": "Bruker"
     }
     zip_file_extention = [".7z",".ace", ".adf",".alz",".ape",".a",".arc", ".arj", ".bz2",".cab", ".Z",
                           ".cpio",".deb",".dms",".flac",".gz",".iso",".lrz", ".lha", ".lzh", ".lz", ".lzma", 
@@ -63,7 +63,7 @@ class MetaFinder:
             self._vendor_not_found_error(all_path_list)
             if not self.error_message:
                 # No known error are found
-                self.error_message.append("Only Varian, JEOL, Bruker files are accepted")
+                self.error_message.append("Only Varian, Jcampdx, Bruker files are accepted")
 
         # Based on found meta data, go through file validation
         # for vendor in meta_info["vendor_name"]:
@@ -75,8 +75,9 @@ class MetaFinder:
                 self._varian_validation(all_path_list, target_exp)
             elif self.meta_info["vendor_name"][i] == "Bruker":
                 self._bruker_validation(all_path_list, target_exp)
-            elif self.meta_info["vendor_name"][i] == "JEOL":
-                self._jeol_validation(all_path_list, target_exp)
+            elif self.meta_info["vendor_name"][i] == "Jcampdx":
+                self._jcampdx_validation(all_path_list, target_exp)
+
 
     @staticmethod
     def param_file_finder(path_list: str, keyword: str, core_path_dict: dict) -> List[str]:
@@ -114,16 +115,16 @@ class MetaFinder:
         if not fid_path and not ser_path : self.error_message.append(f"{individual_folder_path} : Fid file is missing")
 
 
-    def _jeol_validation(self, all_path_list: str, individual_folder_path: str):
+    def _jcampdx_validation(self, all_path_list: str, individual_folder_path: str):
         jdx_path = self.key_file_finder(all_path_list, "jdx", individual_folder_path)
         # assert jdx_path, f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx file"
-        if not jdx_path : self.error_message.append(f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx file")
+        if not jdx_path : self.error_message.append(f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx files using the export function in JEOL Delta")
 
     def _vendor_not_found_error(self, all_path_list: str):
-        self._invalid_file_detector(all_path_list, '.mnova', '.mnova is not currently supported. Please convert .mnova file to .jdx file')
-        self._invalid_file_detector(all_path_list, '.nmrML', '.nmrML is not currently supported. Please submit vendor files')
+        self._invalid_file_detector(all_path_list, '.mnova', '.mnova is not currently supported. Please submit original raw NMR files.')
+        self._invalid_file_detector(all_path_list, '.nmrML', '.nmrML is not currently supported. Please submit original raw NMR files or .jdx files instead.')
         for extention in self.zip_file_extention:
-            self._invalid_file_detector(all_path_list, extention, f'Please make sure that the submission does not include another {extention} file')
+            self._invalid_file_detector(all_path_list, extention, f'Please make sure that the submission does not include nested {extention} file. You can put all original NMR files in the same zip folder')
         
     def _invalid_file_detector(self, all_path_list: str, keyword : str, error_message : str):
         self.error_message.extend([f"{path} : {error_message}" for path in all_path_list if path.endswith(keyword)])        

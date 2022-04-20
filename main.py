@@ -9,6 +9,7 @@ import pandas as pd
 import nmrglue as ng
 import numpy as np
 import json
+import re
 import nmrglue as ng
 
 
@@ -153,91 +154,190 @@ JEOL DATA
 """
 JDX testing
 """
-# print("\nOUTPUT Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx ---------------------------------------------------------------------------------------\n")
-
-jcamp_dict = Jcampdx_Handler.read(["test_files/Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx"])
-find_params_output = Jcampdx_Handler.find_params(jcamp_dict)
-print(find_params_output)
-
-jcamp_dict = Jcampdx_Handler.read(["test_files/Granaticin_C_Proton.jdx"])
-find_params_output = Jcampdx_Handler.find_params(jcamp_dict)
-print(find_params_output)
-
-print("FIRST BRUKER FILE ------\n\n")
-jcamp_dict = Jcampdx_Handler.read(["test_files/Bruker_HMBC.jdx"])
-output = Jcampdx_Handler.find_params(jcamp_dict)
-print(output)
-
-
-print("SECOND BRUKER FILE ------\n\n")
-jcamp_dict2 = Jcampdx_Handler.read(["test_files/bruker_j.jdx"])
-with open("./test_1d.json", "w") as f:
-    json.dump(jcamp_dict2[0][0], f)
-output2 = Jcampdx_Handler.find_params(jcamp_dict2)
-print(output2)
+# print("REFERENCE FILES OUTPUT--------------------")
+# for filename in os.listdir("test_files/Granaticin_C"):
+#     print(filename)
+#     if filename == '.DS_Store':
+#         continue
+#     if os.path.exists(f"test_files/Granaticin_C/{filename}/acqu2"):
+#         file_list = [f"test_files/Granaticin_C/{filename}/acqu", f"test_files/Granaticin_C/{filename}/acqu2"]
+#     else:
+#         file_list = [f"test_files/Granaticin_C/{filename}/acqu"]
+#     print(file_list)
+#     dict_list = Bruker.read(file_list)
+#     params = Bruker.find_params(dict_list)
+#     print(params)
 
 
 
-# test = ng.fileio.bruker.read_jcamp(filename="test_files/Bruker_HMBC.jdx")
-# print(ng.fileio.bruker.parse_jcamp_value(test))
-# param_list = []
-# with open("test_files/Bruker_HMBC.jdx", "w") as f:
-#     Lines = f.readlines()
-#     for line in Lines:
-#         param_list.append(ng.fileio.bruker.parse_jcamp_line(line, f))
+print("JDX FILES OUTPUT--------------------------")
+print("VARIAN 2D:")
+jcamp_dict_varian2d = Jcampdx_Handler.read(["test_files/Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx"])
 
-# print("JEOL Normal -------------------- \n\n")
-# jeol_normal_dict = JEOL.read(["test_files/JEOL/RGL1617G1B cosy.jdx"])
-# output_normal = JEOL.find_params(jeol_normal_dict)
-# print(output_normal)
+print(Jcampdx_Handler.find_params(jcamp_dict_varian2d))
 
-# print("JEOL Mnova 1D-------------------- \n\n")
-# jeol_mnova_dict = Jcampdx_Handler.read(["test_files/JEOL/Mnova_JDX/JEOL_CARBON.jdx"])
-# output_mnova = Jcampdx_Handler.find_params(jeol_mnova_dict)
-# print(output_mnova)
+print("BRUKER #################################################################################################################################################")
+print("BRUKER 1D--------------------------")
+jcamp_dict_bruker1d = Jcampdx_Handler.read(["test_files/bruker_j.jdx"])
+print(f"Length of the dict.keys() is: {jcamp_dict_bruker1d[0].keys()} ")
+print(Jcampdx_Handler.find_params(jcamp_dict_bruker1d))
 
-# print("JEOL Mnova 2D COSY-------------------- \n\n")
-# jeol_mnova_dict = Jcampdx_Handler.read(["test_files/JEOL/Mnova_JDX/JEOL_COSY.jdx"])
-# output_mnova = Jcampdx_Handler.find_params(jeol_mnova_dict)
-# print(output_mnova)
+print("BRUKER 2D--------------------------")
+jcamp_dict_bruker2d = Jcampdx_Handler.read(["test_files/Bruker_HMBC.jdx"])
+print(Jcampdx_Handler.find_params(jcamp_dict_bruker2d))
 
-# print("JEOL Mnova 2D HMBC-------------------- \n\n")
-# jeol_mnova_dict = Jcampdx_Handler.read(["test_files/JEOL/Mnova_JDX/JEOL_HMBC.jdx"])
-# output_mnova = Jcampdx_Handler.find_params(jeol_mnova_dict)
-# print(output_mnova)
+print("AZAMERONE NITRATE ---------------------")
+for filename in os.listdir("test_files/MNOVA_jdx/Bruker/azamerone_nitrate"):
+    file = f"test_files/MNOVA_jdx/Bruker/azamerone_nitrate/{filename}"
+    dict_list = Jcampdx_Handler.read([file])
+    params = Jcampdx_Handler.find_params(dict_list)
+    print(params)
+
+print("DEMETHOXY CORNUSIDE ---------------------")
+for filename in os.listdir("test_files/MNOVA_jdx/Bruker/Demethoxy cornuside"):
+    file = f"test_files/MNOVA_jdx/Bruker/Demethoxy cornuside/{filename}"
+    dict_list = Jcampdx_Handler.read([file])
+    params = Jcampdx_Handler.find_params(dict_list)
+    print(params)
+
+print("DEMETHOXY CORNUSIDE ---------------------")
+for filename in os.listdir("test_files/MNOVA_jdx/Bruker/Demethoxy cornuside"):
+    file = f"test_files/MNOVA_jdx/Bruker/Demethoxy cornuside/{filename}"
+    dict_list = Jcampdx_Handler.read([file])
+    params = Jcampdx_Handler.find_params(dict_list)
+    print(params)
+
+print("GRANATICIN C ----------------------------")
+for filename in os.listdir("test_files/MNOVA_jdx/Bruker/Granaticin_C"):
+    file = f"test_files/MNOVA_jdx/Bruker/Granaticin_C/{filename}"
+    dict_list = Jcampdx_Handler.read([file])
+    params = Jcampdx_Handler.find_params(dict_list)
+    print(params)
+
+print("NMR RAW DATA FOR VOATRIAFRICANINE A -----------------")
+for filename in os.listdir("test_files/MNOVA_jdx/Bruker/NMR raw data for voatriafricanine A"):
+    file = f"test_files/MNOVA_jdx/Bruker/NMR raw data for voatriafricanine A/{filename}"
+    dict_list = Jcampdx_Handler.read([file])
+    params = Jcampdx_Handler.find_params(dict_list)
+    print(params)
+
+print("TETRONASIN -----------------------------------------")
+for filename in os.listdir("test_files/MNOVA_jdx/Bruker/Tetronasin"):
+    file = f"test_files/MNOVA_jdx/Bruker/Tetronasin/{filename}"
+    dict_list = Jcampdx_Handler.read([file])
+    params = Jcampdx_Handler.find_params(dict_list)
+    print(params)
+
+print("VARIAN #############################################################################################################################################")
+print("MB0593C-BAC-AA ------------------------------")
+for filename in os.listdir("test_files/MNOVA_jdx/Varian/MB0593C-BAC-AA"):
+    file = f"test_files/MNOVA_jdx/Varian/MB0593C-BAC-AA/{filename}"
+    dict_list = Jcampdx_Handler.read([file])
+    params = Jcampdx_Handler.find_params(dict_list)
+    print(params)
+
+print("EMERIMICIN V --------------------------------")
+for filename in os.listdir("test_files/MNOVA_jdx/Varian/emerimicin V"):
+    file = f"test_files/MNOVA_jdx/Varian/emerimicin V/{filename}"
+    dict_list = Jcampdx_Handler.read([file])
+    params = Jcampdx_Handler.find_params(dict_list)
+    print(params)
+
+print("ECHINULIN -----------------------------------")
+for filename in os.listdir("test_files/MNOVA_jdx/Varian/echinulin"):
+    file = f"test_files/MNOVA_jdx/Varian/echinulin/{filename}"
+    dict_list = Jcampdx_Handler.read([file])
+    params = Jcampdx_Handler.find_params(dict_list)
+    print(params)
 
 
-# print(jcamp_dict[0][0]["_datatype_LINK"][0]['_comments'])
+print("ASPOCHALASIN 1 -----------------------------------")
+for filename in os.listdir("test_files/MNOVA_jdx/Varian/Aspochalasin I"):
+    file = f"test_files/MNOVA_jdx/Varian/Aspochalasin I/{filename}"
+    dict_list = Jcampdx_Handler.read([file])
+    params = Jcampdx_Handler.find_params(dict_list)
+    print(params)
 
 
-# with open("./dump.json", "w") as f:
-#     json.dump(jcamp_dict[0][0]["_datatype_LINK"][0], f)
+print("JEOL ####################################################################################################################################################")
+for filename in os.listdir("test_files/Raw/JEOL"):
+    file = f"test_files/Raw/JEOL/{filename}"
+    dict_list = JEOL.read([file])
+    params = JEOL.find_params(dict_list)
+    print(params)
+# with open("./test_varian_jdx.json", "w") as f:
+#     comment_list = jcamp_dict_varian2d[0][0]["_datatype_LINK"][0]["_comments"]
+#     for item in comment_list:
+#         f.write(item+"\n")
 
 
 
+
+
+
+# with open("./test_bruker_jdx.txt", "w") as f:
+#     comment_list = jcamp_dict2[0][0]["_datatype_LINK"][0]["_comments"]
+#     for item in comment_list:
+#         f.write(item+"\n")
+
+
+print("BRUKER COMBINED FILES ##############################################################################################################################")
+
+read_output = Jcampdx_Handler.read(["test_files/MNOVA_jdx/Combined Test Bruker/combinedGranaticinD.jdx"])
+params = Jcampdx_Handler.find_params(read_output)
+print(params)
+
+
+print("VARIAN COMBINED FILES ##############################################################################################################################")
+
+read_output = Jcampdx_Handler.read(["test_files/MNOVA_jdx/Combined jdx Varian/combinedvarian.jdx"])
+params = Jcampdx_Handler.find_params(read_output)
+print(params)    
+        
+        
+        
+
+# read_fake_procpar(jcamp_dict)
+
+    
 # find_params_output = Jcampdx_Handler.find_params(jcamp_dict)
-# print("This is the output for the Bruker file.")
 # print(find_params_output)
-# jcamp_string = '\n'.join(list_of_data).split('\n')
-# print(jcamp_string)
-# with open("/workspaces/apvalidation/test_files/fake_procpar.txt", "w") as f:
-#     f.write(jcamp_string)
-#     f.close()
-# varian_dict = Varian.read(["/workspaces/apvalidation/test_files/fake_procpar.txt"])
-# print(varian_dict)
 
+# jcamp_dict = Jcampdx_Handler.read(["test_files/Granaticin_C_Proton.jdx"])
+# find_params_output = Jcampdx_Handler.find_params(jcamp_dict)
+# print(find_params_output)
 
-# print(dict(zip(list_of_data[::2], list_of_data[1::2])))
+# print("FIRST BRUKER FILE ------\n\n")
+# jcamp_dict = Jcampdx_Handler.read(["test_files/Bruker_HMBC.jdx"])
 # output = Jcampdx_Handler.find_params(jcamp_dict)
 # print(output)
-# print(jcamp_dict)
-# print(jcamp_dict[0][0]["_datatype_LINK"][0]["$ORIGINALFORMAT"])
-# afile = open(r'/workspaces/apvalidation/json_dump', 'w', encoding='utf8')
-# json.dump(jcamp_dict, afile)
 
-# print(Chem.MolFromSmiles("C[C@H]1C[C@H](C[C@@H]([C@H](/C(=C\C=C\C[C@H](OC(=O)C[C@@H]([C@H](C1)C)O)[C@@H]2CCC[C@H]2C(=O)O)/C#N)O)C)C"))
-# validate_struct(smiles="C[C@H]1C[C@H](C[C@@H]([C@H](/C(=C\C=C\C[C@H](OC(=O)C[C@@H]([C@H](C1)C)O)[C@@H]2CCC[C@H]2C(=O)O)/C#N)O)C)C", img_path=".", asInchiKey=True)
 
+# print("SECOND BRUKER FILE ------\n\n")
+# jcamp_dict2 = Jcampdx_Handler.read(["test_files/bruker_j.jdx"])
+# with open("./test_1d.json", "w") as f:
+#     json.dump(jcamp_dict2[0][0], f)
+# output2 = Jcampdx_Handler.find_params(jcamp_dict2)
+# print(output2)
+
+
+"""
+NMRML Testing
+"""
+# nmrml_dict = nmrML.read(["/workspaces/apvalidation/test_files/nmrml/FAM013_AHTM.PROTON_04.nmrML"])
+
+# with open("/workspaces/apvalidation/nmrml_dump.json", "w") as f:
+#     json.dump(nmrml_dict,f)
+
+
+# nmrml_dict2 = nmrML.read(["/workspaces/apvalidation/test_files/nmrml/HMDB00005.nmrML"])
+
+# with open("/workspaces/apvalidation/nmrml_dump_2d.json", "w") as f:
+#     json.dump(nmrml_dict2,f)
+
+
+
+# print(nmrML.read([]))
 
 
 
