@@ -9,6 +9,9 @@ __pycache__/
 # Media files
 images/
 
+# MACOS
+.DS_Store
+
 # Distribution / packaging
 my_env/
 myenv/
