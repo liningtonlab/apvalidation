@@ -283,7 +283,7 @@ for filename in os.listdir("test_files/Raw/JEOL"):
 
 print("BRUKER COMBINED FILES ##############################################################################################################################")
 
-read_output = Jcampdx_Handler.read(["test_files/MNOVA_jdx/Combined Test Bruker/combinedGranaticinD.jdx"])
+read_output = Jcampdx_Handler.read(["test_files/MNOVA_jdx/Bruker/GranC.jdx"])
 params = Jcampdx_Handler.find_params(read_output)
 print(params)
 

@@ -558,7 +558,6 @@ class JEOL:
             param_dict = param_dict_list[0][0]
         except:
             param_dict = param_dict_list[0]
-        # try to parse the 2D version of the param_dict
         try:
             param_dict = param_dict['_datatype_NMRSPECTRUM'][0]
         except KeyError:
