@@ -88,7 +88,7 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
 
         json_params = json.dumps(res_dict, indent=4)
 
-        print(json_params)
+        # print(json_params)
         return json_params
 
 

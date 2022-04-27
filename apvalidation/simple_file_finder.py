@@ -2,6 +2,7 @@ import os
 import sys
 from zipfile import ZipFile
 import re
+from typing import Dict, List
 
 class MetaFinder:
 
@@ -10,7 +11,7 @@ class MetaFinder:
     """
 
     meta_name_by_vendor = {
-        ".jdf": "JEOL", ".jdx": "JEOL", "acqu": "Bruker", "procpar": "Varian", "acqu2": "Bruker"
+        ".jdf": "Jcampdx", ".jdx": "Jcampdx", "acqu": "Bruker", "procpar": "Varian", "acqu2": "Bruker"
     }
     zip_file_extention = [".7z",".ace", ".adf",".alz",".ape",".a",".arc", ".arj", ".bz2",".cab", ".Z",
                           ".cpio",".deb",".dms",".flac",".gz",".iso",".lrz", ".lha", ".lzh", ".lz", ".lzma", 
@@ -19,9 +20,12 @@ class MetaFinder:
 
     def __init__(self, input_zip: str):
         self.error_message = []
-        self.meta_info = self.find_meta(input_zip)
-
-    def find_meta(self, input_zip: str) -> dict:
+        self.all_file_path = self.get_all_file_path(input_zip)
+        self.meta_info = self.find_meta(self.all_file_path)
+        self.validator(self.all_file_path)
+        
+    # Get all file path list from the submitted zip file
+    def get_all_file_path(self, input_zip: str) -> list:
         input_zip = os.path.normpath(input_zip)
         submitted_zip = ZipFile(input_zip)
         path_in_zip = submitted_zip.namelist()
@@ -31,6 +35,11 @@ class MetaFinder:
         for path in path_in_zip:
             if re.search("__MACOSX",path) is None:
                 all_path_list.append(path)
+                
+        return all_path_list
+    
+    # Given the path list, determine vendor and param file path for each experiment(directory)
+    def find_meta(self, all_path_list: str) -> Dict[str, list]:
         
         meta_file_name_list = list(MetaFinder.meta_name_by_vendor.keys())
 
@@ -45,32 +54,33 @@ class MetaFinder:
         param_path_list = list(core_path_dict.values())         
         meta_info = {"vendor_name": vendor_list, "meta_file": param_path_list}
 
+        return meta_info
+    
+    def validator(self, all_path_list):
         # If meta data file is not found, raise an assertion
-        if not meta_info["meta_file"]:
+        if not self.meta_info["meta_file"]:
             # Raise an error if known error are found
-            self._vendor_not_found_error(path_in_zip)
+            self._vendor_not_found_error(all_path_list)
             if not self.error_message:
                 # No known error are found
-                self.error_message.append("Only Varian, JEOL, Bruker files are accepted")
+                self.error_message.append("Only Varian, Jcampdx, Bruker files are accepted")
 
         # Based on found meta data, go through file validation
         # for vendor in meta_info["vendor_name"]:
-        for i in range(len(meta_info["vendor_name"])):
-            parent_dir = re.search("^(.+)/([^/]+)$", meta_info["meta_file"][i][0])
+        for i in range(len(self.meta_info["vendor_name"])):
+            parent_dir = re.search("^(.+)/([^/]+)$", self.meta_info["meta_file"][i][0])
             target_exp = parent_dir[1] if parent_dir is not None else ""
-
           
-            if meta_info["vendor_name"][i] == "Varian":
+            if self.meta_info["vendor_name"][i] == "Varian":
                 self._varian_validation(all_path_list, target_exp)
-            elif meta_info["vendor_name"][i] == "Bruker":
+            elif self.meta_info["vendor_name"][i] == "Bruker":
                 self._bruker_validation(all_path_list, target_exp)
-            elif meta_info["vendor_name"][i] == "JEOL":
-                self._jeol_validation(all_path_list, target_exp)
+            elif self.meta_info["vendor_name"][i] == "Jcampdx":
+                self._jcampdx_validation(all_path_list, target_exp)
 
-        return meta_info
 
     @staticmethod
-    def param_file_finder(path_list: str, keyword: str, core_path_dict: dict) -> list:
+    def param_file_finder(path_list: str, keyword: str, core_path_dict: dict) -> List[str]:
         vendor_list = []
         for path in path_list:
             if path.endswith(keyword):
@@ -85,7 +95,7 @@ class MetaFinder:
         return vendor_list
 
     @staticmethod
-    def key_file_finder(path_list: str, keyword: str, start_with: str) -> list:
+    def key_file_finder(path_list: str, keyword: str, start_with: str) -> List[str]:
         key_path_list = []
         for path in path_list:
             if path.endswith(keyword) and path.startswith(start_with):
@@ -105,7 +115,7 @@ class MetaFinder:
         if not fid_path and not ser_path : self.error_message.append(f"{individual_folder_path} : Fid file is missing")
 
 
-    def _jeol_validation(self, all_path_list: str, individual_folder_path: str):
+    def _jcampdx_validation(self, all_path_list: str, individual_folder_path: str):
         jdx_path = self.key_file_finder(all_path_list, "jdx", individual_folder_path)
         # assert jdx_path, f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx file"
         if not jdx_path : self.error_message.append(f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx files using the export function in JEOL Delta")
