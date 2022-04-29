@@ -28,10 +28,6 @@ class Validate:
             return_bool = False
             return_messages.append("Length of carbon and proton list do not match.")
 
-        h_list = peak_dict['H']
-        if Proton.check_value_ranges(h_list) is False:
-            return_messages.append("WARNING: Proton values out of range.")
-
         # currently returns the number of unique protons
         num_protons = Proton.check_atom_counts(smiles)
         print(num_protons)
@@ -39,17 +35,21 @@ class Validate:
             return_bool = False
             return_messages.append("Invalid number of unique protons.")
 
-        c_list = peak_dict['C']
-        if Carbon.check_values_ranges(c_list) is False:
-            return_messages.append("WARNING: Carbon values out of range.")
-
         # currently returns the number of carbons
         num_carbons = Carbon.check_atom_counts(smiles)
         print(num_carbons)
         if num_carbons is False:
             return_bool = False
             return_messages.append("Invalid number of unique carbons.")  
-        
+
+        h_list = peak_dict['H']
+        if Proton.check_value_ranges(h_list) is False:
+            return_messages.append("WARNING: Proton values out of range.")
+
+        c_list = peak_dict['C']
+        if Carbon.check_values_ranges(c_list) is False:
+            return_messages.append("WARNING: Carbon values out of range.")
+
         return return_bool, return_messages
 
 class Proton:
