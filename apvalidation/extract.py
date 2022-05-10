@@ -572,7 +572,7 @@ class JEOL:
         pref_params = {'experiment_type': exp_type, 'nuc_1': exp_nuc_1, 'nuc_2': exp_nuc_2, 'frequency': exp_freq,
                        'solvent': exp_solv.upper(), 'temperature': exp_temp}
 
-        return [pref_params]
+        return pref_params
 
     @staticmethod
     def find_temp(param_dict):
@@ -885,16 +885,7 @@ class Jcampdx_Handler:
                 output_list.append(Bruker.find_params(bruker_structured_dict_list))
 
         elif manuf == "JEOL":
-            try:
-                for experiment in param_dict[0]['_datatype_LINK']:
-                    jeol_structured_dict_list = Jcampdx_Handler.format_jeol_combined(experiment)
-            except KeyError:
-                try:
-                    jeol_structured_dict_list = Jcampdx_Handler.format_jeol_combined(param_dict)
-                    output_list.append(JEOL.find_params(jeol_structured_dict_list))
-                except KeyError:
-                    print("Failed to parse the JEOL dict")
-                    pass
+            output_list.append(JEOL.find_params(param_dict))
 
         return output_list
     
@@ -1181,7 +1172,7 @@ class Jcampdx_Handler:
         :param jdx_read_output: a nested list object, the output from the Jcamp read method.
         :return: list of dictionaries, these are formatted for the Varian Class methods.
         """
-        return [jdx_read_output]
+        return jdx_read_output
         # if errored == True:
         #     try:
         #         line_list = jdx_read_output["_comments"]

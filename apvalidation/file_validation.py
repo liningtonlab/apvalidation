@@ -1,7 +1,7 @@
-from apvalidation import extract as extractor
-from apvalidation.simple_file_finder import MetaFinder
-from apvalidation.extract_core import extract_core_file
-from apvalidation.patoolutil import is_zip, repack_to_zip
+# from apvalidation import extract as extractor
+# from apvalidation.simple_file_finder import MetaFinder
+# from apvalidation.extract_core import extract_core_file
+# from apvalidation.patoolutil import is_zip, repack_to_zip
 
 # Local Test Import
 # import extract as extractor
@@ -57,12 +57,10 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 params = extractor.Bruker.find_params(param_dict)
             elif vendor_type[i] == "Jcampdx":
                 param_dict = extractor.Jcampdx_Handler.read(unzipped_path_name)
+                manuf = extractor.Jcampdx_Handler.find_manuf(param_dict=param_dict)
+                print(f"manuf: {manuf}")
                 params = extractor.Jcampdx_Handler.find_params(param_dict)
 
-            # file_root_without_file_name = str(Path(path).parent)
-            # res_dict[file_root_without_file_name] = params
-            # res_dict[file_root_without_file_name]["vendor"] = vendor_type[i]
-            
             file_root_without_file_name = str(Path(path).parent)
             if file_root_without_file_name == ".":
                 file_root_without_file_name = "/"
@@ -78,7 +76,8 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
             # res_dict[file_root_without_file_name]["vendor"] = vendor_type[i]
             params["original_data_path"] = file_root_without_file_name
             params["vendor"] = vendor_type[i]
-            res_dict.append(params)
+            res_dict.append(params) 
+            
             
             # # Select core files and extract under name_format directory
             # # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
@@ -97,8 +96,6 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                         
             # parent_dir = os.getcwd()
             # indiv_exp_path = str(re.search("^(.+)/([^/]+)$", file_root[i][0])[1])
-            # print("path")
-            # print(indiv_exp_path)
             # extract_core_file(submitted_zip_file, indiv_exp_path, vendor_type[i], folder_name, parent_dir)
 
             os.unlink(tf.name) # Delete temporary file

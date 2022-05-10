@@ -346,12 +346,20 @@ NMRML Testing
 
 
 
-print("CALIFORNIA DATA ###############################################################################################")
-for filename in os.listdir("test_files/North Carolina Data/1-mitragynine"):
-    file = f"test_files/North Carolina Data/1-mitragynine/{filename}"
-    read_output = Jcampdx_Handler.read([file])
-    params = Jcampdx_Handler.find_params(read_output)
-    print(params)
+print("CAROLINA DATA ###############################################################################################")
+for foldername in os.listdir("test_files/North Carolina Data"):
+    if foldername == ".DS_Store":
+        continue
+    if ".zip" in foldername:
+        continue
+
+    
+    for filename in os.listdir(f"test_files/North Carolina Data/{foldername}"):
+        print(filename)
+        file = f"test_files/North Carolina Data/{foldername}/{filename}"
+        read_output = Jcampdx_Handler.read([file])
+        params = Jcampdx_Handler.find_params(read_output)
+        print(params)
 
 # for filename in os.listdir("test_files/Raw/JEOL"):
 #     file = f"test_files/Raw/JEOL/{filename}"
