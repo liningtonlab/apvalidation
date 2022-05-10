@@ -572,7 +572,7 @@ class JEOL:
         pref_params = {'experiment_type': exp_type, 'nuc_1': exp_nuc_1, 'nuc_2': exp_nuc_2, 'frequency': exp_freq,
                        'solvent': exp_solv.upper(), 'temperature': exp_temp}
 
-        return [pref_params]
+        return pref_params
 
     @staticmethod
     def find_temp(param_dict):
@@ -1172,7 +1172,7 @@ class Jcampdx_Handler:
         :param jdx_read_output: a nested list object, the output from the Jcamp read method.
         :return: list of dictionaries, these are formatted for the Varian Class methods.
         """
-        return [jdx_read_output]
+        return jdx_read_output
         # if errored == True:
         #     try:
         #         line_list = jdx_read_output["_comments"]
