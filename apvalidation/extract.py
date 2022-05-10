@@ -797,9 +797,9 @@ class Jcampdx_Handler:
             title = key_procpar.split("/")[-2]
             complete_experiment_list[title] = [experiment_procpars[key_procpar], experiment_fids[key_fid]]
         
-        with open("test_files/read_varian_jdx_output", "w") as f:
-            f.write(str(complete_experiment_list))
-
+        # with open("test_files/read_varian_jdx_output", "w") as f:
+        #     f.write(str(complete_experiment_list))
+        return complete_experiment_list
 
     @staticmethod
     def is_combined(param_dict):
@@ -814,7 +814,6 @@ class Jcampdx_Handler:
         except:
             return "unknown combined status"
         
-
     @staticmethod
     def find_manuf(param_dict):
         """
@@ -823,7 +822,7 @@ class Jcampdx_Handler:
         :param param_dict_list: a list of dictionaries read in from the read function
         :return: the name of the manufacturer 
         """
-        # try to find the key which indicates the manufacturer.
+
         try:
             manuf_name = param_dict[0]["_datatype_LINK"][0]["$ORIGINALFORMAT"][0]
         except KeyError:
@@ -837,7 +836,6 @@ class Jcampdx_Handler:
                 except KeyError:
                     manuf_name = "Not found"
 
-        # check to see which manufacturer is 
         if manuf_name == "Varian":
             return manuf_name
         elif "Bruker" in manuf_name:
@@ -1004,24 +1002,20 @@ class Jcampdx_Handler:
             except KeyError:
                 line_list = "Not found"
 
-        # define list to keep track of the start and stop indices for each separate file (acqus and acqu2s)
+
         file_seps = []
-        # loop through each element in the bruker list to check for file start/stop points
+
         for index, item in enumerate(line_list):
-            # if there is TITLE then thats the start of a file, if END then thats the end of a file
             if "##TITLE= " in item:
                 file_seps.append([index,0])
             if "##END=" in item:
-                # this takes the last item of the list (references top of stack)
                 matching_list = file_seps[-1]
                 matching_list[1] = index+1
 
-        # split the bruker list into separate sub-lists representing each file in the folder.
         file_list = []
         for curr_file in file_seps:
             file_list.append(line_list[curr_file[0]:curr_file[1]])
 
-        # check to see if acqu2s exists by checking for 1 or 2 Parameter type files at beginning of list.
         if 'Parameter file' in file_list[1][0]:
             dim = "2D"
         else:
@@ -1031,7 +1025,6 @@ class Jcampdx_Handler:
             line_list = file_list[0]
             param_dict = {}
             for line in line_list:
-                    # line = line.replace("\n", "")
                     if line.startswith("##"):
                         split_line = line.split("=")
                         key = split_line[0]
@@ -1046,7 +1039,7 @@ class Jcampdx_Handler:
             return [param_dict]
 
         elif dim == "2D":
-            # find the param_dict for both of these files and arrange them in [dim1, dim2] list of dicts
+
             dim_1_line_list = file_list[1]
             dim_2_line_list = file_list[0]
             param_dict_dim1 = {}

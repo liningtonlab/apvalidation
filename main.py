@@ -347,11 +347,11 @@ NMRML Testing
 
 
 print("CALIFORNIA DATA ###############################################################################################")
-for filename in os.listdir("test_files/North Carolina Data/1-mitragynine"):
-    file = f"test_files/North Carolina Data/1-mitragynine/{filename}"
-    read_output = Jcampdx_Handler.read([file])
-    params = Jcampdx_Handler.find_params(read_output)
-    print(params)
+# for filename in os.listdir("test_files/North Carolina Data/1-mitragynine"):
+#     file = f"test_files/North Carolina Data/1-mitragynine/{filename}"
+#     read_output = Jcampdx_Handler.read([file])
+#     params = Jcampdx_Handler.find_params(read_output)
+#     print(params)
 
 # for filename in os.listdir("test_files/Raw/JEOL"):
 #     file = f"test_files/Raw/JEOL/{filename}"
