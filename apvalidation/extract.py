@@ -797,8 +797,8 @@ class Jcampdx_Handler:
             title = key_procpar.split("/")[-2]
             complete_experiment_list[title] = [experiment_procpars[key_procpar], experiment_fids[key_fid]]
         
-        with open("test_files/read_varian_jdx_output", "w") as f:
-            f.write(str(complete_experiment_list))
+        # with open("test_files/read_varian_jdx_output", "w") as f:
+        #     f.write(str(complete_experiment_list))
 
 
     @staticmethod
