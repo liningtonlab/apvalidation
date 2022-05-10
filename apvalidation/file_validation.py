@@ -38,7 +38,7 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
 
     with zipfile.ZipFile(submitted_zip_file, 'r') as zipObj:
         # Extract all the contents of zip file in current directory
-        res_dict = {}
+        res_dict = []
         # for params_path, vendor in file_root, vendor_type:
         for i, path_list in enumerate(file_root):
             unzipped_path_name = []
@@ -59,9 +59,26 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 param_dict = extractor.Jcampdx_Handler.read(unzipped_path_name)
                 params = extractor.Jcampdx_Handler.find_params(param_dict)
 
+            # file_root_without_file_name = str(Path(path).parent)
+            # res_dict[file_root_without_file_name] = params
+            # res_dict[file_root_without_file_name]["vendor"] = vendor_type[i]
+            
             file_root_without_file_name = str(Path(path).parent)
-            res_dict[file_root_without_file_name] = params
-            res_dict[file_root_without_file_name]["vendor"] = vendor_type[i]
+            if file_root_without_file_name == ".":
+                file_root_without_file_name = "/"
+            if type(params) == list:
+                for param in params:
+                    # res_dict[file_root_without_file_name] = param
+                    param["original_data_path"] = file_root_without_file_name
+                json_params = json.dumps(params, indent=4)
+                print(json_params)
+                return json_params
+            
+            # res_dict[file_root_without_file_name] = params
+            # res_dict[file_root_without_file_name]["vendor"] = vendor_type[i]
+            params["original_data_path"] = file_root_without_file_name
+            params["vendor"] = vendor_type[i]
+            res_dict.append(params)
             
             # # Select core files and extract under name_format directory
             # # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
@@ -88,7 +105,7 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
 
         json_params = json.dumps(res_dict, indent=4)
 
-        # print(json_params)
+        print(json_params)
         return json_params
 
 
