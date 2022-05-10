@@ -885,16 +885,7 @@ class Jcampdx_Handler:
                 output_list.append(Bruker.find_params(bruker_structured_dict_list))
 
         elif manuf == "JEOL":
-            try:
-                for experiment in param_dict[0]['_datatype_LINK']:
-                    jeol_structured_dict_list = Jcampdx_Handler.format_jeol_combined(experiment)
-            except KeyError:
-                try:
-                    jeol_structured_dict_list = Jcampdx_Handler.format_jeol_combined(param_dict)
-                    output_list.append(JEOL.find_params(jeol_structured_dict_list))
-                except KeyError:
-                    print("Failed to parse the JEOL dict")
-                    pass
+            output_list.append(JEOL.find_params(param_dict))
 
         return output_list
     
