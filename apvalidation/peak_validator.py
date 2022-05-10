@@ -28,14 +28,14 @@ class Validate:
             return_bool = False
             return_messages.append("Length of carbon and proton list do not match.")
 
-        # currently returns the number of unique protons
+        # currently returns the number of unique protons doesn't work properly I need to know what to check
         num_protons = Proton.check_atom_counts(smiles)
         print(num_protons)
         if num_protons is False:
             return_bool = False
             return_messages.append("Invalid number of unique protons.")
 
-        # currently returns the number of carbons
+        # currently returns the number of carbons doesn't work properly I need to know what to check
         num_carbons = Carbon.check_atom_counts(smiles)
         print(num_carbons)
         if num_carbons is False:

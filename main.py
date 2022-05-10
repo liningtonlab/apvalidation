@@ -14,7 +14,7 @@ import nmrglue as ng
 
 
 
-print(validate_struct("O1C=C[C@H]([C@H]1O2)c3c2cc(OC)c4c3OC(=O)C5=C4CCC(=O)5", "./" ))
+# print(validate_struct("O1C=C[C@H]([C@H]1O2)c3c2cc(OC)c4c3OC(=O)C5=C4CCC(=O)5", "./" ))
 
 
 """
@@ -170,14 +170,14 @@ JDX testing
 
 
 
-print("JDX FILES OUTPUT--------------------------")
-print("VARIAN 2D:")
-jcamp_dict_varian2d = Jcampdx_Handler.read(["test_files/Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx"])
+# print("JDX FILES OUTPUT--------------------------")
+# print("VARIAN 2D:")
+# jcamp_dict_varian2d = Jcampdx_Handler.read(["test_files/Lobos9512D_A_proton_Pyridine_600MHz_5mmregtube.jdx"])
 
-print(Jcampdx_Handler.find_params(jcamp_dict_varian2d))
+# print(Jcampdx_Handler.find_params(jcamp_dict_varian2d))
 
-print("BRUKER #################################################################################################################################################")
-print("BRUKER 1D--------------------------")
+# print("BRUKER #################################################################################################################################################")
+# print("BRUKER 1D--------------------------")
 jcamp_dict_bruker1d = Jcampdx_Handler.read(["test_files/bruker_j.jdx"])
 print(f"Length of the dict.keys() is: {jcamp_dict_bruker1d[0].keys()} ")
 print(Jcampdx_Handler.find_params(jcamp_dict_bruker1d))
@@ -228,7 +228,7 @@ for filename in os.listdir("test_files/MNOVA_jdx/Bruker/Tetronasin"):
     params = Jcampdx_Handler.find_params(dict_list)
     print(params)
 
-print("VARIAN #############################################################################################################################################")
+# print("VARIAN #############################################################################################################################################")
 print("MB0593C-BAC-AA ------------------------------")
 for filename in os.listdir("test_files/MNOVA_jdx/Varian/MB0593C-BAC-AA"):
     file = f"test_files/MNOVA_jdx/Varian/MB0593C-BAC-AA/{filename}"
@@ -260,11 +260,11 @@ for filename in os.listdir("test_files/MNOVA_jdx/Varian/Aspochalasin I"):
 
 
 print("JEOL ####################################################################################################################################################")
-for filename in os.listdir("test_files/Raw/JEOL"):
-    file = f"test_files/Raw/JEOL/{filename}"
-    dict_list = JEOL.read([file])
-    params = JEOL.find_params(dict_list)
-    print(params)
+# for filename in os.listdir("test_files/Raw/JEOL"):
+#     file = f"test_files/Raw/JEOL/{filename}"
+#     dict_list = JEOL.read([file])
+#     params = JEOL.find_params(dict_list)
+#     print(params)
 # with open("./test_varian_jdx.json", "w") as f:
 #     comment_list = jcamp_dict_varian2d[0][0]["_datatype_LINK"][0]["_comments"]
 #     for item in comment_list:
@@ -290,9 +290,13 @@ print(params)
 
 print("VARIAN COMBINED FILES ##############################################################################################################################")
 
-read_output = Jcampdx_Handler.read(["test_files/MNOVA_jdx/Combined jdx Varian/combinedvarian.jdx"])
+# read_output = Jcampdx_Handler.read(["test_files/MNOVA_jdx/Combined jdx Varian/combinedvarian.jdx"])
+# params = Jcampdx_Handler.find_params(read_output)
+# print(params)
+
+read_output = Jcampdx_Handler.read(["test_files/MNOVA_jdx/Combined jdx Varian/combinedvarian2.jdx"])
 params = Jcampdx_Handler.find_params(read_output)
-print(params)    
+print(params)
         
         
         
@@ -342,3 +346,15 @@ NMRML Testing
 
 
 
+print("CALIFORNIA DATA ###############################################################################################")
+for filename in os.listdir("test_files/North Carolina Data/1-mitragynine"):
+    file = f"test_files/North Carolina Data/1-mitragynine/{filename}"
+    read_output = Jcampdx_Handler.read([file])
+    params = Jcampdx_Handler.find_params(read_output)
+    print(params)
+
+# for filename in os.listdir("test_files/Raw/JEOL"):
+#     file = f"test_files/Raw/JEOL/{filename}"
+#     dict_list = JEOL.read([file])
+#     params = JEOL.find_params(dict_list)
+#     print(params)

@@ -3,6 +3,7 @@ import re
 import nmrglue as ng
 import pandas as pd
 import numpy as np
+from pytest import param
 
 
 class Varian:
@@ -165,10 +166,9 @@ class Varian:
         """
 
         exp_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'DOSY', 'ROESY', 'NOESY']
-        # construct a list of possible locations in which the experiment type could be. 
+
         try:
             exp_type_loc1 = param_dict['explist']['values'][0]
-            # print(f"THe explist value is: {exp_type}")
         except KeyError:
             exp_type_loc1 = ""
 
@@ -192,8 +192,6 @@ class Varian:
         exp_loc_list = [exp_type_loc1, exp_type_loc2, exp_type_loc3, exp_type_loc4]
         exp_loc_list = [x.upper() for x in exp_loc_list]
         
-        # print(f"DIMENSION: {exp_dim}")
-        # print(exp_loc_list)
         exp_type = ''
         if exp_dim == '2D':
             for exp_loc in exp_loc_list:
@@ -225,6 +223,7 @@ class Varian:
         :param exp_dim: the dimension of the experiment
         :return: a single float or a tuple of floats depending on the dimension
         """
+        
         if exp_dim == '2D':
             freq1 = round(float(param_dict['reffrq']['values'][0]), 2)
             freq2 = round(float(param_dict['reffrq1']['values'][0]), 2)
@@ -452,7 +451,7 @@ class Bruker:
         possible_exp_str_2 = param_dict['PULPROG']
 
         exp_2d_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'ROESY', 'NOESY', 'DOSY']
-        # assume exp_type is 1D and change from there 
+
         exp_type = ''
         if exp_dim == '2D':
             for entry in exp_2d_list:
@@ -745,8 +744,62 @@ class Jcampdx_Handler:
             param_dict = ng.jcampdx.read(filename=filepath)
             param_dict_list.append(param_dict)
         param_dict = param_dict_list[0]
-        
+
+        linelist = Jcampdx_Handler.read_varian_combined(filepath_list[0])
+    
         return param_dict
+
+    @staticmethod
+    def read_varian_combined(filepath):
+        with open(filepath, 'r') as file:
+            line_list = file.readlines()
+
+        fid_list = []
+        procpar_list = []
+        for line in line_list:
+            if line.startswith("##$PARAMETER FILE=") and "procpar" in line:
+                procpar_list.append(line)
+            if line.startswith("##$PARAMETER FILE=") and "text" in line:
+                fid_list.append(line)
+
+        experiment_procpars = {}
+        experiment_fids = {}
+        current_fid_name = None
+        current_fid_lines = []
+        current_procpar_name = None
+        current_procpar_lines = []
+
+        for line in line_list:
+            if line in procpar_list:
+                current_procpar_name = line
+            elif current_procpar_name is not None:
+                current_procpar_lines.append(line.replace("\n", ""))
+
+            if line in fid_list:
+                current_fid_name = line
+
+                experiment_procpars[current_procpar_name] = current_procpar_lines
+                current_procpar_name = None
+                current_procpar_lines = []
+            elif current_fid_name is not None:
+                current_fid_lines.append(line.replace("\n", ""))
+
+            if "##END=" in line and current_fid_name is not None:
+                experiment_fids[current_fid_name] = current_fid_lines
+                current_fid_name = None
+                current_fid_lines = []
+
+        
+        complete_experiment_list = {}
+        for i in range(len(experiment_procpars)):
+            key_procpar = list(experiment_procpars.keys())[i]
+            key_fid = list(experiment_fids.keys())[i]
+            title = key_procpar.split("/")[-2]
+            complete_experiment_list[title] = [experiment_procpars[key_procpar], experiment_fids[key_fid]]
+        
+        with open("test_files/read_varian_jdx_output", "w") as f:
+            f.write(str(complete_experiment_list))
+
 
     @staticmethod
     def is_combined(param_dict):
@@ -775,11 +828,14 @@ class Jcampdx_Handler:
             manuf_name = param_dict[0]["_datatype_LINK"][0]["$ORIGINALFORMAT"][0]
         except KeyError:
             manuf_name = "Not found"
-        if manuf_name == "Not found":
             try:
                 manuf_name = param_dict[0]["$ORIGINALFORMAT"][0]
             except KeyError:
                 manuf_name = "Not found"
+                try:
+                    manuf_name = param_dict[0]["ORIGIN"][0]
+                except KeyError:
+                    manuf_name = "Not found"
 
         # check to see which manufacturer is 
         if manuf_name == "Varian":
@@ -787,7 +843,7 @@ class Jcampdx_Handler:
         elif "Bruker" in manuf_name:
             manuf_name = "Bruker"
             return manuf_name
-        elif manuf_name in ["JCAMP-DX NMR", "JEOL Delta"]:
+        elif manuf_name in ["JCAMP-DX NMR", "JEOL Delta", "DELTA2_NMR"]:
             manuf_name = "JEOL"
             return manuf_name
         else:
@@ -807,12 +863,12 @@ class Jcampdx_Handler:
 
         output_list = []
         manuf = Jcampdx_Handler.find_manuf(param_dict)
-        print(manuf)
+
         if manuf == "Varian":
             combined_status = Jcampdx_Handler.is_combined(param_dict)
             if combined_status == "combined":
-                for experiment in param_dict[0]['_datatype_LINK']:
-                    varian_structured_dict_list = Jcampdx_Handler.format_varian_combined(experiment)
+                for experiment_2d in param_dict[0]['_datatype_LINK']:
+                    varian_structured_dict_list = Jcampdx_Handler.format_varian_combined(experiment_2d)
                     output_list.append(Varian.find_params(varian_structured_dict_list))
             else:
                 varian_structured_dict_list = Jcampdx_Handler.format_varian_not_combined(param_dict)
@@ -822,16 +878,24 @@ class Jcampdx_Handler:
             combined_status = Jcampdx_Handler.is_combined(param_dict)
             if combined_status == "combined":
                 for experiment in param_dict[0]['_datatype_LINK']:
-
                         bruker_structured_dict_list = Jcampdx_Handler.format_bruker_combined(experiment)
                         output_list.append(Bruker.find_params(bruker_structured_dict_list))
             else:
-                print(combined_status)
                 bruker_structured_dict_list = Jcampdx_Handler.format_bruker_not_combined(param_dict)
                 output_list.append(Bruker.find_params(bruker_structured_dict_list))
 
         elif manuf == "JEOL":
-            output_list.append(JEOL.find_params(experiment))
+            try:
+                for experiment in param_dict[0]['_datatype_LINK']:
+                    jeol_structured_dict_list = Jcampdx_Handler.format_jeol_combined(experiment)
+            except KeyError:
+                try:
+                    jeol_structured_dict_list = Jcampdx_Handler.format_jeol_combined(param_dict)
+                    output_list.append(JEOL.find_params(jeol_structured_dict_list))
+                except KeyError:
+                    print("Failed to parse the JEOL dict")
+                    pass
+
         return output_list
     
     @staticmethod
@@ -844,12 +908,12 @@ class Jcampdx_Handler:
         errored = False
         try:
             line_list = jdx_read_output[0]["_datatype_LINK"][0]["_comments"]
-        except KeyError:
+        except KeyError or TypeError:
             errored = True
         if errored == True:
             try:
                 line_list = jdx_read_output[0]["_comments"]
-            except KeyError:
+            except KeyError or TypeError:
                 pass
 
         key_holder = None
@@ -883,22 +947,22 @@ class Jcampdx_Handler:
         :param jdx_read_output: a nested list object, the output from the Jcamp read method.
         :return: list of dictionaries, these are formatted for the Varian Class methods.
         """
-        # print(jdx_read_output.keys())
-        errored = False
+        
         try:
             line_list = jdx_read_output["_datatype_LINK"][0]["_comments"]
-        except KeyError:
-            errored = True
-        if errored == True:
+        except (KeyError, TypeError):
             try:
                 line_list = jdx_read_output["_comments"]
-            except KeyError:
-                pass
-
+            except (KeyError, TypeError) as error:
+                try:
+                    line_list = jdx_read_output
+                except (KeyError, TypeError):
+                    print("Dictionary contained NO expected keys.")
+                    pass
+                    
         key_holder = None
         param_dict = {}
         value_stack = []
-
         for line in line_list:
             line = line.replace("\n", "")
             if line[0].isalpha():
@@ -928,8 +992,7 @@ class Jcampdx_Handler:
         """
 
         param_dict = read_jdx_output[0]
-        # print(param_dict.keys())
-        # define the important part of the file (part with parameters)
+
         line_list = []
         try: 
             line_list = param_dict['_comments']
@@ -1024,9 +1087,7 @@ class Jcampdx_Handler:
         """
 
         param_dict = read_jdx_output
-        # print(param_dict[0])
-
-        # define the important part of the file (part with parameters)
+        
         line_list = []
         try: 
             line_list = param_dict['_comments']
@@ -1109,3 +1170,44 @@ class Jcampdx_Handler:
 
                     param_dict_dim2[key] = value
             return [param_dict_dim1, param_dict_dim2]
+
+
+
+    @staticmethod
+    def format_jeol_combined(jdx_read_output):
+        """
+        Take the output produced from Jcamp read and format it to be passed into the Varian Class methods.
+
+        :param jdx_read_output: a nested list object, the output from the Jcamp read method.
+        :return: list of dictionaries, these are formatted for the Varian Class methods.
+        """
+        return [jdx_read_output]
+        # if errored == True:
+        #     try:
+        #         line_list = jdx_read_output["_comments"]
+        #     except KeyError:
+        #         pass
+
+        # key_holder = None
+        # param_dict = {}
+        # value_stack = []
+
+        # for line in line_list:
+        #     line = line.replace("\n", "")
+        #     if line[0].isalpha():
+        #         key = line.split(" ")[0]
+
+        #         if key_holder is None:
+        #             key_holder = key
+        #         else:
+        #             value_dict = {"values": value_stack}
+        #             param_dict[key_holder] = value_dict
+        #             value_stack = []
+        #             key_holder = key
+        #     else:
+        #         line = line[2:]
+        #         line = line.replace('"', '')
+        #         value_stack.append(line)
+
+        # return [param_dict]
+        pass
