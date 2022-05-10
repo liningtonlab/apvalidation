@@ -84,7 +84,7 @@ class MetaFinder:
         vendor_list = []
         for path in path_list:
             if path.endswith(keyword):
-                parent_dir = re.search("^(.+)/([^/]+)$", path)[1]
+                parent_dir = os.path.dirname(path)
                 try:
                     core_path_dict[parent_dir]
                     core_path_dict[parent_dir].append(path)
@@ -113,7 +113,6 @@ class MetaFinder:
         ser_path = self.key_file_finder(all_path_list, "ser", individual_folder_path)
         # assert fid_path+ser_path, f"{individual_folder_path} : Fid/Ser file is missing"
         if not fid_path and not ser_path : self.error_message.append(f"{individual_folder_path} : Fid file is missing")
-
 
     def _jcampdx_validation(self, all_path_list: str, individual_folder_path: str):
         jdx_path = self.key_file_finder(all_path_list, "jdx", individual_folder_path)
