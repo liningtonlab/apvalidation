@@ -51,7 +51,7 @@ class MetaFinder:
             lst = self.param_file_finder(all_path_list, name, core_path_dict)
             if lst:
                 vendor_list += lst
-        param_path_list = list(core_path_dict.values())         
+        param_path_list = list(core_path_dict.values())
         meta_info = {"vendor_name": vendor_list, "meta_file": param_path_list}
 
         return meta_info

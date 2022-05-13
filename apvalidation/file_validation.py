@@ -1,7 +1,7 @@
-# from apvalidation import extract as extractor
-# from apvalidation.simple_file_finder import MetaFinder
-# from apvalidation.extract_core import extract_core_file
-# from apvalidation.patoolutil import is_zip, repack_to_zip
+from apvalidation import extract as extractor
+from apvalidation.simple_file_finder import MetaFinder
+from apvalidation.extract_core import extract_core_file
+from apvalidation.patoolutil import is_zip, repack_to_zip
 
 # Local Test Import
 # import extract as extractor
@@ -40,13 +40,19 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
         # Extract all the contents of zip file in current directory
         res_dict = []
         # for params_path, vendor in file_root, vendor_type:
+        for i, vendor in enumerate(vendor_type):
+            if vendor == "Jcampdx" and len(file_root[i]) > 1:
+                vendor_type.pop(i)
+                tmp = file_root.pop(i)
+                for j in range(len(tmp)):
+                    vendor_type.append("Jcampdx")
+                    file_root.append([tmp[j]])
         for i, path_list in enumerate(file_root):
             unzipped_path_name = []
             for path in path_list:
                 core_file_read = zipObj.read(path)
                 tf = create_temporary_file(core_file_read)
                 unzipped_path_name.append(tf.name)
-                
 
             # Get param according to the vendor name
             if vendor_type[i] == "Varian":
@@ -68,15 +74,14 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 for param in params:
                     # res_dict[file_root_without_file_name] = param
                     param["original_data_path"] = file_root_without_file_name
-                json_params = json.dumps(params, indent=4)
-                print(json_params)
-                return json_params
-            
+                # json_params = json.dumps(params, indent=4)
+                res_dict.append(param)
+            else:
             # res_dict[file_root_without_file_name] = params
             # res_dict[file_root_without_file_name]["vendor"] = vendor_type[i]
-            params["original_data_path"] = file_root_without_file_name
-            params["vendor"] = vendor_type[i]
-            res_dict.append(params) 
+                params["original_data_path"] = file_root_without_file_name
+                params["vendor"] = vendor_type[i]
+                res_dict.append(params) 
             
             
             # # Select core files and extract under name_format directory
@@ -112,7 +117,6 @@ def create_temporary_file(core_file_read):
     assert os.path.isfile(tf.name)
     tf.close()
     return tf
-
 
 if __name__ == '__main__':
     find_path_and_extract(sys.argv[1])
