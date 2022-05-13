@@ -72,13 +72,10 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 file_root_without_file_name = "/"
             if type(params) == list:
                 for param in params:
-                    # res_dict[file_root_without_file_name] = param
                     param["original_data_path"] = file_root_without_file_name
-                # json_params = json.dumps(params, indent=4)
+                    params["vendor"] = manuf
                 res_dict.append(param)
             else:
-            # res_dict[file_root_without_file_name] = params
-            # res_dict[file_root_without_file_name]["vendor"] = vendor_type[i]
                 params["original_data_path"] = file_root_without_file_name
                 params["vendor"] = vendor_type[i]
                 res_dict.append(params) 
