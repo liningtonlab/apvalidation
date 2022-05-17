@@ -5,7 +5,7 @@ unicode_dashes = " - ־ ᠆ ‐ ‑ ‒ - – — ― ⁻ ₋ − ﹘ ﹣ －"
 def test_validate():
     smiles_string = "O=C1CCC[C@@]2([H])C(CCC[C@@]21[H])=O"
 
-    H_valid = "13.0, (13.5-14.2), 34.5, 67.3, 12.4 ₋ 14.6"
+    H_valid = "13.0, (13.5-13.9), 34.5, 67.3, 12.4 ₋ 14.6"
     H_invalid_characters = "1H NMR (CD3OD, 500 MHz) δ 1.03 (d, J = 7.0 Hz, 3H, H-8)"
     H_invalid_list_format = "13 (13.5-14.2) 34.5 67.3 12.4 ₋ 14.6"
     H_invalid_range = "13, (13.5 14.2), 34.5, 67.3, (12.4, 14.6)"
