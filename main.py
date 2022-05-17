@@ -366,3 +366,5 @@ for foldername in os.listdir("test_files/North Carolina Data"):
 #     dict_list = JEOL.read([file])
 #     params = JEOL.find_params(dict_list)
 #     print(params)
+
+
