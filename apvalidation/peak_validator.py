@@ -184,7 +184,7 @@ class Validate:
             except ErrorBadRange:
                 return f"Error: {value} out of bounds"
         
-        return True
+        return "Valid"
         
 
     @staticmethod
