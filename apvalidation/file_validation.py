@@ -38,15 +38,21 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
 
     with zipfile.ZipFile(submitted_zip_file, 'r') as zipObj:
         # Extract all the contents of zip file in current directory
-        res_dict = {}
+        res_dict = []
         # for params_path, vendor in file_root, vendor_type:
+        for i, vendor in enumerate(vendor_type):
+            if vendor == "Jcampdx" and len(file_root[i]) > 1:
+                vendor_type.pop(i)
+                tmp = file_root.pop(i)
+                for j in range(len(tmp)):
+                    vendor_type.append("Jcampdx")
+                    file_root.append([tmp[j]])
         for i, path_list in enumerate(file_root):
             unzipped_path_name = []
             for path in path_list:
                 core_file_read = zipObj.read(path)
                 tf = create_temporary_file(core_file_read)
                 unzipped_path_name.append(tf.name)
-                
 
             # Get param according to the vendor name
             if vendor_type[i] == "Varian":
@@ -57,11 +63,23 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 params = extractor.Bruker.find_params(param_dict)
             elif vendor_type[i] == "Jcampdx":
                 param_dict = extractor.Jcampdx_Handler.read(unzipped_path_name)
+                manuf = extractor.Jcampdx_Handler.find_manuf(param_dict=param_dict)
+                print(f"manuf: {manuf}")
                 params = extractor.Jcampdx_Handler.find_params(param_dict)
 
             file_root_without_file_name = str(Path(path).parent)
-            res_dict[file_root_without_file_name] = params
-            res_dict[file_root_without_file_name]["vendor"] = vendor_type[i]
+            if file_root_without_file_name == ".":
+                file_root_without_file_name = "/"
+            if type(params) == list:
+                for param in params:
+                    param["original_data_path"] = file_root_without_file_name
+                    param["vendor"] = manuf
+                res_dict.append(param)
+            else:
+                params["original_data_path"] = file_root_without_file_name
+                params["vendor"] = vendor_type[i]
+                res_dict.append(params) 
+            
             
             # # Select core files and extract under name_format directory
             # # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
@@ -80,15 +98,13 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                         
             # parent_dir = os.getcwd()
             # indiv_exp_path = str(re.search("^(.+)/([^/]+)$", file_root[i][0])[1])
-            # print("path")
-            # print(indiv_exp_path)
             # extract_core_file(submitted_zip_file, indiv_exp_path, vendor_type[i], folder_name, parent_dir)
 
             os.unlink(tf.name) # Delete temporary file
 
         json_params = json.dumps(res_dict, indent=4)
 
-        # print(json_params)
+        print(json_params)
         return json_params
 
 
@@ -98,7 +114,6 @@ def create_temporary_file(core_file_read):
     assert os.path.isfile(tf.name)
     tf.close()
     return tf
-
 
 if __name__ == '__main__':
     find_path_and_extract(sys.argv[1])
