@@ -41,7 +41,7 @@ class Validate:
         """
         clean_text = text_block.replace(" ", "")
         accepted_pattern = re.compile(r"^[\d . - ( ) , ; \u002D \u05BE \u1806 \u2010 \u2011 \u2012 \u2013 \\\
-                                         \u2014 \u2015 \u207B \u208B \u2212 \uFE58 \uFE63 \uFF0D]+$", re.UNICODE)
+                                         \u2014 \u2015 \u207B \u208B \u2212 \uFE58 \uFE63 \uFF0D \t \n]+$", re.UNICODE)
         if re.search(accepted_pattern, clean_text):
             return "Valid String"
         else:
@@ -56,28 +56,20 @@ class Validate:
             :param valid_text: The text to split
             :return: If works, return the split list. If split does not work, raise a NoSplit exception.
         """
-
-        try:
-            split_text = valid_text.split(",")
+        char_list = [",", ";", "\n", "\t", "\\t", "    "]
+        split = False
+        for split_char in char_list:
+            split_text = valid_text.split(split_char)
+            if split_text[-1] == "":
+                split_text.pop()
             if len(split_text) == 1:
-                raise NoSplit
-        except NoSplit:
-            try:
-                split_text = valid_text.split(";")
-                if len(split_text) == 1:
-                    raise NoSplit
-            except NoSplit:
-                try:
-                    split_text = valid_text.split("\n")
-                    if len(split_text) == 1:
-                        raise NoSplit
-                except NoSplit:
-                    try:
-                        split_text = valid_text.split("\t")
-                        if len(split_text) == 1:
-                            raise NoSplit
-                    except NoSplit:
-                        raise NoSplit
+                continue
+            else:
+                split = True
+                break
+ 
+        if split == False:
+            raise NoSplit
         return split_text
 
     @staticmethod
@@ -107,7 +99,6 @@ class Validate:
             :param value_list: a list of the values and ranges in the peak list.
             :return: A list of booleans which represents which values in value_list are valid datatypes and which are not.
                     Ex. If all are valid return [True, True,...], If first is invalid and rest are valid return [False, True, True, ...]
-
         """
         value_check_list = [False]*len(value_list)
         value_list = [value.replace(" ","") for value in value_list]

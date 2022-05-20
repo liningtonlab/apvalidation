@@ -745,61 +745,9 @@ class Jcampdx_Handler:
             param_dict_list.append(param_dict)
         param_dict = param_dict_list[0]
 
-        linelist = Jcampdx_Handler.read_varian_combined(filepath_list[0])
+        # linelist = Jcampdx_Handler.read_varian_combined(filepath_list[0])
     
         return param_dict
-
-    @staticmethod
-    def read_varian_combined(filepath):
-        with open(filepath, 'r') as file:
-            line_list = file.readlines()
-
-        fid_list = []
-        procpar_list = []
-        for line in line_list:
-            if line.startswith("##$PARAMETER FILE=") and "procpar" in line:
-                procpar_list.append(line)
-            if line.startswith("##$PARAMETER FILE=") and "text" in line:
-                fid_list.append(line)
-
-        experiment_procpars = {}
-        experiment_fids = {}
-        current_fid_name = None
-        current_fid_lines = []
-        current_procpar_name = None
-        current_procpar_lines = []
-
-        for line in line_list:
-            if line in procpar_list:
-                current_procpar_name = line
-            elif current_procpar_name is not None:
-                current_procpar_lines.append(line.replace("\n", ""))
-
-            if line in fid_list:
-                current_fid_name = line
-
-                experiment_procpars[current_procpar_name] = current_procpar_lines
-                current_procpar_name = None
-                current_procpar_lines = []
-            elif current_fid_name is not None:
-                current_fid_lines.append(line.replace("\n", ""))
-
-            if "##END=" in line and current_fid_name is not None:
-                experiment_fids[current_fid_name] = current_fid_lines
-                current_fid_name = None
-                current_fid_lines = []
-
-        
-        complete_experiment_list = {}
-        for i in range(len(experiment_procpars)):
-            key_procpar = list(experiment_procpars.keys())[i]
-            key_fid = list(experiment_fids.keys())[i]
-            title = key_procpar.split("/")[-2]
-            complete_experiment_list[title] = [experiment_procpars[key_procpar], experiment_fids[key_fid]]
-        
-        # with open("test_files/read_varian_jdx_output", "w") as f:
-        #     f.write(str(complete_experiment_list))
-        return complete_experiment_list
 
     @staticmethod
     def is_combined(param_dict):
@@ -864,6 +812,7 @@ class Jcampdx_Handler:
 
         if manuf == "Varian":
             combined_status = Jcampdx_Handler.is_combined(param_dict)
+            print(combined_status)
             if combined_status == "combined":
                 for experiment_2d in param_dict[0]['_datatype_LINK']:
                     varian_structured_dict_list = Jcampdx_Handler.format_varian_combined(experiment_2d)
