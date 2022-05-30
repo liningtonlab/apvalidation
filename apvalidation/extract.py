@@ -563,7 +563,6 @@ class JEOL:
             try:
                 param_dict = param_dict["_datatype_LINK"][0]
             except KeyError:
-                print('failed')
                 param_dict = param_dict
         exp_dim = JEOL.find_dim(param_dict)
         exp_freq = JEOL.find_freq(param_dict, exp_dim)

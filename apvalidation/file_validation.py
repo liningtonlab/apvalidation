@@ -2,12 +2,15 @@ from apvalidation import extract as extractor
 from apvalidation.simple_file_finder import MetaFinder
 from apvalidation.extract_core import extract_core_file
 from apvalidation.patoolutil import is_zip, repack_to_zip
+from apvalidation.mnova_jdx_reader import separate_mnova_jdx
+
 
 # Local Test Import
 # import extract as extractor
 # from simple_file_finder import MetaFinder
 # from extract_core import extract_core_file
 # from patoolutil import is_zip, repack_to_zip
+# from mnova_jdx_reader import separate_mnova_jdx
 
 import sys
 import os
@@ -62,10 +65,14 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 param_dict = extractor.Bruker.read(unzipped_path_name)
                 params = extractor.Bruker.find_params(param_dict)
             elif vendor_type[i] == "Jcampdx":
-                param_dict = extractor.Jcampdx_Handler.read(unzipped_path_name)
-                manuf = extractor.Jcampdx_Handler.find_manuf(param_dict=param_dict)
-                print(f"manuf: {manuf}")
-                params = extractor.Jcampdx_Handler.find_params(param_dict)
+                loc = separate_mnova_jdx(unzipped_path_name[0], "./test")
+                for path in os.listdir(loc):
+                    full_path = os.path.join(loc, path)
+                    param_dict = extractor.Jcampdx_Handler.read([full_path])
+                    manuf = extractor.Jcampdx_Handler.find_manuf(param_dict=param_dict)
+                    print(f"manuf: {manuf}")
+                    params = extractor.Jcampdx_Handler.find_params(param_dict)
+                    print(params)
 
             # file_root_without_file_name = str(Path(path).parent)
             file_root_without_file_name = str(path)
