@@ -3,7 +3,7 @@ import re
 import nmrglue as ng
 import pandas as pd
 import numpy as np
-from pytest import param
+
 
 
 class Varian:
