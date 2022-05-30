@@ -765,15 +765,15 @@ class Jcampdx_Handler:
 
         try:
             manuf_name = param_dict[0]["_datatype_LINK"][0]["$ORIGINALFORMAT"][0]
-        except KeyError:
+        except (KeyError, TypeError):
             manuf_name = "Not found"
             try:
                 manuf_name = param_dict[0]["$ORIGINALFORMAT"][0]
-            except KeyError:
+            except (KeyError, TypeError):
                 manuf_name = "Not found"
                 try:
                     manuf_name = param_dict[0]["ORIGIN"][0]
-                except KeyError:
+                except (KeyError, TypeError):
                     manuf_name = "Not found"
 
         if manuf_name == "Varian":

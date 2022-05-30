@@ -28,6 +28,17 @@ def count_tabs(input_string):
     return len(input_string) - len(input_string.lstrip("\t"))
 
 def find_deep_groups(line_level_list, max_depth):
+    """
+        extract the two deepest levels of the nested jdx file as groups. The result will
+        be a list of groupings where each group is the largest set contiguous lines at the two deepest
+        levels of the file. The purpose of this is to remove the meta data tagging that comes with the combined
+        jdx file.
+        :param line_level_list: a list of dict objects that contain the value for each line as well as the depth the line is
+                                nested at.
+        :param max_depth: an int representing the max nesting in the file
+        :return: a list containing groupings of deep lines in the file. This list is separated by lines that were
+                contiguous in the original file.
+    """
     groups = []
     agroup = []
     grouping = False
@@ -46,7 +57,8 @@ def find_deep_groups(line_level_list, max_depth):
 
 def make_filename(item, group, group_num):
     """
-    
+        determine the name of the single experiment jdx file being saved.
+        :param item: a single line 
     """
 
     for item in group:
