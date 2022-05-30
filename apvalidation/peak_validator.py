@@ -41,7 +41,7 @@ class Validate:
         """
         clean_text = text_block.replace(" ", "")
         accepted_pattern = re.compile(r"^[\d . - ( ) , ; \u002D \u05BE \u1806 \u2010 \u2011 \u2012 \u2013 \\\
-                                         \u2014 \u2015 \u207B \u208B \u2212 \uFE58 \uFE63 \uFF0D]+$", re.UNICODE)
+                                         \u2014 \u2015 \u207B \u208B \u2212 \uFE58 \uFE63 \uFF0D \t \n]+$", re.UNICODE)
         if re.search(accepted_pattern, clean_text):
             return "Valid String"
         else:
@@ -56,28 +56,20 @@ class Validate:
             :param valid_text: The text to split
             :return: If works, return the split list. If split does not work, raise a NoSplit exception.
         """
-
-        try:
-            split_text = valid_text.split(",")
+        char_list = [",", ";", "\n", "\t", "\\t", "    "]
+        split = False
+        for split_char in char_list:
+            split_text = valid_text.split(split_char)
+            if split_text[-1] == "":
+                split_text.pop()
             if len(split_text) == 1:
-                raise NoSplit
-        except NoSplit:
-            try:
-                split_text = valid_text.split(";")
-                if len(split_text) == 1:
-                    raise NoSplit
-            except NoSplit:
-                try:
-                    split_text = valid_text.split("\n")
-                    if len(split_text) == 1:
-                        raise NoSplit
-                except NoSplit:
-                    try:
-                        split_text = valid_text.split("\t")
-                        if len(split_text) == 1:
-                            raise NoSplit
-                    except NoSplit:
-                        raise NoSplit
+                continue
+            else:
+                split = True
+                break
+ 
+        if split == False:
+            raise NoSplit
         return split_text
 
     @staticmethod
@@ -107,12 +99,14 @@ class Validate:
             :param value_list: a list of the values and ranges in the peak list.
             :return: A list of booleans which represents which values in value_list are valid datatypes and which are not.
                     Ex. If all are valid return [True, True,...], If first is invalid and rest are valid return [False, True, True, ...]
-
         """
         value_check_list = [False]*len(value_list)
-        value_list = [value.replace(" ","") for value in value_list]
+        # value_list = [value.replace(" ","") for value in value_list]
 
         for index, value in enumerate(value_list):
+
+            value = value.replace(" ", "")
+
             if Validate.is_valid_range(value):
                 value_check_list[index] = True
             else:
@@ -138,12 +132,26 @@ class Validate:
         atoms = {"H": 1, "C": 6}
         atom_num = atoms[atom_type]
         mol = Chem.MolFromSmiles(smiles)
-        mol = rdmolops.AddHs(mol)
+        mol = Chem.AddHs(mol)
 
         atom_query = rdqueries.AtomNumEqualsQueryAtom(atom_num)
-        number_of_atoms = len(mol.GetAtomsMatchingQuery(atom_query))
+        number_of_atoms_1 = len(mol.GetAtomsMatchingQuery(atom_query))
 
-        if 0 < len(value_list) <= number_of_atoms:
+        number_of_atoms_2 = 0
+        for atom in mol.GetAtoms():
+            if atom.GetSymbol() == atom_type:
+                number_of_atoms_2 += 1
+
+        patt = Chem.MolFromSmarts(f"[{atom_type}]")
+        number_of_atoms_3 = len(mol.GetSubstructMatches(patt))
+
+        print(f"Number of {atom_type} Method 1: {number_of_atoms_1}")
+        print(f"Number of {atom_type} Method 2: {number_of_atoms_2}")
+        print(f"Number of {atom_type} Method 3: {number_of_atoms_3}")
+        print(f"Length of value list: {len(value_list)}")
+        print(value_list)
+
+        if 0 < len(value_list) <= number_of_atoms_1:
             return True
         else:
             raise InvalidAtomNumber
@@ -184,7 +192,7 @@ class Validate:
             except ErrorBadRange:
                 return f"Error: {value} out of bounds"
         
-        return True
+        return "Valid"
         
 
     @staticmethod
@@ -231,7 +239,7 @@ class Validate:
                         continue
                 raise InvalidValueType
         except InvalidValueType:
-            return f"Error: The following values are of invalid data type {error_value_list}"
+            return f"Error: The following values in the H list are of invalid data type {error_value_list}"
         
         # Check the datatype for each of the entries in each list
         try:
@@ -245,7 +253,7 @@ class Validate:
                         continue
                 raise InvalidValueType
         except InvalidValueType:
-            return f"Error: The following values are of invalid data type {error_value_list}"
+            return f"Error: The following values in the C list are of invalid data type {error_value_list}"
 
         # Check the number of atoms in each list do not exceed amount of atoms in struct
         try:
