@@ -560,8 +560,11 @@ class JEOL:
         try:
             param_dict = param_dict['_datatype_NMRSPECTRUM'][0]
         except KeyError:
-            param_dict = param_dict
-
+            try:
+                param_dict = param_dict["_datatype_LINK"][0]
+            except KeyError:
+                print('failed')
+                param_dict = param_dict
         exp_dim = JEOL.find_dim(param_dict)
         exp_freq = JEOL.find_freq(param_dict, exp_dim)
         exp_nuc_1, exp_nuc_2 = JEOL.find_nuc(param_dict, exp_dim)
@@ -576,11 +579,15 @@ class JEOL:
 
     @staticmethod
     def find_temp(param_dict):
-        temp_number = int(param_dict['$TEMPSET'][0])
-        if temp_number >= 250:
-            return temp_number
-        else:
-            return temp_number + 273
+        try:
+            temp_number = int(param_dict['$TEMPSET'][0])
+            if temp_number >= 250:
+                return temp_number
+            else:
+                return temp_number + 273
+        except TypeError:
+            return None
+
 
     @staticmethod
     def find_solvent(param_dict):
@@ -874,7 +881,6 @@ class Jcampdx_Handler:
             except KeyError:
                 line_list = "Not found"
 
-
         file_seps = []
 
         for index, item in enumerate(line_list):
@@ -950,33 +956,29 @@ class Jcampdx_Handler:
         :param jdx_read_output: a nested list object, the output from the Jcamp read method.
         :return: list of dictionaries, these are formatted for the Varian Class methods.
         """
+        try:
+            param_dict = jdx_read_output[0]['_datatype_LINK']
+        except KeyError:
+            try:
+                param_dict = jdx_read_output
+            except KeyError:
+                param_dict = "None"
+        
+        # re-name and format frequency keys so they match the delta version of JEOL data.
+        try:
+            freq_list = param_dict[0]['.OBSERVEFREQUENCY'][1]
+            freq_list = freq_list.split(",")
+            param_dict[0]["$XFREQ"] = [freq_list[0]]
+            param_dict[0]["$YFREQ"] = [freq_list[1]]
+        except:
+            freq_list = param_dict[0]['.OBSERVEFREQUENCY'][0]
+            param_dict[0]["$XFREQ"] = [freq_list]
+
+        # add SOLVENT keys
+        param_dict[0]["$SOLVENT"] = param_dict[0][".SOLVENTNAME"]
+
+        # set the temperature to None for now
+        param_dict[0]["$TEMPSET"] = [None]
+
         return [jdx_read_output]
-        # if errored == True:
-        #     try:
-        #         line_list = jdx_read_output["_comments"]
-        #     except KeyError:
-        #         pass
 
-        # key_holder = None
-        # param_dict = {}
-        # value_stack = []
-
-        # for line in line_list:
-        #     line = line.replace("\n", "")
-        #     if line[0].isalpha():
-        #         key = line.split(" ")[0]
-
-        #         if key_holder is None:
-        #             key_holder = key
-        #         else:
-        #             value_dict = {"values": value_stack}
-        #             param_dict[key_holder] = value_dict
-        #             value_stack = []
-        #             key_holder = key
-        #     else:
-        #         line = line[2:]
-        #         line = line.replace('"', '')
-        #         value_stack.append(line)
-
-        # return [param_dict]
-        pass

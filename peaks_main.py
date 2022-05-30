@@ -2,28 +2,37 @@ import apvalidation.peak_validator as peaks
 
 unicode_dashes = " - ־ ᠆ ‐ ‑ ‒ - – — ― ⁻ ₋ − ﹘ ﹣ －"
 
-def test_validate():
-    smiles_string = "O=C1CCC[C@@]2([H])C(CCC[C@@]21[H])=O"
+def test_compound1():
+    smiles_string = "CC1C(=O)CCC2C1(CCC3C2(CCC4(C3(CCC5(C4CC(CC5)(C)C)C)C)C)C)C"
 
-    H_valid = "13.0\t (13.5-14.2)\t 34.5\t 67.3\t 12.4 ₋ 14.6"
-    # H_invalid_characters = "1H NMR (CD3OD, 500 MHz) δ 1.03 (d, J = 7.0 Hz, 3H, H-8)"
-    # H_invalid_list_format = "13 (13.5-14.2) 34.5 67.3 12.4 ₋ 14.6"
-    # H_invalid_range = "13, (13.5 14.2), 34.5, 67.3, (12.4, 14.6)"
+    H_valid = "2.40, 2.39, 2.38, 2.37, 2.31, 2.30, 2.29, 2.28, 2.27, 2.26, 2.25, 2.24, 2.23, 1.98, 1.96, 1.95, 1.76, 1.74, 1.70, 1.69, 1.67, 1.67, 1.65, 1.64, 1.59, 1.58, 1.57, 1.56, 1.54, 1.52, 1.50, 1.48, 1.46, 1.45, 1.45, 1.39, 1.37, 1.36, 1.35, 1.34, 1.30, 1.28, 1.26, 1.22, 1.21, 1.20, 1.18, 1.05, 1.02, 1.00, 1.00, 0.97, 0.95, 0.93, 0.90, 0.88, 0.87, 0.76, 0.72, 0.72"
 
-    C_valid = "11, (11.5-15.2), 64.7, 76.3, 1.4 ₋ 19.6"
-    # C_invalid_characters = "1H NMR (CD3OD, 500 MHz) δ 1.03 (d, J = 7.0 Hz, 3H, H-8)"
-    # C_invalid_list_format = "11 (11.5-15.2) 64.7 76.3 1.4 ₋ 19.6"
-    # C_invalid_range = "11, (11.5,15.2), 64.7, 76.3, 1.4 ₋ 19.6"
+    C_valid = "213.33, 59.63, 58.37, 53.25, 42.94, 42.29, 41.67, 41.44, 39.84, 39.40, 38.44, 37.59, 36.16, 35.77, 35.49, 35.17, 32.92, 32.57, 32.24, 31.93, 30.65, 30.14, 28.31, 22.42, 20.40, 18.81, 18.38, 18.09, 14.80, 6.97"
 
     output_valid = peaks.Validate.validate(H_valid, C_valid, smiles_string)
     print(f"Valid: {output_valid}")
-    # output_invalid_characters = peaks.Validate.validate(H_invalid_characters, C_invalid_characters, smiles_string)
-    # print(f"Invalid Characters: {output_invalid_characters}")
-    # output_invalid_list_format = peaks.Validate.validate(H_invalid_list_format, C_invalid_list_format, smiles_string)
-    # print(f"Invalid List: {output_invalid_list_format}")
-    # output_invalid_range = peaks.Validate.validate(H_invalid_range, C_invalid_range, smiles_string)
-    # print(f"Invalid Range: {output_invalid_range}")
 
+def test_compound2():
+    smiles_string = "OC1CCC2C(C)(CCC3C2(C)CCC4(C)C5CC(C)(C)CCC5(C)CCC34C)C1C"
+
+    H_valid = "3.73, 1.90, 1.89, 1.86, 1.74, 1.72, 1.59, 1.55, 1.53, 1.52, 1.51, 1.49, 1.47, 1.44, 1.42, 1.40, 1.38, 1.36, 1.34, 1.32, 1.31, 1.30, 1.29, 1.21, 1.20, 1.19, 1.18, 1.17, 1.15, 1.12, 1.10, 1.00, 0.99, 0.96, 0.95, 0.94, 0.93, 0.91, 0.89, 0.86"
+
+    C_valid = "72.89, 61.49, 53.34, 49.31, 42.95, 41.86, 39.81, 39.43, 38.51, 37.97, 37.24, 36.22, 35.69, 35.48, 35.33, 35.18, 32.95, 32.47, 32.23, 31.94, 30.78, 30.17, 28.32, 20.27, 18.80, 18.39, 17.69, 16.54, 15.93, 11.77"
+
+    output_valid = peaks.Validate.validate(H_valid, C_valid, smiles_string)
+    print(f"Valid: {output_valid}")
+
+def test_compound3():
+    smiles_string = "CC(=CCC1CC23CC(C(OC2=C(C(=O)C(C3=O)(C1(C)C)C(=O)C4=CC=CC=C4)CC=C(C)C)(C)C)CC=C(C)C)C"
+
+    H_valid = "7.72, 7.70, 7.61, 7.53, 7.52, 7.38, 7.37, 7.36, 7.29, 7.27, 7.26, 7.25, 7.23, 7.22, 7.21, 6.44, 5.24, 5.22, 5.08, 5.01, 5.00, 4.99, 4.88, 4.87, 4.68, 4.59, 3.48, 3.10, 3.07, 3.06, 3.05, 3.04, 3.01, 2.53, 2.51, 2.18, 2.16, 2.13, 2.09, 2.08, 2.07, 2.04, 2.03, 1.96, 1.94, 1.92, 1.90, 1.90, 1.87, 1.86, 1.85, 1.84, 1.81, 1.79, 1.72, 1.69, 1.67, 1.65, 1.63, 1.61, 1.60, 1.57, 1.55, 1.54, 1.52, 1.49, 1.48, 1.47, 1.46, 1.44, 1.42, 1.40, 1.39, 1.38, 1.36, 1.34, 1.31, 1.25, 1.22, 1.20, 0.92, 0.89, 0.54, 0.53"
+
+    C_valid = "209.14, 193.82, 193.31, 167.81, 137.09, 134.36, 132.53, 132.02, 131.94, 128.44, 128.44, 127.94, 127.94, 125.12, 124.13, 121.45, 120.87, 84.34, 78.09, 49.59, 48.88, 47.99, 40.06, 38.12, 30.17, 29.64, 29.25, 28.47, 27.00, 26.08, 26.00, 25.91, 22.28, 22.20, 21.50, 18.11, 18.07, 18.02"
+
+    output_valid = peaks.Validate.validate(H_valid, C_valid, smiles_string)
+    print(f"Valid: {output_valid}")
 
 # Test Validate
-test_validate()
+test_compound1()
+test_compound2()
+test_compound3()

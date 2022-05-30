@@ -101,9 +101,12 @@ class Validate:
                     Ex. If all are valid return [True, True,...], If first is invalid and rest are valid return [False, True, True, ...]
         """
         value_check_list = [False]*len(value_list)
-        value_list = [value.replace(" ","") for value in value_list]
+        # value_list = [value.replace(" ","") for value in value_list]
 
         for index, value in enumerate(value_list):
+
+            value = value.replace(" ", "")
+
             if Validate.is_valid_range(value):
                 value_check_list[index] = True
             else:
@@ -129,12 +132,26 @@ class Validate:
         atoms = {"H": 1, "C": 6}
         atom_num = atoms[atom_type]
         mol = Chem.MolFromSmiles(smiles)
-        mol = rdmolops.AddHs(mol)
+        mol = Chem.AddHs(mol)
 
         atom_query = rdqueries.AtomNumEqualsQueryAtom(atom_num)
-        number_of_atoms = len(mol.GetAtomsMatchingQuery(atom_query))
+        number_of_atoms_1 = len(mol.GetAtomsMatchingQuery(atom_query))
 
-        if 0 < len(value_list) <= number_of_atoms:
+        number_of_atoms_2 = 0
+        for atom in mol.GetAtoms():
+            if atom.GetSymbol() == atom_type:
+                number_of_atoms_2 += 1
+
+        patt = Chem.MolFromSmarts(f"[{atom_type}]")
+        number_of_atoms_3 = len(mol.GetSubstructMatches(patt))
+
+        print(f"Number of {atom_type} Method 1: {number_of_atoms_1}")
+        print(f"Number of {atom_type} Method 2: {number_of_atoms_2}")
+        print(f"Number of {atom_type} Method 3: {number_of_atoms_3}")
+        print(f"Length of value list: {len(value_list)}")
+        print(value_list)
+
+        if 0 < len(value_list) <= number_of_atoms_1:
             return True
         else:
             raise InvalidAtomNumber
@@ -222,7 +239,7 @@ class Validate:
                         continue
                 raise InvalidValueType
         except InvalidValueType:
-            return f"Error: The following values are of invalid data type {error_value_list}"
+            return f"Error: The following values in the H list are of invalid data type {error_value_list}"
         
         # Check the datatype for each of the entries in each list
         try:
@@ -236,7 +253,7 @@ class Validate:
                         continue
                 raise InvalidValueType
         except InvalidValueType:
-            return f"Error: The following values are of invalid data type {error_value_list}"
+            return f"Error: The following values in the C list are of invalid data type {error_value_list}"
 
         # Check the number of atoms in each list do not exceed amount of atoms in struct
         try:
