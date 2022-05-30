@@ -9,7 +9,7 @@ bruker = ["fid", "ser", "acqu", "acqu2", "acqus", "acqu2s"]
 jcamp = ["jdx"]
 
 
-def extract_core_file(input_zip : str, indiv_exp_path, vendor, folder_name, parent_dir):
+def extract_core_file(input_zip, indiv_exp_path, vendor, folder_name, parent_dir, param_file = ""):
     with ZipFile(input_zip, 'r') as zipObject:
         all_paths = zipObject.namelist()
 
@@ -19,7 +19,9 @@ def extract_core_file(input_zip : str, indiv_exp_path, vendor, folder_name, pare
         elif vendor == "Bruker":
             extract_files = search_keyword(all_paths, indiv_exp_path, bruker)
         elif vendor == "Jcampdx":
-            extract_files = search_keyword(all_paths, indiv_exp_path, jcamp)
+            # extract_files = search_keyword(all_paths, indiv_exp_path, jcamp)
+            extract_files = [param_file]
+            
 
         extract_to_folder(extract_files, zipObject, folder_name, parent_dir)
 

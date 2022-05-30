@@ -67,13 +67,15 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 print(f"manuf: {manuf}")
                 params = extractor.Jcampdx_Handler.find_params(param_dict)
 
-            file_root_without_file_name = str(Path(path).parent)
+            # file_root_without_file_name = str(Path(path).parent)
+            file_root_without_file_name = str(path)
+            
             if file_root_without_file_name == ".":
                 file_root_without_file_name = "/"
             if type(params) == list:
                 for param in params:
                     param["original_data_path"] = file_root_without_file_name
-                    param["vendor"] = manuf
+                    param["vendor"] = vendor_type[i]
                 res_dict.append(param)
             else:
                 params["original_data_path"] = file_root_without_file_name
@@ -83,22 +85,24 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
             
             # # Select core files and extract under name_format directory
             # # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
-            # two_d_name = res_dict[file_root_without_file_name]["nuc_2"] + "_" if res_dict[file_root_without_file_name]["nuc_2"] else ""
+            # two_d_name = res_dict[i]["nuc_2"] + "_" if res_dict[i]["nuc_2"] else ""
             # #NULL value is replaced by an empty string
-            # if res_dict[file_root_without_file_name]["nuc_1"]:
-            #     one_d_name = res_dict[file_root_without_file_name]["nuc_1"] + "_"
+            # if res_dict[i]["nuc_1"]:
+            #     one_d_name = res_dict[i]["nuc_1"] + "_"
             # else:
             #     one_d_name = ""
                 
-            # folder_name = one_d_name + two_d_name + res_dict[file_root_without_file_name]["experiment_type"]
+            # folder_name = one_d_name + two_d_name + res_dict[i]["experiment_type"]
             # repeat_exp_num = existing_folder_names.count(folder_name)
             # existing_folder_names.append(folder_name)
             # if repeat_exp_num >= 1:
             #     folder_name = folder_name + " ({})".format(repeat_exp_num)
                         
             # parent_dir = os.getcwd()
-            # indiv_exp_path = str(re.search("^(.+)/([^/]+)$", file_root[i][0])[1])
-            # extract_core_file(submitted_zip_file, indiv_exp_path, vendor_type[i], folder_name, parent_dir)
+            # # indiv_exp_path = str(re.search("^(.+)/([^/]+)$", file_root[i][0])[1])
+            # indiv_exp_path = f"{str(Path(file_root[i][0]).parent)}/"
+            # param_file = res_dict[i]['original_data_path']
+            # extract_core_file(submitted_zip_file, indiv_exp_path, vendor_type[i], folder_name, parent_dir, param_file)
 
             os.unlink(tf.name) # Delete temporary file
 
