@@ -785,6 +785,7 @@ class Jcampdx_Handler:
             manuf_name = "JEOL"
             return manuf_name
         else:
+            print("NO manuf found")
             manuf_name = "Not found"
             return manuf_name
 
