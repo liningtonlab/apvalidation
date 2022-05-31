@@ -60,21 +60,33 @@ def find_deep_groups(line_level_list, max_depth):
 
     return groups
 
-def make_filename(item, group_num):
+def make_filename(group, group_num):
     """
         determine the name of the single experiment jdx file being saved.
         :param item: a single line in the group being checked
         :param group_num: the number of the group being saved
         :return: the title of the file or None if not found yet
     """
+    done = False
+    group_title = None
+    seq_title = None
 
-    if item["value"].startswith("##TITLE="):
-        group_title = item["value"].split("=")[1]
-        group_title = group_title.split("/")[-1]
-        group_title = f"{group_title}_exp_{group_num+1}.jdx"
-        return group_title
-    else:
-        return None
+    for item in group:
+        if item["value"].startswith("##TITLE="):
+            
+            group_title = item["value"].split("=")[1]
+            group_title = group_title.split("/")[-1]
+
+        if item["value"].startswith("##.PULSE SEQUENCE="):
+            seq_title = item["value"].split("=")[1]
+            done = True
+
+        if done is True:
+            final_title = f"{group_title}_{seq_title}_exp_{group_num+1}.jdx"
+            return final_title
+
+    return "NoTitle"
+
 
 
 def save_separate_files(merged_groups, save_path):
@@ -89,24 +101,20 @@ def save_separate_files(merged_groups, save_path):
 
     if not os.path.exists(save_path):
         os.makedirs(save_path)
-    else:
-        for filename in os.listdir(save_path):
-            file_path = os.path.join(save_path, filename)
-            try:
-                if os.path.isfile(file_path) or os.path.islink(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-            except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (file_path, e))
-
+    # else:
+    #     for filename in os.listdir(save_path):
+    #         file_path = os.path.join(save_path, filename)
+    #         try:
+    #             if os.path.isfile(file_path) or os.path.islink(file_path):
+    #                 os.unlink(file_path)
+    #             elif os.path.isdir(file_path):
+    #                 shutil.rmtree(file_path)
+    #         except Exception as e:
+    #             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     for index, group in enumerate(merged_groups):
-        for item in group:
-            group_title = make_filename(item, index)
-            if group_title != None:
-                break
 
+        group_title = make_filename(group, index)
         
         single_file = open(f"{save_path}/{group_title}", "w+")
         for index, item in enumerate(group):
@@ -138,8 +146,6 @@ def separate_mnova_jdx(input_filepath, save_location):
         line_level_list.append({"value": line, "level": depth})
 
     deep_groups = find_deep_groups(line_level_list, max_depth)
-    print(f"deep groups = {deep_groups}")
     saved_folder = save_separate_files(deep_groups, f"{save_location}")
-    print(f"saved_folder = {saved_folder}")
     return saved_folder
 
