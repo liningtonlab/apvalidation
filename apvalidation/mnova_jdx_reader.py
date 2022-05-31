@@ -52,7 +52,12 @@ def find_deep_groups(line_level_list, max_depth):
             grouping = False
             groups.append(agroup)
             agroup = []
-        
+    # catch the case where the loop finished on a max_depth line and therefore that lines group never gets added
+    if line["level"] == max_depth or line['level'] == max_depth-1:
+        grouping = False
+        groups.append(agroup)
+        agroup = []
+
     return groups
 
 def make_filename(item, group_num):
@@ -119,6 +124,7 @@ def separate_mnova_jdx(input_filepath, save_location):
         :param save_location: the filepath to the folder that the single jdx are saved to
         :return: a path to the saved folder
     """
+
     with open(f"{input_filepath}", "r") as f:
         line_list = f.readlines()
         line_list_tabs = add_indents(line_list)
@@ -132,8 +138,8 @@ def separate_mnova_jdx(input_filepath, save_location):
         line_level_list.append({"value": line, "level": depth})
 
     deep_groups = find_deep_groups(line_level_list, max_depth)
-    
+    print(f"deep groups = {deep_groups}")
     saved_folder = save_separate_files(deep_groups, f"{save_location}")
-    
+    print(f"saved_folder = {saved_folder}")
     return saved_folder
 
