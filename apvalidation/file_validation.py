@@ -61,34 +61,25 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
             if vendor_type[i] == "Varian":
                 param_dict = extractor.Varian.read(unzipped_path_name)
                 params = extractor.Varian.find_params(param_dict)
+                add_path_vendor(path, params, vendor_type, res_dict, i)
             elif vendor_type[i] == "Bruker":
                 param_dict = extractor.Bruker.read(unzipped_path_name)
                 params = extractor.Bruker.find_params(param_dict)
-            elif vendor_type[i] == "Jcampdx":
+                add_path_vendor(path, params, vendor_type, res_dict, i)
+                
+            # file_root_without_file_name = str(Path(path).parent)
+
+            
+            if vendor_type[i] == "Jcampdx":
                 loc = separate_mnova_jdx(unzipped_path_name[0], "./test")
                 for path in os.listdir(loc):
                     full_path = os.path.join(loc, path)
                     param_dict = extractor.Jcampdx_Handler.read([full_path])
                     manuf = extractor.Jcampdx_Handler.find_manuf(param_dict=param_dict)
                     print(f"manuf: {manuf}")
-                    params = extractor.Jcampdx_Handler.find_params(param_dict)
+                    params = extractor.Jcampdx_Handler.find_params(param_dict)[0]
                     print(params)
-
-            # file_root_without_file_name = str(Path(path).parent)
-            file_root_without_file_name = str(path)
-            
-            if file_root_without_file_name == ".":
-                file_root_without_file_name = "/"
-            if type(params) == list:
-                for param in params:
-                    param["original_data_path"] = file_root_without_file_name
-                    param["vendor"] = vendor_type[i]
-                res_dict.append(param)
-            else:
-                params["original_data_path"] = file_root_without_file_name
-                params["vendor"] = vendor_type[i]
-                res_dict.append(params) 
-            
+                    add_path_vendor(path, params, vendor_type, res_dict, i)
             
             # # Select core files and extract under name_format directory
             # # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
@@ -126,5 +117,13 @@ def create_temporary_file(core_file_read):
     tf.close()
     return tf
 
+def add_path_vendor(path, params, vendor_type, res_dict, i):
+    file_root_without_file_name = str(path)
+    if file_root_without_file_name == ".":
+        file_root_without_file_name = "/"
+    params["original_data_path"] = file_root_without_file_name
+    params["vendor"] = vendor_type[i]
+    res_dict.append(params)
+    
 if __name__ == '__main__':
     find_path_and_extract(sys.argv[1])
