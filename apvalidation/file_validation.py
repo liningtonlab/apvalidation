@@ -73,13 +73,14 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
                 spilit_file_dir = f"{str(Path(submitted_zip_file).parent)}/jdx_spilt"
                 loc = separate_mnova_jdx(unzipped_path_name[0], spilit_file_dir)
                 for path in os.listdir(loc):
-                    full_path = os.path.join(loc, path)
-                    param_dict = extractor.Jcampdx_Handler.read([full_path])
-                    manuf = extractor.Jcampdx_Handler.find_manuf(param_dict=param_dict)
-                    print(f"manuf: {manuf}")
-                    params = extractor.Jcampdx_Handler.find_params(param_dict)[0]
-                    print(params)
-                    add_path_vendor(path, params, manuf, res_dict)
+                    if Path(path).suffix == '.jdx':
+                        full_path = os.path.join(loc, path)
+                        param_dict = extractor.Jcampdx_Handler.read([full_path])
+                        manuf = extractor.Jcampdx_Handler.find_manuf(param_dict=param_dict)
+                        print(f"manuf: {manuf}")
+                        params = extractor.Jcampdx_Handler.find_params(param_dict)[0]
+                        print(params)
+                        add_path_vendor(path, params, manuf, res_dict)
             
             # # Select core files and extract under name_format directory
             # # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
