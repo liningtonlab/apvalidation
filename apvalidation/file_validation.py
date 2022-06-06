@@ -29,8 +29,10 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
        
     
     if not is_zip(submitted_zip_file):
+        old_zip_file = submitted_zip_file
         submitted_zip_file = repack_to_zip(submitted_zip_file)
-    
+        os.unlink(old_zip_file)
+           
     meta = MetaFinder(submitted_zip_file)
     assert meta.error_message == [], meta.error_message  
     
