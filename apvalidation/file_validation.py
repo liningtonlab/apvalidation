@@ -71,7 +71,7 @@ def find_path_and_extract(submitted_zip_file: str) -> json:
             
             if vendor_type[i] == "Jcampdx":
                 spilit_file_dir = f"{str(Path(submitted_zip_file).parent)}/jdx_spilt"
-                loc = separate_mnova_jdx(unzipped_path_name[0], spilit_file_dir)
+                loc = separate_mnova_jdx(unzipped_path_name[0], submitted_zip_file)
                 for path in os.listdir(loc):
                     if Path(path).suffix == '.jdx':
                         full_path = os.path.join(loc, path)
