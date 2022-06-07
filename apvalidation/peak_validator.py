@@ -145,11 +145,8 @@ class Validate:
         patt = Chem.MolFromSmarts(f"[{atom_type}]")
         number_of_atoms_3 = len(mol.GetSubstructMatches(patt))
 
-        print(f"Number of {atom_type} Method 1: {number_of_atoms_1}")
-        print(f"Number of {atom_type} Method 2: {number_of_atoms_2}")
-        print(f"Number of {atom_type} Method 3: {number_of_atoms_3}")
-        print(f"Length of value list: {len(value_list)}")
-        print(value_list)
+        # sanity check that all 3 methods of finding the number of atoms in the molecule are returning the same amount
+        assert number_of_atoms_1 == number_of_atoms_2 == number_of_atoms_3, "UnEqual number of atoms"
 
         if 0 < len(value_list) <= number_of_atoms_1:
             return True
@@ -276,4 +273,24 @@ class Validate:
             return output
 
         return "Both lists are valid"
+
+
+class Convert:
+
+    @staticmethod
+    def convert_to_float_list(peak_string):
+        peak_list = Validate.parse_text_to_list(peak_string)
+        output_list = []
+        for value in peak_list:
+            if Validate.is_valid_range(value) is True:
+                split_values = re.split("[\u002D\u05BE\u1806\u2010\u2011\u2012\u2013\u2014\u2015\u207B\u208B\u2212\uFE58\uFE63\uFF0D]",value)
+                split_values = [float(re.sub("[ ()]", "", sub_str)) for sub_str in split_values]
+                range_tuple = (split_values[0], split_values[1])
+                output_list.append(range_tuple)
+            else:
+                value = float(value)
+                output_list.append(value)
+        return output_list
+
+        
 

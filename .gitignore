@@ -5,6 +5,7 @@ __pycache__/
 
 # main file
 main.py
+peaks_main.py
 
 # C extensions
 *.so
