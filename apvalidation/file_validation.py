@@ -8,7 +8,7 @@ from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 # Local Test Import
 # import extract as extractor
 # from simple_file_finder import MetaFinder
-# from extract_core import extract_core_file
+# from extract_core import extract_core_file, extract_jdx
 # from patoolutil import is_zip, repack_to_zip
 # from mnova_jdx_reader import separate_mnova_jdx
 
@@ -90,33 +90,35 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time = False) -> js
                 #         print(params)
                 #         add_path_vendor(path, params, manuf, res_dict)
             
-            # # Select core files and extract under name_format directory
-            # # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
-            # two_d_name = res_dict[i]["nuc_2"] + "_" if res_dict[i]["nuc_2"] else ""
-            # #NULL value is replaced by an empty string
-            # if res_dict[i]["nuc_1"]:
-            #     one_d_name = res_dict[i]["nuc_1"] + "_"
-            # else:
-            #     one_d_name = ""
-                
-            # folder_name = one_d_name + two_d_name + res_dict[i]["experiment_type"]
-            # repeat_exp_num = existing_folder_names.count(folder_name)
-            # existing_folder_names.append(folder_name)
-            # if repeat_exp_num >= 1:
-            #     folder_name = folder_name + " ({})".format(repeat_exp_num)
-                        
-            # parent_dir = os.getcwd()
-            # # indiv_exp_path = str(re.search("^(.+)/([^/]+)$", file_root[i][0])[1])
-            # indiv_exp_path = f"{str(Path(file_root[i][0]).parent)}/"
-            # param_file = res_dict[i]['original_data_path']
-            # extract_core_file(submitted_zip_file, indiv_exp_path, vendor_type[i], folder_name, parent_dir, param_file)
-
             os.unlink(tf.name) # Delete temporary file
 
         if jcamp:
             res_dict = extract_jcamp(loc)
         json_params = json.dumps(res_dict, indent=4)
-
+        
+        # for i, vendor in enumerate(vendor_type):
+        #     # Select core files and extract under name_format directory
+        #     # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
+        #     two_d_name = res_dict[i]["nuc_2"] + "_" if res_dict[i]["nuc_2"] else ""
+        #     #NULL value is replaced by an empty string
+        #     if res_dict[i]["nuc_1"]:
+        #         one_d_name = res_dict[i]["nuc_1"] + "_"
+        #     else:
+        #         one_d_name = ""
+                
+        #     folder_name = one_d_name + two_d_name + res_dict[i]["experiment_type"]
+        #     repeat_exp_num = existing_folder_names.count(folder_name)
+        #     existing_folder_names.append(folder_name)
+        #     if repeat_exp_num >= 1:
+        #         folder_name = folder_name + " ({})".format(repeat_exp_num)
+                        
+        #     parent_dir = os.getcwd()
+        #     # indiv_exp_path = str(re.search("^(.+)/([^/]+)$", file_root[i][0])[1])
+        #     indiv_exp_path = f"{str(Path(file_root[i][0]).parent)}/"
+        #     param_file = res_dict[i]['original_data_path']
+        #     # extract_core_file(submitted_zip_file, indiv_exp_path, vendor_type[i], folder_name, parent_dir, param_file)
+        #     extract_jdx(loc,param_file,folder_name,parent_dir)
+            
         print(json_params)
         return json_params
 
@@ -148,6 +150,6 @@ def add_path_vendor(path, params, vendor_type, res_dict):
     res_dict.append(params)
     
 if __name__ == '__main__':
-    # find_path_and_extract(sys.argv[1])
-    find_path_and_extract("/Users/jonghyeokkim/Downloads/NMR/12-speciofoline.zip", True)
+    find_path_and_extract(sys.argv[1])
+    # find_path_and_extract("/Users/jonghyeokkim/Downloads/NMR/12-speciofoline.zip", True)
     # extract_jcamp(sys.argv[1])
