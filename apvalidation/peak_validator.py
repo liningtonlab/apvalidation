@@ -1,4 +1,5 @@
 import re
+import stat
 import statistics as stats
 import warnings
 
@@ -28,6 +29,7 @@ class WarnBadRange(Exception):
 
 class ErrorBadRange(Exception):
     pass
+
 
 class Validate:
 
@@ -292,5 +294,30 @@ class Convert:
                 output_list.append(value)
         return output_list
 
+    @staticmethod
+    def sort_list_desc(peak_list):
+        map_dict = {}
+        list_to_sort = []
+        for value in peak_list:
+            if type(value) is tuple:
+                map_dict[value[0]] = value
+                list_to_sort.append(value[0])
+            else:
+                map_dict[value] = value
+                list_to_sort.append(value)
+
+        list_to_sort.sort(reverse=True)
+
+        output_list = []
+        for number in list_to_sort:
+            output_list.append(map_dict[number])
+
+        return output_list
+
+    @staticmethod
+    def convert(peak_string):
+        peak_list = Convert.convert_to_float_list(peak_string=peak_string)
+        sorted_peak_list = Convert.sort_list_desc(peak_list=peak_list)
+        return sorted_peak_list
         
 
