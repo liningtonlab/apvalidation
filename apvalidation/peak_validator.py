@@ -139,16 +139,16 @@ class Validate:
         atom_query = rdqueries.AtomNumEqualsQueryAtom(atom_num)
         number_of_atoms_1 = len(mol.GetAtomsMatchingQuery(atom_query))
 
-        number_of_atoms_2 = 0
-        for atom in mol.GetAtoms():
-            if atom.GetSymbol() == atom_type:
-                number_of_atoms_2 += 1
+        # number_of_atoms_2 = 0
+        # for atom in mol.GetAtoms():
+        #     if atom.GetSymbol() == atom_type:
+        #         number_of_atoms_2 += 1
 
-        patt = Chem.MolFromSmarts(f"[{atom_type}]")
-        number_of_atoms_3 = len(mol.GetSubstructMatches(patt))
+        # patt = Chem.MolFromSmarts(f"[{atom_type}]")
+        # number_of_atoms_3 = len(mol.GetSubstructMatches(patt))
 
         # sanity check that all 3 methods of finding the number of atoms in the molecule are returning the same amount
-        assert number_of_atoms_1 == number_of_atoms_2 == number_of_atoms_3, "UnEqual number of atoms"
+        # assert number_of_atoms_1 == number_of_atoms_2 == number_of_atoms_3, "UnEqual number of atoms"
 
         if 0 < len(value_list) <= number_of_atoms_1:
             return True
