@@ -28,6 +28,8 @@ class WarnBadRange(Exception):
     pass
 
 class ErrorBadRange(Exception):
+    def __init__(self, bad_value):
+        self.bad_value = bad_value
     pass
 
 
@@ -172,24 +174,24 @@ class Validate:
                 split_value = [unchecked_values.append(float(re.sub("[ ()]", "", sub_str))) for sub_str in split_value]
             else:
                 unchecked_values.append(float(value))
-
+        print(unchecked_values)
         for value in unchecked_values:
             try:
                 if atom_type == "H":
                     if value < -2 or value > 20:
-                        raise ErrorBadRange
+                        raise ErrorBadRange(bad_value=value)
                     elif value < -0.5 or value > 14:
                         warnings.warn(f"Warning: {value} is out of typical bounds")
-            except ErrorBadRange:
-                return f"Error: {value} out of bounds"
+            except ErrorBadRange as exc:
+                raise exc
             try:
                 if atom_type == "C":
                     if value < -20 or value >250:
-                        raise ErrorBadRange
+                        raise ErrorBadRange(bad_value=value)
                     elif value < -10 or value >230:
                         warnings.warn(f"Warning: {value} is out of typical bounds")
-            except ErrorBadRange:
-                return f"Error: {value} out of bounds"
+            except ErrorBadRange as exc:
+                raise exc
         
         return "Valid"
         
@@ -266,13 +268,13 @@ class Validate:
 
         # Check the values to ensure they are real H or C values
         try:
-            output = Validate.check_value_ranges(H_list, "H")
-        except ErrorBadRange:
-            return output
+            Validate.check_value_ranges(H_list, "H")
+        except ErrorBadRange as exc:
+            return f"Error {exc.bad_value} is out of a normal H value range"
         try:
-            output = Validate.check_value_ranges(C_list, "C")
-        except ErrorBadRange:
-            return output
+            Validate.check_value_ranges(C_list, "C")
+        except ErrorBadRange as exc:
+            return f"Error {exc.bad_value} is out of a normal H value range"
 
         return "Both lists are valid"
 
