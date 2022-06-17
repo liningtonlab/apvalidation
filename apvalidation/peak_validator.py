@@ -186,9 +186,9 @@ class Validate:
                 raise exc
             try:
                 if atom_type == "C":
-                    if value < -20 or value >250:
+                    if value < 20 or value >250:
                         raise ErrorBadRange(bad_value=value)
-                    elif value < -10 or value >230:
+                    elif value < 10 or value >230:
                         warnings.warn(f"Warning: {value} is out of typical bounds")
             except ErrorBadRange as exc:
                 raise exc
