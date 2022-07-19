@@ -105,19 +105,19 @@ class MetaFinder:
     def _varian_validation(self, all_path_list: str, individual_folder_path: str):
         fid_path = self.key_file_finder(all_path_list, "fid", individual_folder_path)
         # assert fid_path, f"{individual_folder_path} : Fid file is missing"
-        if not fid_path : self.error_message.append(f"{individual_folder_path} : Fid file is missing")
+        if not fid_path : self.error_message.append(f"{individual_folder_path} : Fid file is missing or in an invalid directory location")
         
 
     def _bruker_validation(self, all_path_list: str, individual_folder_path: str):
         fid_path = self.key_file_finder(all_path_list, "fid", individual_folder_path)
         ser_path = self.key_file_finder(all_path_list, "ser", individual_folder_path)
         # assert fid_path+ser_path, f"{individual_folder_path} : Fid/Ser file is missing"
-        if not fid_path and not ser_path : self.error_message.append(f"{individual_folder_path} : Fid file is missing")
+        if not fid_path and not ser_path : self.error_message.append(f"{individual_folder_path} : Fid file is missing or in an invalid directory location")
 
     def _jcampdx_validation(self, all_path_list: str, individual_folder_path: str):
         jdx_path = self.key_file_finder(all_path_list, "jdx", individual_folder_path)
         # assert jdx_path, f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx file"
-        if not jdx_path : self.error_message.append(f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx files using the export function in JEOL Delta")
+        if not jdx_path : self.error_message.append(f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx files using the export function in JEOL Delta or MestreNova")
 
     def _vendor_not_found_error(self, all_path_list: str):
         self._invalid_file_detector(all_path_list, '.mnova', '.mnova is not currently supported. Please submit original raw NMR files.')
