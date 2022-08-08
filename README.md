@@ -3,8 +3,13 @@ This repository contains the scripts needed to ensure the quality of the zipped 
 
 #### WARNING: The main branch of this repo is a python package with a setup.py file to allow for pip installation. Changes to this branch could effect production versions of applications that depend on it.
 
+# Installation
+To install the apvalidation package into your own Python project, just use pip along with the git link to this project.
+```
+pip install @git+https://github.com/liningtonlab/apvalidation.git
+```
 
-## Functionality
+# Functionality
 The code in this repository has four main functionalities.
 1. Traverse the deposited NMR zip folder to determine the type of machine used in the experiments (Bruker, Varian, or JEOL) and the filetype of the data.
 2. Read the parameter files to extract information about the experiment.
@@ -13,8 +18,12 @@ The code in this repository has four main functionalities.
 
 The first two sections of this documentation will focus on the extraction of parameters from the data files.
 
-# Extracting Parameters from the Data (Sections 1&2)
+# Extracting Parameters from the Data
+This function uses functionality one and two from the four functionalities above.
+
 The high-level steps taken to extract this data is outlined in the diagram below.
+
+
 <img src="https://user-images.githubusercontent.com/55040326/183517545-1a7ce3ea-137b-4238-8488-650d1dfc5d67.png" />
 
 Each step in the above diagram will be covered in more detail below.
@@ -88,13 +97,23 @@ Each of these classes contain methods which are able to read and parse the corre
   parameter_dict = extract.Varian.read(filepath)
   desired_parameters = extract.Varian.find_params(parameter_dict)
 ```
+# Validating SMILES Strings
+When a SMILES string is submitted to the deposition site it must be checked for validity. 
+Validating SMILES and producing chemical structures is the third functionality that the apvalidation holds.
 
-#### extract.py Execution Flowchart
-The following chart shows the execution of the parameter extraction scripts from calling the read function to how all the helper functions contribute to find_params().
-To get a full view of the flowchart please download the image and view it locally.
-![text](https://github.com/liningtonlab/ap_validation/blob/main/NP%20Validation%20extract.py.png)
+The code to perform this function can be found in the [smiles_validation.py](https://github.com/liningtonlab/apvalidation/blob/main/apvalidation/smiles_validation.py) file. 
 
-## 3. Unzip files.
+The function contained in this file does both the validation and structure image creation at the same time. The inputs to this function are:
+
+validate_struct(smiles, img_path, asInchiKey=False):
+
+
+
+
+
+
+
+## Unzip files.
 extract_core.py
 
 extract_core_file function finds a necessary file in the submitted zip file and extracts them
