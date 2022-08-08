@@ -28,13 +28,15 @@ validator function append found error to error_message. If a new error is found,
 
 ## 2. Reading the Parameter Files.
 
-Once the parameter file is retrieved from the code in section (1.), some information from this file must be extracted. The experiment parameters that are needed from this file are the following.
+Once the parameter file is retrieved from the steps in [Section 1](#1-traversing-the-zip-files), some information from this file must be extracted. The experiment parameters that are needed from this file are the following.
 - experiment type
 - F2 nucleus
 - F1 nucleus
 - frequency
 - temperature (kelvin)
 - solvent
+
+<img src="https://user-images.githubusercontent.com/55040326/183517545-1a7ce3ea-137b-4238-8488-650d1dfc5d67.png" />
 
 ### User Methods
 The functions for retrieving these parameters can be found in the "extract.py" file under the "paramExtract/packages" folder. In this file you will notice three different classes; Varian, Bruker, and Jcampdx. These three classes reference to the three different types of machines that produce the NMR data. Since the machines produce different parameter files  we need different functions to deal with each type.
