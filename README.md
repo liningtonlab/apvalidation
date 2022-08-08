@@ -1,12 +1,14 @@
 # Article Pipeline Data Validation Scripts (ap_validation)
-This repository contains the scripts needed to ensure the quality of the zipped NMR data deposited into the Article Pipeline. 
+This repository contains the scripts needed to ensure the quality of the zipped NMR data deposited into the Article Pipeline.
+
+#### WARNING: The main branch of this repo is a python package with a setup.py file to allow for pip installation. Changes to this branch could effect production versions of applications that depend on it.
 
 ## Dependencies
 First and most importantly, these scripts will require an installation of the python package rdkit. This is important to note since rdkit's installation process is particularily complicated if you are not using an Anaconda environment.
 ## Functionality
 The code in this repository has three main functionalities.
-1. Traverse the deposited NMR zip folder to classify the machine used and retrieve the parameter files.
-2. Read the retrieved parameter files to extract any required information about the experiment.
+1. Traverse the deposited NMR zip folder to determine the type of machine used in the experiments (Bruker, Varian, or JEOL) and retrieve the parameter files.
+2. Read the retrieved parameter files to extract information about the experiment.
 3. Standardize and display the structures of the compounds using the smiles string submitted by the user.
 
 ## 1. Traversing the ZIP Files.

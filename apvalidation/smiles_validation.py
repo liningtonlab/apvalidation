@@ -1,6 +1,7 @@
 from rdkit import Chem
 from rdkit.Chem import Draw
 from apvalidation.smiles_to_inchikey import to_inchikey
+from rdkit.Chem import rdCoordGen
 
 
 def validate_struct(smiles, img_path, asInchiKey=False):
@@ -18,6 +19,7 @@ def validate_struct(smiles, img_path, asInchiKey=False):
 
     smiles = "".join(smiles.split())
     mol = Chem.MolFromSmiles(smiles)
+    rdCoordGen.AddCoords(mol)
     if mol is not None and asInchiKey == False:
         generated_img_path = f"{img_path}/{smiles}.png"
         print(f"Length of filepath: {len(generated_img_path)}")
