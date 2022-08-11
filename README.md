@@ -50,7 +50,7 @@ This section exists to deal with the need to support the JDX filetype.
 A JDX file is a nested xml-like filetype which uses tags to nest it's data. If you want to learn more about the JDX filetype you can read about it [here](http://www.jcamp-dx.org/).
 
 ### Where do JDX files come from?
-For the purpose of the deposition site we will be recieving JDX files from depositors who have either .mnova, or .jdf files. These are filetypes which CANNOT be taken by the depostion site but which CAN be exported as a JDX files to be processed that way instead.
+For the purpose of the deposition site we will be receiving JDX files from depositors who have either .mnova, or .jdf files. These are filetypes which CANNOT be taken by the deposition site but which CAN be exported as a JDX files to be processed that way instead.
 
 These files are to be exported to JDX using the [MestreNova Software](https://mestrelab.com/download/mnova/).
 
@@ -98,18 +98,38 @@ Each of these classes contain methods which are able to read and parse the corre
   desired_parameters = extract.Varian.find_params(parameter_dict)
 ```
 # Validating SMILES Strings
-When a SMILES string is submitted to the deposition site it must be checked for validity. 
-Validating SMILES and producing chemical structures is the third functionality that the apvalidation holds.
+When a SMILES string is submitted to the deposition site, it must be checked for validity. 
+Validating SMILES and producing images of those structures is the third functionality performed by apvalidation.
 
 The code to perform this function can be found in the [smiles_validation.py](https://github.com/liningtonlab/apvalidation/blob/main/apvalidation/smiles_validation.py) file. 
 
-The function contained in this file does both the validation and structure image creation at the same time. The inputs to this function are:
+The function validate_struct(), contained in this file does both the validation, and the structure image creation at the same time. The inputs to this function are:
 
 validate_struct(smiles, img_path, asInchiKey=False):
 
+- str smiles: The SMILES submitted by the depositor
+- str img_path: The path to the where the structure image should be saved after it is created.
+- bool asInchiKey: When True, the function saves the image with the InchiKey as the file name. The default uses the SMILES as the filename.
+
+Example Usage:
+
+```
+validate_struct(smiles="CC=C", img_path="./image_folder")
+
+# This ex. checks that CC=C is a valid SMILES and then saves the structure as
+# an image in the ./image_folder using SMILES as the image filename.
+```
+
+# Validation Peak Lists
+
+The final functionality implemented by apvalidation is the peak list validation. When a peak list is submitted to the deposition site, that list must be checked for the proper format.
+
+The [peak_validator.py](https://github.com/liningtonlab/apvalidation/blob/main/apvalidation/peak_validator.py) contains all the logic to validate these peak lists.
+
+Below you can see a diagram which leads through the different checks performed on a peak list before it is confirmed to be valid.
 
 
-
+<img src="https://user-images.githubusercontent.com/55040326/183711596-f9ff52e4-794e-4766-832e-f12db03967ad.png"/>
 
 
 
