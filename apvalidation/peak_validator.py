@@ -197,7 +197,7 @@ class Validate:
         
 
     @staticmethod
-    def validate(H_text_block, C_text_block, smiles):
+    def validate(H_text_block, C_text_block, smiles, solvent):
         """
             Check that the peak lists given check some basic validity checks before accepting them into the DB.
 
@@ -208,25 +208,27 @@ class Validate:
                     raise an Exception specifying the problem with the input.
         """
 
-        # Check that characters in the text block are valid 
+        # Check that characters in the text block are valid
+        if not solvent:
+            return ("No solvent provided", "Error")
         try:
             Validate.check_valid_characters(H_text_block)
         except InvalidCharacters:
-            return "Error Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+            return ("Error Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error")
         try:
             Validate.check_valid_characters(C_text_block)
         except InvalidCharacters:
-            return "Error Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+            return ("Error Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error")
 
         # Parse the text blocks into lists based on the seporators
         try:
             H_list = Validate.parse_text_to_list(H_text_block)
         except NoSplit:
-            return "Failed to split H list, please check your seporators."
+            return ("Failed to split H list, please check your seporators.", "Error")
         try:
             C_list = Validate.parse_text_to_list(C_text_block)
         except NoSplit:
-            return "Failed to split C list, please check your seporators."
+            return ("Failed to split C list, please check your seporators.", "Error")
         
         # Check if each element in the parsed lists are either floats or ranges
         try:
@@ -240,7 +242,7 @@ class Validate:
                         continue
                 raise InvalidValueType
         except InvalidValueType:
-            return f"Error: The following values in the H list are of invalid data type {error_value_list}"
+            return (f"Error: The following values in the H list are of invalid data type {error_value_list}", "Error")
         
         # Check the datatype for each of the entries in each list
         try:
@@ -254,29 +256,29 @@ class Validate:
                         continue
                 raise InvalidValueType
         except InvalidValueType:
-            return f"Error: The following values in the C list are of invalid data type {error_value_list}"
+            return (f"Error: The following values in the C list are of invalid data type {error_value_list}", "Error")
 
         # Check the number of atoms in each list do not exceed amount of atoms in struct
         try:
             Validate.check_number_atoms(H_list, "H", smiles)
         except InvalidAtomNumber:
-            return "Error: Invalid number of H atoms in the peak list"
+            return ("Error: Invalid number of H atoms in the peak list", "Error")
         try:
             Validate.check_number_atoms(C_list, "C", smiles)
         except InvalidAtomNumber:
-            return "Error: Invalid number of C atoms in the peak list"
+            return ("Error: Invalid number of C atoms in the peak list", "Error")
 
         # Check the values to ensure they are real H or C values
         try:
             Validate.check_value_ranges(H_list, "H")
         except ErrorBadRange as exc:
-            return f"Error {exc.bad_value} is out of a normal H value range"
+            return (f"Warning {exc.bad_value} is out of a normal H value range", "Warning")
         try:
             Validate.check_value_ranges(C_list, "C")
         except ErrorBadRange as exc:
-            return f"Error {exc.bad_value} is out of a normal C value range"
+            return (f"Warning {exc.bad_value} is out of a normal C value range", "Warning")
 
-        return "Both lists are valid"
+        return ("Both lists are valid", "No Errors")
 
 
 class Convert:
