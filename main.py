@@ -21,4 +21,4 @@ from apvalidation.peak_validator import Validate
 from apvalidation.extract import Varian
 
 input_file = "./procpar"
-Varian.replace_procpar_property(input_file, "go_id", 1, '""')
+Varian.remove_personal_info(input_file)

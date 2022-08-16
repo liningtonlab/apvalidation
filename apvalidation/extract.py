@@ -27,7 +27,7 @@ class Varian:
         param_dict_list = []
         for filepath in filepath_list:
             assert os.path.isfile(filepath)
-            Varian.remove_personal_info(filepath)
+            Varian.remove_personal_info(filepath=filepath)
             param_dict = ng.varian.read_procpar(filename=filepath)
             param_dict_list.append(param_dict)
         
@@ -75,6 +75,7 @@ class Varian:
         """
         Varian.replace_procpar_property(filepath, "go_id", 1, '""')
         Varian.replace_procpar_property(filepath, "emailaddr", 1, '""')
+        print("running remove personal info Varian")
     
 
     @staticmethod
