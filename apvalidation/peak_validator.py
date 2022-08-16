@@ -272,11 +272,11 @@ class Validate:
         try:
             Validate.check_value_ranges(H_list, "H")
         except ErrorBadRange as exc:
-            return (f"Warning {exc.bad_value} is out of a normal H value range", "Warning")
+            return (f"Warning: {exc.bad_value} is out of a normal H value range", "Warning")
         try:
             Validate.check_value_ranges(C_list, "C")
         except ErrorBadRange as exc:
-            return (f"Warning {exc.bad_value} is out of a normal C value range", "Warning")
+            return (f"Warning: {exc.bad_value} is out of a normal C value range", "Warning")
 
         return ("Both lists are valid", "No Errors")
 

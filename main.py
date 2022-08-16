@@ -14,6 +14,11 @@ from apvalidation.peak_validator import Validate
 #     print(f"find_paramoutput = {find_param_output}")
 
 
-result = Validate.validate("13.0, (13.5-13.9), 12.4 - 14.6, 10.0", "(11.5-15.2), 64.7", "CC", "D2O")
-print("result")
-print(result)
+# result = Validate.validate("13.0, (13.5-13.9), 12.4 - 14.6, 10.0", "(11.5-15.2), 64.7", "CC", "D2O")
+# print("result")
+# print(result)
+
+from apvalidation.extract import Varian
+
+input_file = "./procpar"
+Varian.replace_procpar_property(input_file, "go_id", 1, '""')

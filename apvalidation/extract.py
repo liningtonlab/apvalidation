@@ -3,8 +3,9 @@ import re
 import nmrglue as ng
 import pandas as pd
 import numpy as np
-
-
+import fileinput
+import sys
+import shutil
 
 class Varian:
     """
@@ -26,6 +27,7 @@ class Varian:
         param_dict_list = []
         for filepath in filepath_list:
             assert os.path.isfile(filepath)
+            Varian.remove_personal_info(filepath)
             param_dict = ng.varian.read_procpar(filename=filepath)
             param_dict_list.append(param_dict)
         
@@ -59,6 +61,66 @@ class Varian:
                        'temperature': exp_temp
                        }
         return pref_params
+
+
+    @staticmethod
+    def remove_personal_info(filepath):
+        """
+        Runs repalce_propcar_property on a list of fields known to contain
+        sensetive information in a propcar file. Replaces them with empty
+        strings in the file directly.
+
+        :param filepath: string formatted filepath to the propcar file
+        :return: None
+        """
+        Varian.replace_procpar_property(filepath, "go_id", 1, '""')
+        Varian.replace_procpar_property(filepath, "emailaddr", 1, '""')
+    
+
+    @staticmethod
+    def replace_procpar_property(filepath, tag, replace_index_after_tag, replacement_line):
+        """
+        Replaces specifed properties in a propcar filed with a provided string.
+
+        :param filepath: string formatted filepath to the propcar file
+        :param tag: string of the property to replace
+        :param replace_index_after_tag: the index of the specific element in the property
+        to replace
+        :param replacement_line: the string to replace the specified property with element with
+
+        :return: None
+        """
+        # Make copy of original file to preserve it if an error occurs
+        file_split = os.path.splitext(filepath)
+        copypath = f"{file_split[0]}_copy{file_split[1]}"
+        shutil.copy(filepath, copypath)
+
+        try:
+            # Run replacement on copy
+            replace = False
+            for line in fileinput.input(copypath, inplace=1):
+                leading_str = ""
+                if line.startswith("$$"):
+                    leading_str = f"$$ {str(replace_index_after_tag)}"
+                elif re.match("^[0-9 ]+\W", line):
+                    leading_str = str(replace_index_after_tag)
+
+                if replace is True and line.startswith(leading_str) and leading_str != "":
+                    replace = False
+                    line = f"{leading_str} {replacement_line}\n"
+                if tag in line:
+                    replace = True
+
+                sys.stdout.write(line) 
+        except:
+            os.remove(copypath)
+            return False
+        
+        os.remove(filepath)
+        os.rename(copypath, filepath)
+                
+        return True
+
 
     @staticmethod
     def find_temp(param_dict):
