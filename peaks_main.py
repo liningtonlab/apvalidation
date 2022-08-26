@@ -6,18 +6,18 @@ unicode_dashes = " - ־ ᠆ ‐ ‑ ‒ - – — ― ⁻ ₋ − ﹘ ﹣ －"
 def test_validate():
     smiles_string = "O=C1CCC[C@@]2([H])C(CCC[C@@]21[H])=O"
 
-    H_valid = "13.0, (13.5-13.9), 34.5, 67.3, 12.4 ₋ 14.6"
+    H_valid = "13.0, (13.5-13.9), 15.5, 15.3, 12.4 ₋ 14.6"
     H_invalid_characters = "1H NMR (CD3OD, 500 MHz) δ 1.03 (d, J = 7.0 Hz, 3H, H-8)"
     H_invalid_list_format = "13 (13.5-14.2) 34.5 67.3 12.4 ₋ 14.6"
     H_invalid_range = "13, (13.5 14.2), 34.5, 67.3, (12.4, 14.6)"
-    temp_invalid = 336
+    temp_invalid = 360
     freq_invalid = 1300
 
-    C_valid = "11, (11.5-15.2), 64.7, 76.3, 1.4 ₋ 19.6"
+    C_valid = "20, (20.5-25.2), 64.7, 76.3, 21.4 ₋ 22.6"
     C_invalid_characters = "1H NMR (CD3OD, 500 MHz) δ 1.03 (d, J = 7.0 Hz, 3H, H-8)"
     C_invalid_list_format = "11 (11.5-15.2) 64.7 76.3 1.4 ₋ 19.6"
     C_invalid_range = "11, (11.5,15.2), 64.7, 76.3, 1.4 ₋ 19.6"
-    temp_valid = 350
+    temp_valid = 300
     freq_valid = 800
 
     output_valid = peaks.Validate.validate(
@@ -25,8 +25,8 @@ def test_validate():
         C_text_block = C_valid, 
         smiles = smiles_string,
         solvent = "test_solvent",
-        frequency = temp_valid,
-        temperature = freq_valid,
+        frequency = freq_valid,
+        temperature = temp_valid,
         reference_residual_solvent = "test_reference_residual_solvent"
     )
     print(f"Valid: {output_valid}")
@@ -35,8 +35,8 @@ def test_validate():
         C_text_block = C_invalid_characters, 
         smiles = smiles_string,
         solvent = "test_solvent",
-        frequency = temp_valid,
-        temperature = freq_valid,
+        frequency = freq_invalid,
+        temperature = temp_invalid,
         reference_residual_solvent = "test_reference_residual_solvent",
     )
     print(f"Invalid Characters: {output_invalid_characters}")
