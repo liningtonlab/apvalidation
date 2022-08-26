@@ -158,7 +158,7 @@ class Validate:
             raise InvalidAtomNumber
 
     @staticmethod
-    def check_value_ranges(value_list, atom_type):
+    def check_value_ranges_C_H(value_list, atom_type):
         """
             Ensure the numerical range for each value makes sense for the type of atom. Ex. H > -2 etc..
 
@@ -194,10 +194,39 @@ class Validate:
                 raise exc
         
         return "Valid"
+
+    @staticmethod
+    def check_value_ranges_other(value, feature):
+        """
+            Ensure the numerical value for the specified feature (temperature, frequency)
+
+            :param value: feature value.
+            :param feature: the feature to validate ("temperature" or "frequency")
+            :return: If valid input, return True. If invalid input, return error message.
+        """
+        if feature == "temperature":
+            try:
+                if value < 200 or value > 400:
+                    raise ErrorBadRange(bad_value=value)
+                elif value < 295 or value > 335:
+                    warnings.warn(f"Warning: {value} is out of typical bounds")
+            except ErrorBadRange as exc:
+                raise exc
+
+        elif feature == "frequency":
+            try:
+                if value < 50 or value > 1500:
+                    raise ErrorBadRange(bad_value=value)
+                elif value < 100 or value > 1200:
+                    warnings.warn(f"Warning: {value} is out of typical bounds")
+            except ErrorBadRange as exc:
+                raise exc
+        
+        return "Valid"
         
 
     @staticmethod
-    def validate(H_text_block, C_text_block, smiles, solvent):
+    def validate(H_text_block, C_text_block, smiles, solvent, frequency, temperature, reference_residual_solvent):
         """
             Check that the peak lists given check some basic validity checks before accepting them into the DB.
 
@@ -211,6 +240,12 @@ class Validate:
         # Check that characters in the text block are valid
         if not solvent:
             return ("No solvent provided", "Error")
+        if not frequency:
+            return ("No frequency provided", "Error")
+        if not temperature:
+            return ("No temperature provided", "Error")
+        if not reference_residual_solvent:
+            return ("No Reference Residual Solvent provided", "Error")
         try:
             Validate.check_valid_characters(H_text_block)
         except InvalidCharacters:
@@ -269,14 +304,29 @@ class Validate:
             return ("Error: Invalid number of C atoms in the peak list", "Error")
 
         # Check the values to ensure they are real H or C values
+        warning_message = ["Warning:", "Warning"]
         try:
-            Validate.check_value_ranges(H_list, "H")
+            Validate.check_value_ranges_C_H(H_list, "H")
         except ErrorBadRange as exc:
-            return (f"Warning: {exc.bad_value} is out of a normal H value range", "Warning")
+            # return (f"Warning: {exc.bad_value} is out of a normal H value range", "Warning")
+            warning_message[0] += " {exc.bad_value} is out of a normal H value range."
         try:
-            Validate.check_value_ranges(C_list, "C")
+            Validate.check_value_ranges_C_H(C_list, "C")
         except ErrorBadRange as exc:
-            return (f"Warning: {exc.bad_value} is out of a normal C value range", "Warning")
+            # return (f"Warning: {exc.bad_value} is out of a normal C value range", "Warning")
+            warning_message[0] += " {exc.bad_value} is out of a normal C value range."
+        try:
+            Validate.check_value_ranges_other(temperature, "temperature")
+        except ErrorBadRange as exc:
+             warning_message[0] += " {exc.bad_value} is out of a normal temperature value range."
+        try:
+            Validate.check_value_ranges_other(frequency, "frequency")
+        except ErrorBadRange as exc:
+            # return (f"Warning: {exc.bad_value} is out of a normal C value range", "Warning")
+            warning_message[0] += " {exc.bad_value} is out of a normal frequency value range."
+
+        if warning_message[0]:
+            return warning_message
 
         return ("Both lists are valid", "No Errors")
 

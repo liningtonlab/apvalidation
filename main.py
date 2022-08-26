@@ -2,6 +2,7 @@ import os
 from apvalidation.extract import Jcampdx_Handler
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 from apvalidation.peak_validator import Validate
+from apvalidation.file_validation import find_path_and_extract
 
 # input_file = "test_files/MNOVA_jdx/Combined JEOL jdx/combinedJEOLpart2.jdx"
 # save_location = "test_files/testing_save_singles/test_folder_6"
@@ -18,7 +19,9 @@ from apvalidation.peak_validator import Validate
 # print("result")
 # print(result)
 
-from apvalidation.extract import Varian
+# from apvalidation.extract import Varian
 
-input_file = "./procpar"
-Varian.remove_personal_info(input_file)
+# input_file = "./procpar"
+# Varian.remove_personal_info(input_file)
+
+find_path_and_extract("./Borrelidin_B_NMR_RAW.zip", is_second_time = False)
