@@ -326,7 +326,7 @@ class Validate:
             warning_message[0] += " {exc.bad_value} is out of a normal frequency value range."
 
         if warning_message[0]:
-            return warning_message
+            return tuple(warning_message)
 
         return ("Both lists are valid", "No Errors")
 
