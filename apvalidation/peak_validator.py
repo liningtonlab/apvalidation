@@ -319,12 +319,12 @@ class Validate:
         try:
             Validate.check_value_ranges_other(temperature, "temperature")
         except ErrorBadRange as exc:
-             warning_message[0] += f" {exc.bad_value} is out of a normal temperature value range."
+             warning_message[0] += f" {exc.bad_value} K is out of a normal temperature value range."
         try:
             Validate.check_value_ranges_other(frequency, "frequency")
         except ErrorBadRange as exc:
             # return (f"Warning: {exc.bad_value} is out of a normal C value range", "Warning")
-            warning_message[0] += f" {exc.bad_value} is out of a normal frequency value range."
+            warning_message[0] += f" {exc.bad_value} MHz is out of a normal frequency value range."
 
         if warning_message[0] != "Warning:":
             return tuple(warning_message)
