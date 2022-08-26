@@ -176,22 +176,22 @@ class Validate:
                 unchecked_values.append(float(value))
         print(unchecked_values)
         for value in unchecked_values:
-            try:
-                if atom_type == "H":
+            if atom_type == "H":
+                try:
                     if value < -2 or value > 20:
                         raise ErrorBadRange(bad_value=value)
                     elif value < -0.5 or value > 14:
                         warnings.warn(f"Warning: {value} is out of typical bounds")
-            except ErrorBadRange as exc:
-                raise exc
-            try:
-                if atom_type == "C":
+                except ErrorBadRange as exc:
+                    raise exc
+            if atom_type == "C":
+                try:
                     if value < 10 or value >230:
                         raise ErrorBadRange(bad_value=value)
                     elif value < 20 or value >250:
                         warnings.warn(f"Warning: {value} is out of typical bounds")
-            except ErrorBadRange as exc:
-                raise exc
+                except ErrorBadRange as exc:
+                    raise exc
         
         return "Valid"
 
@@ -215,9 +215,9 @@ class Validate:
 
         elif feature == "frequency":
             try:
-                if value < 50 or value > 1500:
+                if value < 50 or value > 1700:
                     raise ErrorBadRange(bad_value=value)
-                elif value < 100 or value > 1200:
+                elif value < 100 or value > 1400:
                     warnings.warn(f"Warning: {value} is out of typical bounds")
             except ErrorBadRange as exc:
                 raise exc
@@ -305,25 +305,26 @@ class Validate:
 
         # Check the values to ensure they are real H or C values
         warning_message = ["Warning:", "Warning"]
+        
         try:
             Validate.check_value_ranges_C_H(H_list, "H")
         except ErrorBadRange as exc:
             # return (f"Warning: {exc.bad_value} is out of a normal H value range", "Warning")
-            warning_message[0] += " {exc.bad_value} is out of a normal H value range."
+            warning_message[0] += f" {exc.bad_value} is out of a normal H value range."
         try:
             Validate.check_value_ranges_C_H(C_list, "C")
         except ErrorBadRange as exc:
             # return (f"Warning: {exc.bad_value} is out of a normal C value range", "Warning")
-            warning_message[0] += " {exc.bad_value} is out of a normal C value range."
+            warning_message[0] += f" {exc.bad_value} is out of a normal C value range."
         try:
             Validate.check_value_ranges_other(temperature, "temperature")
         except ErrorBadRange as exc:
-             warning_message[0] += " {exc.bad_value} is out of a normal temperature value range."
+             warning_message[0] += f" {exc.bad_value} is out of a normal temperature value range."
         try:
             Validate.check_value_ranges_other(frequency, "frequency")
         except ErrorBadRange as exc:
             # return (f"Warning: {exc.bad_value} is out of a normal C value range", "Warning")
-            warning_message[0] += " {exc.bad_value} is out of a normal frequency value range."
+            warning_message[0] += f" {exc.bad_value} is out of a normal frequency value range."
 
         if warning_message[0] != "Warning:":
             return tuple(warning_message)
