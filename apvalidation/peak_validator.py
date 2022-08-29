@@ -226,7 +226,7 @@ class Validate:
         
 
     @staticmethod
-    def validate(H_text_block, C_text_block, smiles, solvent, frequency, temperature, reference_residual_solvent):
+    def validate(H_text_block, C_text_block, smiles, solvent, frequency, temperature, reference):
         """
             Check that the peak lists given check some basic validity checks before accepting them into the DB.
 
@@ -244,8 +244,8 @@ class Validate:
             return ("No frequency provided", "Error")
         if not temperature:
             return ("No temperature provided", "Error")
-        if not reference_residual_solvent:
-            return ("No Reference Residual Solvent provided", "Error")
+        if not reference:
+            return ("No reference provided", "Error")
         try:
             Validate.check_valid_characters(H_text_block)
         except InvalidCharacters:

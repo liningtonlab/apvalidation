@@ -29,7 +29,7 @@ def test_validate():
         solvent = "test_solvent",
         frequency = freq_valid,
         temperature = temp_valid,
-        reference_residual_solvent = "test_reference_residual_solvent"
+        reference = "test_reference"
     )
     print(f"Valid: {output_valid}")
     output_warning_ranges = peaks.Validate.validate(
@@ -39,7 +39,7 @@ def test_validate():
         solvent = "test_solvent",
         frequency = freq_warning,
         temperature = temp_warning,
-        reference_residual_solvent = "test_reference_residual_solvent",
+        reference = "test_reference",
     )
     print(f"Warning Ranges: {output_warning_ranges}")
     output_invalid_characters = peaks.Validate.validate(
@@ -49,7 +49,7 @@ def test_validate():
         solvent = "test_solvent",
         frequency = freq_warning,
         temperature = temp_warning,
-        reference_residual_solvent = "test_reference_residual_solvent",
+        reference = "test_reference",
     )
     print(f"Invalid Characters: {output_invalid_characters}")
     output_invalid_list_format = peaks.Validate.validate(
@@ -59,7 +59,7 @@ def test_validate():
         solvent = "test_solvent",
         frequency = temp_valid,
         temperature = freq_valid,
-        reference_residual_solvent = "test_reference_residual_solvent",
+        reference = "test_reference",
     )
     print(f"Invalid List: {output_invalid_list_format}")
     output_invalid_range = peaks.Validate.validate(
@@ -69,7 +69,7 @@ def test_validate():
         solvent = "test_solvent",
         frequency = temp_valid,
         temperature = freq_valid,
-        reference_residual_solvent = "test_reference_residual_solvent",
+        reference = "test_reference",
     )
     print(f"Invalid Range: {output_invalid_range}")
 
