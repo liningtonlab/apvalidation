@@ -11,14 +11,18 @@ def test_validate():
     H_invalid_list_format = "13 (13.5-14.2) 34.5 67.3 12.4 ₋ 14.6"
     H_warning_range = "40, (13.5-13.9), 15.5, 15.3, 12.4 ₋ 14.6"
     H_invalid_range = "13, (13.5 14.2), 34.5, 67.3, (12.4, 14.6)"
+    H_invalid_number = "10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10"
     temp_warning = 360
     freq_warning = 1500
+    temp_error = -20
+    freq_error = -20
 
     C_valid = "20, (20.5-25.2), 64.7, 76.3, 21.4 ₋ 22.6"
     C_invalid_characters = "1H NMR (CD3OD, 500 MHz) δ 1.03 (d, J = 7.0 Hz, 3H, H-8)"
     C_invalid_list_format = "11 (11.5-15.2) 64.7 76.3 1.4 ₋ 19.6"
     C_warning_range = "15, (20.5-25.2), 64.7, 76.3, 21.4 ₋ 22.6"
     C_invalid_range = "11, (11.5,15.2), 64.7, 76.3, 1.4 ₋ 19.6"
+    
     temp_valid = 300
     freq_valid = 800
 
@@ -34,6 +38,18 @@ def test_validate():
         reference = "test_reference"
     )
     print(f"Valid: {output_valid}")
+    invalid_number = peaks.Validate.validate(
+        H_text_block = H_invalid_number,
+        C_text_block = C_valid, 
+        smiles = smiles_string,
+        solvent = "test_solvent",
+        h_frequency = freq_valid,
+        h_temperature = temp_valid,
+        c_frequency = freq_valid,
+        c_temperature = temp_valid,
+        reference = "test_reference"
+    )
+    print(f"Invalid Number of H atoms: {invalid_number}")
     output_warning_ranges = peaks.Validate.validate(
         H_text_block = H_warning_range,
         C_text_block = C_warning_range, 
@@ -57,6 +73,18 @@ def test_validate():
         c_temperature = temp_warning,
         reference = "test_reference",
     )
+    invalid_temp_freq = peaks.Validate.validate(
+        H_text_block = H_valid,
+        C_text_block = C_valid, 
+        smiles = smiles_string,
+        solvent = "test_solvent",
+        h_frequency = freq_valid,
+        h_temperature = temp_error,
+        c_frequency = freq_valid,
+        c_temperature = temp_error,
+        reference = "test_reference"
+    )
+    print(f"Invalid Temp Freq: {invalid_temp_freq}")
     print(f"Invalid Characters: {output_invalid_characters}")
     output_invalid_list_format = peaks.Validate.validate(
         H_text_block = H_invalid_list_format,

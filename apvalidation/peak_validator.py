@@ -25,10 +25,14 @@ class InvalidAtomNumber(Exception):
     pass
 
 class WarnBadRange(Exception):
+    def __init__(self, bad_value):
+        self.error_type = "warning"
+        self.bad_value = bad_value
     pass
 
 class ErrorBadRange(Exception):
     def __init__(self, bad_value):
+        self.error_type = "error"
         self.bad_value = bad_value
     pass
 
@@ -181,7 +185,8 @@ class Validate:
                     if value < -2 or value > 20:
                         raise ErrorBadRange(bad_value=value)
                     elif value < -0.5 or value > 14:
-                        warnings.warn(f"Warning: {value} is out of typical bounds")
+                        raise WarnBadRange(bad_value=value)
+                        # warnings.warn(f"Warning: {value} is out of typical bounds")
                 except ErrorBadRange as exc:
                     raise exc
             if atom_type == "C":
@@ -189,7 +194,8 @@ class Validate:
                     if value < 10 or value >230:
                         raise ErrorBadRange(bad_value=value)
                     elif value < 20 or value >250:
-                        warnings.warn(f"Warning: {value} is out of typical bounds")
+                        raise WarnBadRange(bad_value=value)
+                        # warnings.warn(f"Warning: {value} is out of typical bounds")
                 except ErrorBadRange as exc:
                     raise exc
         
@@ -209,7 +215,8 @@ class Validate:
                 if value < 200 or value > 400:
                     raise ErrorBadRange(bad_value=value)
                 elif value < 295 or value > 335:
-                    warnings.warn(f"Warning: {value} is out of typical bounds")
+                    raise WarnBadRange(bad_value=value)
+                    # warnings.warn(f"Warning: {value} is out of typical bounds")
             except ErrorBadRange as exc:
                 raise exc
 
@@ -218,7 +225,8 @@ class Validate:
                 if value < 50 or value > 1700:
                     raise ErrorBadRange(bad_value=value)
                 elif value < 100 or value > 1400:
-                    warnings.warn(f"Warning: {value} is out of typical bounds")
+                    raise WarnBadRange(bad_value=value)
+                    # warnings.warn(f"Warning: {value} is out of typical bounds")
             except ErrorBadRange as exc:
                 raise exc
         
@@ -322,28 +330,51 @@ class Validate:
         
         try:
             Validate.check_value_ranges_C_H(H_list, "H")
-        except ErrorBadRange as exc:
-            warning_message[0] += f" {exc.bad_value} is out of a normal H value range."
+        except (ErrorBadRange, WarnBadRange) as exc:
+            if exc.error_type == "error":
+                return ("Error: Invalid number of H atoms in the peak list", "Error")
+            elif exc.error_type == "warning":
+                warning_message[0] += f"\n{exc.bad_value} is out of a normal H value range."
+
         try:
             Validate.check_value_ranges_C_H(C_list, "C")
-        except ErrorBadRange as exc:
-            warning_message[0] += f" {exc.bad_value} is out of a normal C value range."
+        except (ErrorBadRange, WarnBadRange) as exc:
+            if exc.error_type == "error":
+                return ("Error: Invalid number of C atoms in the peak list", "Error")
+            elif exc.error_type == "warning":
+                warning_message[0] += f"\n{exc.bad_value} is out of a normal C value range."
+        
         try:
             Validate.check_value_ranges_other(h_temperature, "temperature")
-        except ErrorBadRange as exc:
-             warning_message[0] += f" {exc.bad_value} K is out of a normal temperature value range."
+        except (ErrorBadRange, WarnBadRange) as exc:
+            if exc.error_type == "error":
+                return (f"Error: Hydrogen Temperature value {exc.bad_value} K is out of the accepted value range", "Error")
+            elif exc.error_type == "warning":
+                warning_message[0] += f"Hydrogen Temperature \n-{exc.bad_value} K is out of the expected temperature value range."
+        
         try:
             Validate.check_value_ranges_other(c_temperature, "temperature")
-        except ErrorBadRange as exc:
-             warning_message[0] += f" {exc.bad_value} K is out of a normal temperature value range."
+        except (ErrorBadRange, WarnBadRange) as exc:
+            if exc.error_type == "error":
+                return (f"Error: Carbon Temperature value {exc.bad_value} K is out of the accepted value range", "Error")
+            elif exc.error_type == "warning":
+                warning_message[0] += f"Carbon Temperature \n-{exc.bad_value} K is out of the expected temperature value range."
+        
         try:
             Validate.check_value_ranges_other(h_frequency, "frequency")
-        except ErrorBadRange as exc:
-            warning_message[0] += f" {exc.bad_value} MHz is out of a normal frequency value range."
+        except (ErrorBadRange, WarnBadRange) as exc:
+            if exc.error_type == "error":
+                return (f"Error: Hydrogen Frequency value {exc.bad_value} MHz is out of the accepted value range", "Error")
+            elif exc.error_type == "warning":
+                warning_message[0] += f"Hydrogen Frequency \n-{exc.bad_value} MHz is out of a the expected frequency value range."
+        
         try:
             Validate.check_value_ranges_other(c_frequency, "frequency")
-        except ErrorBadRange as exc:
-            warning_message[0] += f" {exc.bad_value} MHz is out of a normal frequency value range."
+        except (ErrorBadRange, WarnBadRange) as exc:
+            if exc.error_type == "error":
+                return (f"Error: Carbon Frequency value {exc.bad_value} MHz is out of the accepted value range", "Error")
+            elif exc.error_type == "warning":
+                warning_message[0] += f"Carbon Frequency \n-{exc.bad_value} MHz is out of a the expected frequency value range."
 
         if warning_message[0] != "Warning:":
             return tuple(warning_message)
