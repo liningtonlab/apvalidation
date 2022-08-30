@@ -27,8 +27,10 @@ def test_validate():
         C_text_block = C_valid, 
         smiles = smiles_string,
         solvent = "test_solvent",
-        frequency = freq_valid,
-        temperature = temp_valid,
+        h_frequency = freq_valid,
+        h_temperature = temp_valid,
+        c_frequency = freq_valid,
+        c_temperature = temp_valid,
         reference = "test_reference"
     )
     print(f"Valid: {output_valid}")
@@ -37,8 +39,10 @@ def test_validate():
         C_text_block = C_warning_range, 
         smiles = smiles_string,
         solvent = "test_solvent",
-        frequency = freq_warning,
-        temperature = temp_warning,
+        h_frequency = freq_warning,
+        h_temperature = temp_warning,
+        c_frequency = freq_warning,
+        c_temperature = temp_warning,
         reference = "test_reference",
     )
     print(f"Warning Ranges: {output_warning_ranges}")
@@ -47,8 +51,10 @@ def test_validate():
         C_text_block = C_invalid_range, 
         smiles = smiles_string,
         solvent = "test_solvent",
-        frequency = freq_warning,
-        temperature = temp_warning,
+        h_frequency = freq_warning,
+        h_temperature = temp_warning,
+        c_frequency = freq_warning,
+        c_temperature = temp_warning,
         reference = "test_reference",
     )
     print(f"Invalid Characters: {output_invalid_characters}")
@@ -57,8 +63,10 @@ def test_validate():
         C_text_block = C_invalid_list_format, 
         smiles = smiles_string,
         solvent = "test_solvent",
-        frequency = temp_valid,
-        temperature = freq_valid,
+        h_frequency = temp_valid,
+        h_temperature = freq_valid,
+        c_frequency = temp_valid,
+        c_temperature = freq_valid,
         reference = "test_reference",
     )
     print(f"Invalid List: {output_invalid_list_format}")
@@ -67,8 +75,10 @@ def test_validate():
         C_text_block = C_invalid_range, 
         smiles = smiles_string,
         solvent = "test_solvent",
-        frequency = temp_valid,
-        temperature = freq_valid,
+        h_frequency = temp_valid,
+        h_temperature = freq_valid,
+        c_frequency = temp_valid,
+        c_temperature = freq_valid,
         reference = "test_reference",
     )
     print(f"Invalid Range: {output_invalid_range}")

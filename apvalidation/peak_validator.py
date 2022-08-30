@@ -226,7 +226,17 @@ class Validate:
         
 
     @staticmethod
-    def validate(H_text_block, C_text_block, smiles, solvent, frequency, temperature, reference):
+    def validate(
+        H_text_block,
+        C_text_block,
+        smiles,
+        solvent,
+        h_frequency,
+        h_temperature,
+        c_frequency,
+        c_temperature,
+        reference
+    ):
         """
             Check that the peak lists given check some basic validity checks before accepting them into the DB.
 
@@ -240,10 +250,14 @@ class Validate:
         # Check that characters in the text block are valid
         if not solvent:
             return ("No solvent provided", "Error")
-        if not frequency:
-            return ("No frequency provided", "Error")
-        if not temperature:
-            return ("No temperature provided", "Error")
+        if not h_frequency:
+            return ("No hydrogen frequency provided", "Error")
+        if not h_temperature:
+            return ("No hydrogen temperature provided", "Error")
+        if not c_frequency:
+            return ("No carbon frequency provided", "Error")
+        if not c_temperature:
+            return ("No carbon temperature provided", "Error")
         if not reference:
             return ("No reference provided", "Error")
         try:
@@ -309,21 +323,26 @@ class Validate:
         try:
             Validate.check_value_ranges_C_H(H_list, "H")
         except ErrorBadRange as exc:
-            # return (f"Warning: {exc.bad_value} is out of a normal H value range", "Warning")
             warning_message[0] += f" {exc.bad_value} is out of a normal H value range."
         try:
             Validate.check_value_ranges_C_H(C_list, "C")
         except ErrorBadRange as exc:
-            # return (f"Warning: {exc.bad_value} is out of a normal C value range", "Warning")
             warning_message[0] += f" {exc.bad_value} is out of a normal C value range."
         try:
-            Validate.check_value_ranges_other(temperature, "temperature")
+            Validate.check_value_ranges_other(h_temperature, "temperature")
         except ErrorBadRange as exc:
              warning_message[0] += f" {exc.bad_value} K is out of a normal temperature value range."
         try:
-            Validate.check_value_ranges_other(frequency, "frequency")
+            Validate.check_value_ranges_other(c_temperature, "temperature")
         except ErrorBadRange as exc:
-            # return (f"Warning: {exc.bad_value} is out of a normal C value range", "Warning")
+             warning_message[0] += f" {exc.bad_value} K is out of a normal temperature value range."
+        try:
+            Validate.check_value_ranges_other(h_frequency, "frequency")
+        except ErrorBadRange as exc:
+            warning_message[0] += f" {exc.bad_value} MHz is out of a normal frequency value range."
+        try:
+            Validate.check_value_ranges_other(c_frequency, "frequency")
+        except ErrorBadRange as exc:
             warning_message[0] += f" {exc.bad_value} MHz is out of a normal frequency value range."
 
         if warning_message[0] != "Warning:":
