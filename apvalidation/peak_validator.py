@@ -342,7 +342,7 @@ class Validate:
             if exc.error_type == "error":
                 return ("Error: Invalid number of C atoms in the peak list", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f"\n{exc.bad_value} is out of a normal C value range."
+                warning_message[0] += f" \n{exc.bad_value} is out of a normal C value range."
         
         try:
             Validate.check_value_ranges_other(h_temperature, "temperature")
@@ -350,7 +350,7 @@ class Validate:
             if exc.error_type == "error":
                 return (f"Error: Hydrogen Temperature value {exc.bad_value} K is out of the accepted value range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f"Hydrogen Temperature \n-{exc.bad_value} K is out of the expected temperature value range."
+                warning_message[0] += f" \nHydrogen Temperature {exc.bad_value} K is out of the expected temperature value range."
         
         try:
             Validate.check_value_ranges_other(c_temperature, "temperature")
@@ -358,7 +358,7 @@ class Validate:
             if exc.error_type == "error":
                 return (f"Error: Carbon Temperature value {exc.bad_value} K is out of the accepted value range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f"Carbon Temperature \n-{exc.bad_value} K is out of the expected temperature value range."
+                warning_message[0] += f" \nCarbon Temperature {exc.bad_value} K is out of the expected temperature value range."
         
         try:
             Validate.check_value_ranges_other(h_frequency, "frequency")
@@ -366,7 +366,7 @@ class Validate:
             if exc.error_type == "error":
                 return (f"Error: Hydrogen Frequency value {exc.bad_value} MHz is out of the accepted value range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f"Hydrogen Frequency \n-{exc.bad_value} MHz is out of a the expected frequency value range."
+                warning_message[0] += f" \nHydrogen Frequency {exc.bad_value} MHz is out of a the expected frequency value range."
         
         try:
             Validate.check_value_ranges_other(c_frequency, "frequency")
@@ -374,7 +374,7 @@ class Validate:
             if exc.error_type == "error":
                 return (f"Error: Carbon Frequency value {exc.bad_value} MHz is out of the accepted value range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f"Carbon Frequency \n-{exc.bad_value} MHz is out of a the expected frequency value range."
+                warning_message[0] += f" \nCarbon Frequency {exc.bad_value} MHz is out of a the expected frequency value range."
 
         if warning_message[0] != "Warning:":
             return tuple(warning_message)
