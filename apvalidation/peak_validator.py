@@ -343,7 +343,7 @@ class Validate:
             if exc.error_type == "error":
                 return (f"Hydrogen peak value(s) {exc.bad_value} out of the accepted range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f"\nHydrogen peak value(s) {exc.bad_value} out of a normal H value range."
+                warning_message[0] += f"Hydrogen peak value(s) {exc.bad_value} out of the expected H value range.\n"
 
         try:
             Validate.check_value_ranges_C_H(C_list, "C")
@@ -351,7 +351,7 @@ class Validate:
             if exc.error_type == "error":
                 return (f"Carbon peak value(s) {exc.bad_value} out of the accepted range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f"\nCarbon peak value(s) {exc.bad_value} out of a normal C value range."
+                warning_message[0] += f"Carbon peak value(s) {exc.bad_value} out of the expected C value range.\n"
         
         try:
             Validate.check_value_ranges_other(h_temperature, "temperature")
@@ -359,7 +359,7 @@ class Validate:
             if exc.error_type == "error":
                 return (f"Hydrogen Temperature value {exc.bad_value} K is out of the accepted range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f"\nHydrogen Temperature {exc.bad_value} K is out of the expected temperature value range."
+                warning_message[0] += f"Hydrogen Temperature {exc.bad_value} K is out of the expected temperature value range.\n"
         
         try:
             Validate.check_value_ranges_other(c_temperature, "temperature")
@@ -367,7 +367,7 @@ class Validate:
             if exc.error_type == "error":
                 return (f"Carbon Temperature value {exc.bad_value} K is out of the accepted range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f"\nCarbon Temperature {exc.bad_value} K is out of the expected temperature value range."
+                warning_message[0] += f"Carbon Temperature {exc.bad_value} K is out of the expected temperature value range.\n"
         
         try:
             Validate.check_value_ranges_other(h_frequency, "frequency")
@@ -375,7 +375,7 @@ class Validate:
             if exc.error_type == "error":
                 return (f"Hydrogen Frequency value {exc.bad_value} MHz is out of the accepted range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f"\nHydrogen Frequency {exc.bad_value} MHz is out of a the expected frequency value range."
+                warning_message[0] += f"Hydrogen Frequency {exc.bad_value} MHz is out of a the expected frequency value range.\n"
         
         try:
             Validate.check_value_ranges_other(c_frequency, "frequency")
@@ -383,9 +383,10 @@ class Validate:
             if exc.error_type == "error":
                 return (f"Carbon Frequency value {exc.bad_value} MHz is out of the accepted range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f"\nCarbon Frequency {exc.bad_value} MHz is out of a the expected frequency value range."
+                warning_message[0] += f"Carbon Frequency {exc.bad_value} MHz is out of a the expected frequency value range.\n"
 
-        if warning_message[0] != "Warning:":
+        if warning_message[0]:
+            warning_message[0] = warning_message[0].rsplit('\n', 1)[0]
             return tuple(warning_message)
 
         return ("Both lists are valid", "No Errors")
