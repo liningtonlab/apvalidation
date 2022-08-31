@@ -197,9 +197,11 @@ class Validate:
             if atom_type == "C":
                 try:
                     if value < 10 or value >230:
-                        raise ErrorBadRange(bad_value=value)
+                        has_error = True
+                        error_values.append(value)
                     elif value < 20 or value >250:
-                        raise WarnBadRange(bad_value=value)
+                        has_warning = True
+                        warning_values.append(value)
                 except ErrorBadRange as exc:
                     raise exc
         
@@ -225,7 +227,6 @@ class Validate:
                     raise ErrorBadRange(bad_value=value)
                 elif value < 260 or value > 335:
                     raise WarnBadRange(bad_value=value)
-                    # warnings.warn(f"Warning: {value} is out of typical bounds")
             except ErrorBadRange as exc:
                 raise exc
 
@@ -235,7 +236,6 @@ class Validate:
                     raise ErrorBadRange(bad_value=value)
                 elif value < 100 or value > 1400:
                     raise WarnBadRange(bad_value=value)
-                    # warnings.warn(f"Warning: {value} is out of typical bounds")
             except ErrorBadRange as exc:
                 raise exc
         
