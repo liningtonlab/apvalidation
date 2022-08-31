@@ -178,15 +178,20 @@ class Validate:
                 split_value = [unchecked_values.append(float(re.sub("[ ()]", "", sub_str))) for sub_str in split_value]
             else:
                 unchecked_values.append(float(value))
-        print(unchecked_values)
+
+        error_values = []
+        warning_values = []
+        has_error = False
+        has_warning = False
         for value in unchecked_values:
             if atom_type == "H":
                 try:
                     if value < -2 or value > 20:
-                        raise ErrorBadRange(bad_value=value)
+                        has_error = True
+                        error_values.append(value)
                     elif value < -0.5 or value > 14:
-                        raise WarnBadRange(bad_value=value)
-                        # warnings.warn(f"Warning: {value} is out of typical bounds")
+                        has_warning = True
+                        warning_values.append(value)
                 except ErrorBadRange as exc:
                     raise exc
             if atom_type == "C":
@@ -195,10 +200,14 @@ class Validate:
                         raise ErrorBadRange(bad_value=value)
                     elif value < 20 or value >250:
                         raise WarnBadRange(bad_value=value)
-                        # warnings.warn(f"Warning: {value} is out of typical bounds")
                 except ErrorBadRange as exc:
                     raise exc
         
+        if has_error:
+            raise ErrorBadRange(bad_value=error_values)
+        if has_warning:
+            raise WarnBadRange(bad_value=warning_values)
+
         return "Valid"
 
     @staticmethod
@@ -214,7 +223,7 @@ class Validate:
             try:
                 if value < 200 or value > 400:
                     raise ErrorBadRange(bad_value=value)
-                elif value < 295 or value > 335:
+                elif value < 260 or value > 335:
                     raise WarnBadRange(bad_value=value)
                     # warnings.warn(f"Warning: {value} is out of typical bounds")
             except ErrorBadRange as exc:
@@ -326,55 +335,55 @@ class Validate:
             return ("Error: Invalid number of C atoms in the peak list", "Error")
 
         # Check the values to ensure they are real H or C values
-        warning_message = ["Warning:", "Warning"]
+        warning_message = ["", "Warning"]
         
         try:
             Validate.check_value_ranges_C_H(H_list, "H")
         except (ErrorBadRange, WarnBadRange) as exc:
             if exc.error_type == "error":
-                return ("Error: Invalid number of H atoms in the peak list", "Error")
+                return (f"Hydrogen peak value(s) {exc.bad_value} out of the accepted range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f"\n{exc.bad_value} is out of a normal H value range."
+                warning_message[0] += f"\nHydrogen peak value(s) {exc.bad_value} out of a normal H value range."
 
         try:
             Validate.check_value_ranges_C_H(C_list, "C")
         except (ErrorBadRange, WarnBadRange) as exc:
             if exc.error_type == "error":
-                return ("Error: Invalid number of C atoms in the peak list", "Error")
+                return (f"Carbon peak value(s) {exc.bad_value} out of the accepted range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f" \n{exc.bad_value} is out of a normal C value range."
+                warning_message[0] += f"\nCarbon peak value(s) {exc.bad_value} out of a normal C value range."
         
         try:
             Validate.check_value_ranges_other(h_temperature, "temperature")
         except (ErrorBadRange, WarnBadRange) as exc:
             if exc.error_type == "error":
-                return (f"Error: Hydrogen Temperature value {exc.bad_value} K is out of the accepted value range", "Error")
+                return (f"Hydrogen Temperature value {exc.bad_value} K is out of the accepted range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f" \nHydrogen Temperature {exc.bad_value} K is out of the expected temperature value range."
+                warning_message[0] += f"\nHydrogen Temperature {exc.bad_value} K is out of the expected temperature value range."
         
         try:
             Validate.check_value_ranges_other(c_temperature, "temperature")
         except (ErrorBadRange, WarnBadRange) as exc:
             if exc.error_type == "error":
-                return (f"Error: Carbon Temperature value {exc.bad_value} K is out of the accepted value range", "Error")
+                return (f"Carbon Temperature value {exc.bad_value} K is out of the accepted range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f" \nCarbon Temperature {exc.bad_value} K is out of the expected temperature value range."
+                warning_message[0] += f"\nCarbon Temperature {exc.bad_value} K is out of the expected temperature value range."
         
         try:
             Validate.check_value_ranges_other(h_frequency, "frequency")
         except (ErrorBadRange, WarnBadRange) as exc:
             if exc.error_type == "error":
-                return (f"Error: Hydrogen Frequency value {exc.bad_value} MHz is out of the accepted value range", "Error")
+                return (f"Hydrogen Frequency value {exc.bad_value} MHz is out of the accepted range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f" \nHydrogen Frequency {exc.bad_value} MHz is out of a the expected frequency value range."
+                warning_message[0] += f"\nHydrogen Frequency {exc.bad_value} MHz is out of a the expected frequency value range."
         
         try:
             Validate.check_value_ranges_other(c_frequency, "frequency")
         except (ErrorBadRange, WarnBadRange) as exc:
             if exc.error_type == "error":
-                return (f"Error: Carbon Frequency value {exc.bad_value} MHz is out of the accepted value range", "Error")
+                return (f"Carbon Frequency value {exc.bad_value} MHz is out of the accepted range", "Error")
             elif exc.error_type == "warning":
-                warning_message[0] += f" \nCarbon Frequency {exc.bad_value} MHz is out of a the expected frequency value range."
+                warning_message[0] += f"\nCarbon Frequency {exc.bad_value} MHz is out of a the expected frequency value range."
 
         if warning_message[0] != "Warning:":
             return tuple(warning_message)
