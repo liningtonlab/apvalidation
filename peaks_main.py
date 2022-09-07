@@ -62,17 +62,6 @@ def test_validate():
         reference = "test_reference",
     )
     print(f"Warning Ranges: {output_warning_ranges}")
-    output_invalid_characters = peaks.Validate.validate(
-        H_text_block = H_invalid_range,
-        C_text_block = C_invalid_range, 
-        smiles = smiles_string,
-        solvent = "test_solvent",
-        h_frequency = freq_warning,
-        h_temperature = temp_warning,
-        c_frequency = freq_warning,
-        c_temperature = temp_warning,
-        reference = "test_reference",
-    )
     invalid_temp_freq = peaks.Validate.validate(
         H_text_block = H_valid,
         C_text_block = C_valid, 
@@ -85,6 +74,17 @@ def test_validate():
         reference = "test_reference"
     )
     print(f"Invalid Temp Freq: {invalid_temp_freq}")
+    output_invalid_characters = peaks.Validate.validate(
+        H_text_block = H_invalid_range,
+        C_text_block = C_invalid_range, 
+        smiles = smiles_string,
+        solvent = "test_solvent",
+        h_frequency = freq_warning,
+        h_temperature = temp_warning,
+        c_frequency = freq_warning,
+        c_temperature = temp_warning,
+        reference = "test_reference",
+    )
     print(f"Invalid Characters: {output_invalid_characters}")
     output_invalid_list_format = peaks.Validate.validate(
         H_text_block = H_invalid_list_format,
@@ -110,6 +110,18 @@ def test_validate():
         reference = "test_reference",
     )
     print(f"Invalid Range: {output_invalid_range}")
+    output_no_temp = peaks.Validate.validate(
+        H_text_block = H_valid,
+        C_text_block = C_valid, 
+        smiles = smiles_string,
+        solvent = "test_solvent",
+        h_frequency = freq_valid,
+        h_temperature = None,
+        c_frequency = freq_valid,
+        c_temperature = None,
+        reference = "test_reference"
+    )
+    print(f"No Temperature: {output_no_temp}")
 
 # def test_sanghoon():
 
