@@ -466,11 +466,11 @@ class Validate:
 
         # Check the values to ensure they are real H or C values
         try:
-            Validate.check_value_ranges(H_list, "H")
+            Validate.check_value_ranges_C_H(H_list, "H")
         except ErrorBadRange as exc:
             return f"Error {exc.bad_value} is out of a normal H value range"
         try:
-            Validate.check_value_ranges(C_list, "C")
+            Validate.check_value_ranges_C_H(C_list, "C")
         except ErrorBadRange as exc:
             return f"Error {exc.bad_value} is out of a normal C value range"
 
