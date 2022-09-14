@@ -335,10 +335,10 @@ class Validate:
         warning_message = ["", "Warning"]
 
         if not c_temperature:
-            warning_message[0] += f"No carbon temperature provided.\n"
+            warning_message[0] += "No carbon temperature provided.\n"
         
         if not h_temperature:
-            warning_message[0] += f"No hydrogen temperature provided.\n"
+            warning_message[0] += "No hydrogen temperature provided.\n"
         
         try:
             Validate.check_value_ranges_C_H(H_list, "H")
@@ -508,17 +508,20 @@ class Convert:
         list_to_sort = []
         for value in peak_list:
             if type(value) is tuple:
-                map_dict[value[0]] = value
-                list_to_sort.append(value[0])
+                key_value = value[0]
             else:
-                map_dict[value] = value
-                list_to_sort.append(value)
+                key_value = value
+            if key_value not in map_dict:
+                map_dict[key_value] = []
+            map_dict[key_value].append(value)
+            if key_value not in list_to_sort:
+                list_to_sort.append(key_value)
 
         list_to_sort.sort(reverse=True)
 
         output_list = []
         for number in list_to_sort:
-            output_list.append(map_dict[number])
+            output_list.extend(map_dict[number])
 
         return output_list
 
