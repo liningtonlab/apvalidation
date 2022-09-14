@@ -464,15 +464,23 @@ class Validate:
         except InvalidAtomNumber:
             return "Error: Invalid number of C atoms in the peak list"
 
+
         # Check the values to ensure they are real H or C values
         try:
             Validate.check_value_ranges_C_H(H_list, "H")
-        except ErrorBadRange as exc:
-            return f"Error {exc.bad_value} is out of a normal H value range"
+        except (ErrorBadRange, WarnBadRange) as exc:
+            if exc.error_type == "error":
+                return f"Hydrogen peak value(s) {exc.bad_value} out of the accepted range"
+            elif exc.error_type == "warning":
+                return f"Hydrogen peak value(s) {exc.bad_value} outside of the typical H value range.\n"
+
         try:
             Validate.check_value_ranges_C_H(C_list, "C")
-        except ErrorBadRange as exc:
-            return f"Error {exc.bad_value} is out of a normal C value range"
+        except (ErrorBadRange, WarnBadRange) as exc:
+            if exc.error_type == "error":
+                return f"Carbon peak value(s) {exc.bad_value} out of the accepted range"
+            elif exc.error_type == "warning":
+                return f"Carbon peak value(s) {exc.bad_value} outside of the typical C value range.\n"
 
         return "Both lists are valid"
 
