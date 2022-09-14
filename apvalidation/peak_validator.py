@@ -410,21 +410,21 @@ class Validate:
         try:
             Validate.check_valid_characters(H_text_block)
         except InvalidCharacters:
-            return "Error Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+            return "Error: Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
         try:
             Validate.check_valid_characters(C_text_block)
         except InvalidCharacters:
-            return "Error Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+            return "Error: Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
 
         # Parse the text blocks into lists based on the seporators
         try:
             H_list = Validate.parse_text_to_list(H_text_block)
         except NoSplit:
-            return "Failed to split H list, please check your seporators."
+            return "Error: Failed to split H list, please check your seporators."
         try:
             C_list = Validate.parse_text_to_list(C_text_block)
         except NoSplit:
-            return "Failed to split C list, please check your seporators."
+            return "Error: Failed to split C list, please check your seporators."
         
         # Check if each element in the parsed lists are either floats or ranges
         try:
@@ -470,17 +470,17 @@ class Validate:
             Validate.check_value_ranges_C_H(H_list, "H")
         except (ErrorBadRange, WarnBadRange) as exc:
             if exc.error_type == "error":
-                return f"Hydrogen peak value(s) {exc.bad_value} out of the accepted range"
+                return f"Error: Hydrogen peak value(s) {exc.bad_value} out of the accepted range"
             elif exc.error_type == "warning":
-                return f"Hydrogen peak value(s) {exc.bad_value} outside of the typical H value range.\n"
+                return f"Warning: Hydrogen peak value(s) {exc.bad_value} outside of the typical H value range.\n"
 
         try:
             Validate.check_value_ranges_C_H(C_list, "C")
         except (ErrorBadRange, WarnBadRange) as exc:
             if exc.error_type == "error":
-                return f"Carbon peak value(s) {exc.bad_value} out of the accepted range"
+                return f"Error: Carbon peak value(s) {exc.bad_value} out of the accepted range"
             elif exc.error_type == "warning":
-                return f"Carbon peak value(s) {exc.bad_value} outside of the typical C value range.\n"
+                return f"Warning: Carbon peak value(s) {exc.bad_value} outside of the typical C value range.\n"
 
         return "Both lists are valid"
 
