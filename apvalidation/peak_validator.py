@@ -395,6 +395,88 @@ class Validate:
         return ("Both lists are valid", "No Errors")
 
 
+    @staticmethod
+    def legacy_validate(H_text_block, C_text_block, smiles):
+        """
+            Check that the peak lists given check some basic validity checks before accepting them into the DB.
+            :param H_text_block: The text entered into the H peak list text box.
+            :param C_text_block: The text entered into the C peak list text box.
+            :param smiles: The smiles string for the corresponding compound.
+            :return: If the input is valid, return a string confirming its validity. If the input is not valid, 
+                    raise an Exception specifying the problem with the input.
+        """
+
+        # Check that characters in the text block are valid 
+        try:
+            Validate.check_valid_characters(H_text_block)
+        except InvalidCharacters:
+            return "Error Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+        try:
+            Validate.check_valid_characters(C_text_block)
+        except InvalidCharacters:
+            return "Error Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+
+        # Parse the text blocks into lists based on the seporators
+        try:
+            H_list = Validate.parse_text_to_list(H_text_block)
+        except NoSplit:
+            return "Failed to split H list, please check your seporators."
+        try:
+            C_list = Validate.parse_text_to_list(C_text_block)
+        except NoSplit:
+            return "Failed to split C list, please check your seporators."
+        
+        # Check if each element in the parsed lists are either floats or ranges
+        try:
+            error_list = Validate.check_data_type(H_list)
+            if sum(error_list) != len(H_list):
+                error_value_list = []
+                for index, b_val in enumerate(error_list):
+                    if b_val is False:
+                        error_value_list.append(H_list[index])
+                    else:
+                        continue
+                raise InvalidValueType
+        except InvalidValueType:
+            return f"Error: The following values in the H list are of invalid data type {error_value_list}"
+        
+        # Check the datatype for each of the entries in each list
+        try:
+            error_list = Validate.check_data_type(C_list)
+            if sum(error_list) != len(C_list):
+                error_value_list = []
+                for index, b_val in enumerate(H_list):
+                    if b_val is False:
+                        error_value_list.append(H_list[index])
+                    else:
+                        continue
+                raise InvalidValueType
+        except InvalidValueType:
+            return f"Error: The following values in the C list are of invalid data type {error_value_list}"
+
+        # Check the number of atoms in each list do not exceed amount of atoms in struct
+        try:
+            Validate.check_number_atoms(H_list, "H", smiles)
+        except InvalidAtomNumber:
+            return "Error: Invalid number of H atoms in the peak list"
+        try:
+            Validate.check_number_atoms(C_list, "C", smiles)
+        except InvalidAtomNumber:
+            return "Error: Invalid number of C atoms in the peak list"
+
+        # Check the values to ensure they are real H or C values
+        try:
+            Validate.check_value_ranges(H_list, "H")
+        except ErrorBadRange as exc:
+            return f"Error {exc.bad_value} is out of a normal H value range"
+        try:
+            Validate.check_value_ranges(C_list, "C")
+        except ErrorBadRange as exc:
+            return f"Error {exc.bad_value} is out of a normal C value range"
+
+        return "Both lists are valid"
+
+
 class Convert:
 
     @staticmethod
