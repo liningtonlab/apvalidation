@@ -464,7 +464,7 @@ class Validate:
         except InvalidAtomNumber:
             return "Error: Invalid number of C atoms in the peak list"
 
-        warning_message = ["", "Warning"]
+        warning_message = ["Warning: ", ""]
         
         # Check the values to ensure they are real H or C values
         try:

@@ -136,7 +136,7 @@ def test_validate():
 
     legacy_ver_test = peaks.Validate.legacy_validate(
         H_text_block = H_warning_range,
-        C_text_block = C_warning_range, 
+        C_text_block = C_valid, 
         smiles = smiles_string,
     )
     print(f"Legacy validate: {legacy_ver_test}")
