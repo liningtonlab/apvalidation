@@ -464,7 +464,8 @@ class Validate:
         except InvalidAtomNumber:
             return "Error: Invalid number of C atoms in the peak list"
 
-
+        warning_message = ["", "Warning"]
+        
         # Check the values to ensure they are real H or C values
         try:
             Validate.check_value_ranges_C_H(H_list, "H")
@@ -472,7 +473,7 @@ class Validate:
             if exc.error_type == "error":
                 return f"Error: Hydrogen peak value(s) {exc.bad_value} out of the accepted range"
             elif exc.error_type == "warning":
-                return f"Warning: Hydrogen peak value(s) {exc.bad_value} outside of the typical H value range.\n"
+                warning_message[0] += f"Warning: Hydrogen peak value(s) {exc.bad_value} outside of the typical H value range.\n"
 
         try:
             Validate.check_value_ranges_C_H(C_list, "C")
@@ -480,7 +481,11 @@ class Validate:
             if exc.error_type == "error":
                 return f"Error: Carbon peak value(s) {exc.bad_value} out of the accepted range"
             elif exc.error_type == "warning":
-                return f"Warning: Carbon peak value(s) {exc.bad_value} outside of the typical C value range.\n"
+                warning_message[0] += f"Warning: Carbon peak value(s) {exc.bad_value} outside of the typical C value range.\n"
+        
+        if warning_message[0]:
+            warning_message[0] = warning_message[0].rsplit('\n', 1)[0]
+            return tuple(warning_message)
 
         return "Both lists are valid"
 
