@@ -133,6 +133,14 @@ def test_validate():
     test_parse_bug_sort = peaks.Convert.sort_list_desc(test_parse_bug)
     print(f"TEST CONVERT BUG ORDER: {test_parse_bug_sort}")
 
+
+    legacy_ver_test = peaks.Validate.legacy_validate(
+        H_text_block = H_valid,
+        C_text_block = C_valid, 
+        smiles = smiles_string,
+    )
+    print(f"Legacy validate: {legacy_ver_test}")
+
 # def test_sanghoon():
 
 #     H_test1 = "11.87, 8.85, 8.83, 8.83, 8.52, 8.50, 8.14, 8.10, 8.09, 8.08, 8.08, 8.07, 8.07, 7.62, 7.62, 7.61, 7.61, 7.61, 7.61, 7.60, 7.60, 4.18, 2.46"
