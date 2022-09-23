@@ -53,7 +53,7 @@ class Validate:
             :param text_block: The text taken from the user input
             :return: If valid, return a string confirming valid chars. If invalid raise InvalidCharacters exception.
         """
-        if text_block == "":
+        if not text_block or text_block=="\n":
             raise EmptyList
 
         clean_text = text_block.replace(" ", "")
@@ -432,7 +432,7 @@ class Validate:
                 return "Error: H list is empty. If you do not wish to submit a peak list for this compound please check the skip box."
         try:
             Validate.check_valid_characters(C_text_block)
-        except (InvalidCharacters, EmptyList) as exc:
+        except Exception as exc:
             if exc.error == "InvalidCharacters":
                 return "Error: Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
             elif exc.error == "EmptyList":
@@ -502,8 +502,6 @@ class Validate:
         try:
             Validate.check_value_ranges_C_H(C_list, "C")
         except (ErrorBadRange, WarnBadRange) as exc:
-            print("exc.error_type")
-            print(exc.error_type)
             if exc.error_type == "error":
                 return f"Error: Carbon peak value(s) {exc.bad_value} out of the accepted range"
             elif exc.error_type == "warning":
