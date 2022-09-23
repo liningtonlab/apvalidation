@@ -12,8 +12,15 @@ from rdkit.Chem import rdqueries, rdmolops
 These are custom exception classes to help annotate what error we are handling.
 """
 
+class EmptyList(Exception):
+    def __init__(self):
+        self.error_type = "error"
+        self.error = "EmptyList"
+
 class InvalidCharacters(Exception):
-    pass
+    def __init__(self):
+        self.error_type = "error"
+        self.error = "InvalidCharacters"
 
 class NoSplit(Exception):
     pass
@@ -28,13 +35,12 @@ class WarnBadRange(Exception):
     def __init__(self, bad_value):
         self.error_type = "warning"
         self.bad_value = bad_value
-    pass
 
 class ErrorBadRange(Exception):
     def __init__(self, bad_value):
         self.error_type = "error"
         self.bad_value = bad_value
-    pass
+
 
 
 class Validate:
@@ -47,6 +53,9 @@ class Validate:
             :param text_block: The text taken from the user input
             :return: If valid, return a string confirming valid chars. If invalid raise InvalidCharacters exception.
         """
+        if text_block == "":
+            raise EmptyList
+
         clean_text = text_block.replace(" ", "")
         accepted_pattern = re.compile(r"^[\d . - ( ) , ; \u002D \u05BE \u1806 \u2010 \u2011 \u2012 \u2013 \\\
                                          \u2014 \u2015 \u207B \u208B \u2212 \uFE58 \uFE63 \uFF0D \t \n]+$", re.UNICODE)
@@ -274,14 +283,21 @@ class Validate:
             return ("No hydrogen frequency provided", "Error")
         if not c_frequency:
             return ("No carbon frequency provided", "Error")
+
         try:
             Validate.check_valid_characters(H_text_block)
-        except InvalidCharacters:
-            return ("Error Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error")
+        except Exception as exc:
+            if exc.error == "InvalidCharacters":
+                return "Error: Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+            elif exc.error == "EmptyList":
+                return "Error: H list is empty. If you do not wish to submit a peak list for this compound please remove all peak lists"
         try:
             Validate.check_valid_characters(C_text_block)
-        except InvalidCharacters:
-            return ("Error Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error")
+        except (InvalidCharacters, EmptyList) as exc:
+            if exc.error == "InvalidCharacters":
+                return "Error: Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+            elif exc.error == "EmptyList":
+                return "Error: C list is empty. If you do not wish to submit a peak list for this compound please remove all peak lists."
 
         # Parse the text blocks into lists based on the seporators
         try:
@@ -409,12 +425,18 @@ class Validate:
         # Check that characters in the text block are valid 
         try:
             Validate.check_valid_characters(H_text_block)
-        except InvalidCharacters:
-            return "Error: Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+        except Exception as exc:
+            if exc.error == "InvalidCharacters":
+                return "Error: Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+            elif exc.error == "EmptyList":
+                return "Error: H list is empty. If you do not wish to submit a peak list for this compound please check the skip box."
         try:
             Validate.check_valid_characters(C_text_block)
-        except InvalidCharacters:
-            return "Error: Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+        except (InvalidCharacters, EmptyList) as exc:
+            if exc.error == "InvalidCharacters":
+                return "Error: Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+            elif exc.error == "EmptyList":
+                return "Error: C list is empty. If you do not wish to submit a peak list for this compound please check the skip box."
 
         # Parse the text blocks into lists based on the seporators
         try:
@@ -480,6 +502,8 @@ class Validate:
         try:
             Validate.check_value_ranges_C_H(C_list, "C")
         except (ErrorBadRange, WarnBadRange) as exc:
+            print("exc.error_type")
+            print(exc.error_type)
             if exc.error_type == "error":
                 return f"Error: Carbon peak value(s) {exc.bad_value} out of the accepted range"
             elif exc.error_type == "warning":

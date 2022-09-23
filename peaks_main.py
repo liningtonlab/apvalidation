@@ -139,6 +139,18 @@ def test_validate():
         C_text_block = C_valid, 
         smiles = smiles_string,
     )
+    print(f"Legacy 空っぽ: {legacy_ver_test}")
+    legacy_ver_test = peaks.Validate.legacy_validate(
+        H_text_block = "",
+        C_text_block = "", 
+        smiles = smiles_string,
+    )
+    print(f"Legacy invalid char: {legacy_ver_test}")
+    legacy_ver_test = peaks.Validate.legacy_validate(
+        H_text_block = "sdf",
+        C_text_block = "dsf", 
+        smiles = smiles_string,
+    )
     print(f"Legacy validate: {legacy_ver_test}")
     legacy_ver_test = peaks.Validate.legacy_validate(
         H_text_block = H_warning_range,
