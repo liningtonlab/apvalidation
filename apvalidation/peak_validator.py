@@ -44,7 +44,6 @@ class ErrorBadRange(Exception):
 
 
 class Validate:
-
     @staticmethod
     def check_valid_characters(text_block):
         """
@@ -288,16 +287,16 @@ class Validate:
             Validate.check_valid_characters(H_text_block)
         except Exception as exc:
             if exc.error == "InvalidCharacters":
-                return "Error: Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+                return "Warning: Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
             elif exc.error == "EmptyList":
-                return "Error: H list is empty. If you do not wish to submit a peak list for this compound please remove all peak lists"
+                return "Warning: H list is empty. It may be saved but not submitted. If you do not wish to submit a peak list for this compound please remove all peak lists"
         try:
             Validate.check_valid_characters(C_text_block)
         except (InvalidCharacters, EmptyList) as exc:
             if exc.error == "InvalidCharacters":
                 return "Error: Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
             elif exc.error == "EmptyList":
-                return "Error: C list is empty. If you do not wish to submit a peak list for this compound please remove all peak lists."
+                return "Error: C list is empty. It may be saved but not submitted. If you do not wish to submit a peak list for this compound please remove all peak lists."
 
         # Parse the text blocks into lists based on the seporators
         try:
@@ -429,14 +428,14 @@ class Validate:
             if exc.error == "InvalidCharacters":
                 return "Error: Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
             elif exc.error == "EmptyList":
-                return "Error: H list is empty. If you do not wish to submit a peak list for this compound please check the skip box."
+                return "Warning: H list is empty. It may be saved but not submitted. If you do not wish to submit a peak list for this compound please check the skip box."
         try:
             Validate.check_valid_characters(C_text_block)
         except Exception as exc:
             if exc.error == "InvalidCharacters":
                 return "Error: Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
             elif exc.error == "EmptyList":
-                return "Error: C list is empty. If you do not wish to submit a peak list for this compound please check the skip box."
+                return "Warning: C list is empty. If you do not wish to submit a peak list for this compound please check the skip box."
 
         # Parse the text blocks into lists based on the seporators
         try:
