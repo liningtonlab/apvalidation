@@ -12,10 +12,10 @@ from rdkit.Chem import rdqueries, rdmolops
 These are custom exception classes to help annotate what error we are handling.
 """
 
-class EmptyList(Exception):
-    def __init__(self):
-        self.error_type = "error"
-        self.error = "EmptyList"
+# class EmptyList(Exception):
+#     def __init__(self):
+#         self.error_type = "error"
+#         self.error = "EmptyList"
 
 class InvalidCharacters(Exception):
     def __init__(self):
@@ -52,8 +52,8 @@ class Validate:
             :param text_block: The text taken from the user input
             :return: If valid, return a string confirming valid chars. If invalid raise InvalidCharacters exception.
         """
-        if not text_block or text_block=="\n":
-            raise EmptyList
+        if not text_block:
+            return "Valid String"
 
         clean_text = text_block.replace(" ", "")
         accepted_pattern = re.compile(r"^[\d . - ( ) , ; \u002D \u05BE \u1806 \u2010 \u2011 \u2012 \u2013 \\\
@@ -145,6 +145,9 @@ class Validate:
             :param smiles: the smiles string for the corresponding compound. 
             :return: If input is valid, return True. If input is invalid, raise InvalidAtomNumer exception.
         """
+        if not value_list:
+            return True
+            
         atoms = {"H": 1, "C": 6}
         atom_num = atoms[atom_type]
         mol = Chem.MolFromSmiles(smiles)
@@ -288,15 +291,11 @@ class Validate:
         except Exception as exc:
             if exc.error == "InvalidCharacters":
                 return "Warning: Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
-            elif exc.error == "EmptyList":
-                return "Warning: H list is empty. It may be saved but not submitted. If you do not wish to submit a peak list for this compound please remove all peak lists"
         try:
             Validate.check_valid_characters(C_text_block)
-        except (InvalidCharacters, EmptyList) as exc:
+        except Exception as exc:
             if exc.error == "InvalidCharacters":
                 return "Error: Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
-            elif exc.error == "EmptyList":
-                return "Error: C list is empty. It may be saved but not submitted. If you do not wish to submit a peak list for this compound please remove all peak lists."
 
         # Parse the text blocks into lists based on the seporators
         try:
@@ -403,6 +402,16 @@ class Validate:
             elif exc.error_type == "warning":
                 warning_message[0] += f"Carbon Frequency {exc.bad_value} MHz is outside of a the typical frequency value range.\n"
 
+        empty_message = ["", "Empty"]
+        if not c_frequency or c_frequency=="\n":
+            empty_message[0] += "Empty C list: If you do not wish to submit a peak list for this compound please click the remove button before clicking the submit button"
+        if not h_frequency or h_frequency=="\n":
+            empty_message[0] += "Empty H list: If you do not wish to submit a peak list for this compound please click the remove button before clicking the submit button"
+
+        if empty_message[0]:
+            empty_message[0] = empty_message[0].rsplit('\n', 1)[0]
+            return tuple(empty_message)
+
         if warning_message[0]:
             warning_message[0] = warning_message[0].rsplit('\n', 1)[0]
             return tuple(warning_message)
@@ -427,15 +436,11 @@ class Validate:
         except Exception as exc:
             if exc.error == "InvalidCharacters":
                 return "Error: Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
-            elif exc.error == "EmptyList":
-                return "Empty: H list is empty. If you do not wish to submit a peak list for this compound please check the skip box before clicking submit."
         try:
             Validate.check_valid_characters(C_text_block)
         except Exception as exc:
             if exc.error == "InvalidCharacters":
                 return "Error: Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
-            elif exc.error == "EmptyList":
-                return "Empty: C list is empty. If you do not wish to submit a peak list for this compound please check the skip box before clicking submit."
 
         # Parse the text blocks into lists based on the seporators
         try:
@@ -477,10 +482,12 @@ class Validate:
 
         # Check the number of atoms in each list do not exceed amount of atoms in struct
         try:
+            # if H_list:
             Validate.check_number_atoms(H_list, "H", smiles)
         except InvalidAtomNumber:
             return "Error: Invalid number of H atoms in the peak list"
         try:
+            # if C_list:
             Validate.check_number_atoms(C_list, "C", smiles)
         except InvalidAtomNumber:
             return "Error: Invalid number of C atoms in the peak list"
@@ -506,9 +513,14 @@ class Validate:
             elif exc.error_type == "warning":
                 warning_message += f"Carbon peak value(s) {exc.bad_value} outside of the typical C value range.\n"
                 has_warning = True
-        
+
         if has_warning == True:
             return warning_message
+
+        if not H_list:
+            return "Empty H list: If you do not wish to submit a peak list for this compound please check the skip box before clicking the submit button."
+        if not C_list:
+            return "Empty C list: If you do not wish to submit a peak list for this compound please check the skip box before clicking the submit button."
 
         return "Both lists are valid"
 
