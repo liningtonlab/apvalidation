@@ -428,14 +428,14 @@ class Validate:
             if exc.error == "InvalidCharacters":
                 return "Error: Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
             elif exc.error == "EmptyList":
-                return "Warning: H list is empty. It may be saved but not submitted. If you do not wish to submit a peak list for this compound please check the skip box."
+                return "Empty: H list is empty. If you do not wish to submit a peak list for this compound please check the skip box before clicking submit."
         try:
             Validate.check_valid_characters(C_text_block)
         except Exception as exc:
             if exc.error == "InvalidCharacters":
                 return "Error: Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
             elif exc.error == "EmptyList":
-                return "Warning: C list is empty. If you do not wish to submit a peak list for this compound please check the skip box."
+                return "Empty: C list is empty. If you do not wish to submit a peak list for this compound please check the skip box before clicking submit."
 
         # Parse the text blocks into lists based on the seporators
         try:
