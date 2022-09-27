@@ -153,6 +153,12 @@ def test_validate():
     )
     print(f"Legacy C 空っぽ: {legacy_ver_test}")
     legacy_ver_test = peaks.Validate.legacy_validate(
+        H_text_block = "",
+        C_text_block = "", 
+        smiles = smiles_string,
+    )
+    print(f"Legacy 二つ空っぽ: {legacy_ver_test}")
+    legacy_ver_test = peaks.Validate.legacy_validate(
         H_text_block = "sdf",
         C_text_block = "dsf", 
         smiles = smiles_string,

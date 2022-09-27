@@ -517,12 +517,14 @@ class Validate:
         if not H_list and not C_list:
             return "Empty: Both Lists contain no peaks. Please check the skip box if you do not wish to submit a peak list for this compound."
         if not H_list:
-            warning_message += "H list is blank: No H list will be submitted for this compound"
+            warning_message += "H list is blank: No H list will be submitted for this compound.\n"
+            has_warning = True
         if not C_list:
-            warning_message += "C list is blank: No H list will be submitted for this compound."
+            warning_message += "C list is blank: No H list will be submitted for this compound.\n"
+            has_warning = True
         
         if has_warning == True:
-            return warning_message
+            return warning_message.rsplit('\n', 1)[0]
 
         return "Both lists are valid"
 
