@@ -119,7 +119,7 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time = False) -> js
         #     # extract_core_file(submitted_zip_file, indiv_exp_path, vendor_type[i], folder_name, parent_dir, param_file)
         #     extract_jdx(loc,param_file,folder_name,parent_dir)
             
-        print(json_params)
+        # print(json_params)
         return json_params
 
     
