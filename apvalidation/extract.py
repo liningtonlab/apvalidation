@@ -468,8 +468,6 @@ class Bruker:
 
         solv_str = param_dict['SOLVENT']
 
-        print(f"BRUKER solv_str '{solv_str}'")
-
         if solv_str.upper() in all_solvents.keys():
             exp_solv = all_solvents[solv_str.upper()]
         elif solv_str.upper() in all_solvents.values():
