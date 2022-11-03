@@ -24,7 +24,8 @@ from apvalidation.file_validation import find_path_and_extract
 # input_file = "./procpar"
 # Varian.remove_personal_info(input_file)
 
-find_path_and_extract("./apvalidation/test/test_bruker_1.zip", is_second_time = False)
-find_path_and_extract("./apvalidation/test/test_bruker_2.zip", is_second_time = False)
-find_path_and_extract("./apvalidation/test/test_bruker_3.zip", is_second_time = False)
+# find_path_and_extract("./apvalidation/test/test_bruker_1.zip", is_second_time = False)
+# find_path_and_extract("./apvalidation/test/test_bruker_2.zip", is_second_time = False)
+# find_path_and_extract("./apvalidation/test/test_bruker_3.zip", is_second_time = False)
+find_path_and_extract("./apvalidation/test/Problem49.rar", is_second_time = False)
 # find_path_and_extract("./apvalidation/test/Granaticin_C.zip", is_second_time = False)

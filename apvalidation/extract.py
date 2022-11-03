@@ -7,6 +7,23 @@ import fileinput
 import sys
 import shutil
 
+
+all_solvents = {
+    **dict.fromkeys(['DMSO', 'DIMETHYL SULFOXIDE', 'DIMETHYL-SULFOXIDE', 'DMSO-D6', 'dmso-d6', 'd6-dmso', 'D6-DMSO'], 'C2D6OS'),
+    **dict.fromkeys(['TETRAHYDROFURAN', 'THF', 'D6-THF', 'THF-D6', 'C2D6OS_SPE'], 'C2D6OS'),
+    **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D', 'DEUTEROCHLOROFORM', 'CDCL3_SPE'], 'CDCL3'),
+    **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE', 'METHYLENE CHLORIDE', 'METHYLENE-CHLORIDE', 'METHYLENE-CHLORI', 'CD2CL2_SPE'], 'CD2CL2'),
+    **dict.fromkeys(['ACETONE', 'C3D6O_SPE'], 'C3D6O'),
+    **dict.fromkeys(['METHANOL', 'DEUTERATED-METHANOL', 'MEOD', 'CD3OD_SPE'], 'CD3OD'),
+    **dict.fromkeys(['TOLUENE', 'C7D8_SPE'], 'C7D8'),
+    **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O', 'DEUTERIUM OXIDE', 'D2O_SPE'], 'D2O'),
+    **dict.fromkeys(['TRIFLUOROACETIC-ACID', 'TRIFLUOROACETIC ACID', 'C2DF3O2_SPE'], 'C2DF3O2'),
+    **dict.fromkeys(['PYRIDINE', 'PYR', 'PYRIDINE-D5', 'C5D5N_SPE'], 'C5D5N'),
+    **dict.fromkeys(['ACETONITRILE', 'C2D3N_SPE'], 'C2D3N'),
+    **dict.fromkeys(['ACETONITRILE-D3', 'ACETONITRILE D3', 'CD3CN_SPE'], 'CD3CN'),
+    **dict.fromkeys(['BENZENE', 'C6D6_SPE'], 'C6D6'),
+}
+
 class Varian:
     """
     A class that contains the methods to extract parameters from Varian NMR data
@@ -141,20 +158,6 @@ class Varian:
         :param param_dict: a large dictionary containing all the parameters.
         :return: a string containing the chemical formula of the solvent used.
         """
-        all_solvents = {
-            **dict.fromkeys(['DMSO', 'DIMETHYL SULFOXIDE', 'DIMETHYL-SULFOXIDE', 'DMSO-D6', 'dmso-d6', 'd6-dmso', 'D6-DMSO'], 'C2D6OS'),
-            **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D', 'DEUTEROCHLOROFORM'], 'CDCL3'),
-            **dict.fromkeys(['TETRAHYDROFURAN', 'THF', 'D6-THF', 'THF-D6'], 'C2D6OS'),
-            **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE', 'METHYLENE CHLORIDE', 'METHYLENE-CHLORIDE', 'METHYLENE-CHLORI'], 'CD2CL2'),
-            **dict.fromkeys(['ACETONE'], 'C3D6O'),
-            **dict.fromkeys(['METHANOL', 'DEUTERATED-METHANOL', 'MEOD'], 'CD3OD'),
-            **dict.fromkeys(['TOLUENE'], 'C7D8'),
-            **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O', 'DEUTERIUM OXIDE'], 'D2O'),
-            **dict.fromkeys(['TRIFLUOROACETIC-ACID', 'TRIFLUOROACETIC ACID'], 'C2DF3O2'),
-            **dict.fromkeys(['PYRIDINE', 'PYR', 'PYRIDINE-D5'], 'C5D5N'),
-            **dict.fromkeys(['ACETONITRILE'], 'C2D3N'),
-            **dict.fromkeys(['BENZENE'], 'C6D6'),
-        }
         try:
             solv_str = param_dict['solvent']['values'][0]
             if solv_str is not None:
@@ -451,21 +454,6 @@ class Bruker:
         :return: The solvent in string format.
         """
 
-        all_solvents = {
-            **dict.fromkeys(['DMSO', 'DIMETHYL SULFOXIDE', 'DIMETHYL-SULFOXIDE', 'DMSO-D6', 'dmso-d6', 'd6-dmso', 'D6-DMSO'], 'C2D6OS'),
-            **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D', 'DEUTEROCHLOROFORM'], 'CDCL3'),
-            **dict.fromkeys(['TETRAHYDROFURAN', 'THF', 'D6-THF', 'THF-D6'], 'C2D6OS'),
-            **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE', 'METHYLENE CHLORIDE', 'METHYLENE-CHLORIDE', 'METHYLENE-CHLORI'], 'CD2CL2'),
-            **dict.fromkeys(['ACETONE'], 'C3D6O'),
-            **dict.fromkeys(['METHANOL', 'DEUTERATED-METHANOL', 'MEOD'], 'CD3OD'),
-            **dict.fromkeys(['TOLUENE'], 'C7D8'),
-            **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O', 'DEUTERIUM OXIDE'], 'D2O'),
-            **dict.fromkeys(['TRIFLUOROACETIC-ACID', 'TRIFLUOROACETIC ACID'], 'C2DF3O2'),
-            **dict.fromkeys(['PYRIDINE', 'PYR', 'PYRIDINE-D5'], 'C5D5N'),
-            **dict.fromkeys(['ACETONITRILE'], 'C2D3N'),
-            **dict.fromkeys(['BENZENE'], 'C6D6'),
-        }
-
         solv_str = param_dict['SOLVENT']
 
         if solv_str.upper() in all_solvents.keys():
@@ -661,20 +649,6 @@ class JEOL:
         :param param_dict: Dictionary containing all the parameters for the experiment.
         :return: The solvent in string format.
         """
-        all_solvents = {
-            **dict.fromkeys(['DMSO', 'DIMETHYL SULFOXIDE', 'DIMETHYL-SULFOXIDE', 'DMSO-D6', 'dmso-d6', 'd6-dmso', 'D6-DMSO'], 'C2D6OS'),
-            **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D', 'DEUTEROCHLOROFORM'], 'CDCL3'),
-            **dict.fromkeys(['TETRAHYDROFURAN', 'THF', 'D6-THF', 'THF-D6'], 'C2D6OS'),
-            **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE', 'METHYLENE CHLORIDE', 'METHYLENE-CHLORIDE', 'METHYLENE-CHLORI'], 'CD2CL2'),
-            **dict.fromkeys(['ACETONE'], 'C3D6O'),
-            **dict.fromkeys(['METHANOL', 'DEUTERATED-METHANOL', 'MEOD'], 'CD3OD'),
-            **dict.fromkeys(['TOLUENE'], 'C7D8'),
-            **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O', 'DEUTERIUM OXIDE'], 'D2O'),
-            **dict.fromkeys(['TRIFLUOROACETIC-ACID', 'TRIFLUOROACETIC ACID'], 'C2DF3O2'),
-            **dict.fromkeys(['PYRIDINE', 'PYR', 'PYRIDINE-D5'], 'C5D5N'),
-            **dict.fromkeys(['ACETONITRILE'], 'C2D3N'),
-            **dict.fromkeys(['BENZENE'], 'C6D6'),
-        }
         solv_str = param_dict['$SOLVENT'][0]
         if solv_str in all_solvents.keys():
             exp_solv = all_solvents[solv_str]
