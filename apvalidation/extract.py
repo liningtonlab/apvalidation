@@ -294,7 +294,7 @@ class Varian:
             freq2 = round(float(param_dict['reffrq1']['values'][0]), 2)
             freq_val = (freq1, freq2)
         else:
-            freq_val = round(float(param_dict['reffrq']['values'][0]), 2)
+            freq_val = [round(float(param_dict['reffrq']['values'][0]), 2)]
         return freq_val
 
     @staticmethod
@@ -727,7 +727,6 @@ class JEOL:
             return freq
         else:
             freq = round(float(param_dict['$XFREQ'][0]), 2)
-
             return [freq]
 
     @staticmethod
