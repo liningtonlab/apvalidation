@@ -404,7 +404,7 @@ class Validate:
 
         empty_message = ["", "Empty"]
         if not H_list and not C_list:
-            return (f"Empty: Both Lists contain no peaks. At least one list required. You may also submit peak lists for this compound.", "Error")
+            return (f'Empty: Both Lists contain no peaks. At least one list required. You may also submit no peak lists for this compound by clikcing "remove".', "Error")
         if not c_frequency or c_frequency=="\n":
             empty_message[0] += "Empty C list: If you do not wish to submit a peak list for this compound please click the remove button before clicking the submit button"
         if not h_frequency or h_frequency=="\n":
