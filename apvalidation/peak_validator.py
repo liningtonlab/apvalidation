@@ -290,12 +290,12 @@ class Validate:
             Validate.check_valid_characters(H_text_block)
         except Exception as exc:
             if exc.error == "InvalidCharacters":
-                return "Warning: Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+                return ("Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error")
         try:
             Validate.check_valid_characters(C_text_block)
         except Exception as exc:
             if exc.error == "InvalidCharacters":
-                return "Error: Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
+                 return ("Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error")
 
         # Parse the text blocks into lists based on the seporators
         try:
@@ -403,6 +403,8 @@ class Validate:
                 warning_message[0] += f"Carbon Frequency {exc.bad_value} MHz is outside of a the typical frequency value range.\n"
 
         empty_message = ["", "Empty"]
+        if not H_list and not C_list:
+            return (f"Empty: Both Lists contain no peaks. At least one list required. You may also submit peak lists for this compound.", "Error")
         if not c_frequency or c_frequency=="\n":
             empty_message[0] += "Empty C list: If you do not wish to submit a peak list for this compound please click the remove button before clicking the submit button"
         if not h_frequency or h_frequency=="\n":
@@ -417,116 +419,6 @@ class Validate:
             return tuple(warning_message)
 
         return ("Both lists are valid", "No Errors")
-
-
-    @staticmethod
-    def legacy_validate(H_text_block, C_text_block, smiles):
-        """
-            Check that the peak lists given check some basic validity checks before accepting them into the DB.
-            :param H_text_block: The text entered into the H peak list text box.
-            :param C_text_block: The text entered into the C peak list text box.
-            :param smiles: The smiles string for the corresponding compound.
-            :return: If the input is valid, return a string confirming its validity. If the input is not valid, 
-                    raise an Exception specifying the problem with the input.
-        """
-
-        # Check that characters in the text block are valid 
-        try:
-            Validate.check_valid_characters(H_text_block)
-        except Exception as exc:
-            if exc.error == "InvalidCharacters":
-                return "Error: Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
-        try:
-            Validate.check_valid_characters(C_text_block)
-        except Exception as exc:
-            if exc.error == "InvalidCharacters":
-                return "Error: Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()"
-
-        # Parse the text blocks into lists based on the seporators
-        try:
-            H_list = Validate.parse_text_to_list(H_text_block)
-        except NoSplit:
-            return "Error: Failed to split H list, please check your seporators."
-        try:
-            C_list = Validate.parse_text_to_list(C_text_block)
-        except NoSplit:
-            return "Error: Failed to split C list, please check your seporators."
-        
-        # Check if each element in the parsed lists are either floats or ranges
-        try:
-            error_list = Validate.check_data_type(H_list)
-            if sum(error_list) != len(H_list):
-                error_value_list = []
-                for index, b_val in enumerate(error_list):
-                    if b_val is False:
-                        error_value_list.append(H_list[index])
-                    else:
-                        continue
-                raise InvalidValueType
-        except InvalidValueType:
-            return f"Error: The following values in the H list are of invalid data type {error_value_list}"
-        
-        # Check the datatype for each of the entries in each list
-        try:
-            error_list = Validate.check_data_type(C_list)
-            if sum(error_list) != len(C_list):
-                error_value_list = []
-                for index, b_val in enumerate(H_list):
-                    if b_val is False:
-                        error_value_list.append(H_list[index])
-                    else:
-                        continue
-                raise InvalidValueType
-        except InvalidValueType:
-            return f"Error: The following values in the C list are of invalid data type {error_value_list}"
-
-        # Check the number of atoms in each list do not exceed amount of atoms in struct
-        try:
-            # if H_list:
-            Validate.check_number_atoms(H_list, "H", smiles)
-        except InvalidAtomNumber:
-            return "Error: Invalid number of H atoms in the peak list"
-        try:
-            # if C_list:
-            Validate.check_number_atoms(C_list, "C", smiles)
-        except InvalidAtomNumber:
-            return "Error: Invalid number of C atoms in the peak list"
-
-        warning_message = "Warning: "
-        has_warning = False
-        
-        # Check the values to ensure they are real H or C values
-        try:
-            Validate.check_value_ranges_C_H(H_list, "H")
-        except (ErrorBadRange, WarnBadRange) as exc:
-            if exc.error_type == "error":
-                return f"Error: Hydrogen peak value(s) {exc.bad_value} out of the accepted range"
-            elif exc.error_type == "warning":
-                warning_message += f"Hydrogen peak value(s) {exc.bad_value} outside of the typical H value range.\n"
-                has_warning = True
-
-        try:
-            Validate.check_value_ranges_C_H(C_list, "C")
-        except (ErrorBadRange, WarnBadRange) as exc:
-            if exc.error_type == "error":
-                return f"Error: Carbon peak value(s) {exc.bad_value} out of the accepted range"
-            elif exc.error_type == "warning":
-                warning_message += f"Carbon peak value(s) {exc.bad_value} outside of the typical C value range.\n"
-                has_warning = True
-
-        if not H_list and not C_list:
-            return "Empty: Both Lists contain no peaks. Please check the skip box if you do not wish to submit a peak list for this compound."
-        if not H_list:
-            warning_message += "H list is blank: No H list will be submitted for this compound.\n"
-            has_warning = True
-        if not C_list:
-            warning_message += "C list is blank: No H list will be submitted for this compound.\n"
-            has_warning = True
-        
-        if has_warning == True:
-            return warning_message.rsplit('\n', 1)[0]
-
-        return "Both lists are valid"
 
 
 class Convert:
