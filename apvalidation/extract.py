@@ -22,7 +22,7 @@ all_solvents = {
     **dict.fromkeys(['ACETONITRILE', 'C2D3N_SPE'], 'C2D3N'),
     **dict.fromkeys(['ACETONITRILE-D3', 'ACETONITRILE D3', 'CD3CN_SPE'], 'CD3CN'),
     **dict.fromkeys(['BENZENE', 'C6D6_SPE'], 'C6D6'),
-    **dict.fromkeys(['<<no solvents available>'], 'NOT_AVALIBLE'),
+    **dict.fromkeys(['<<no solvents available>', '<no solvents available>', '<<no solvents available>>'], None),
 }
 
 class Varian:
@@ -171,7 +171,7 @@ class Varian:
         elif solv_str in all_solvents.values():
             exp_solv = solv_str.upper()
         else:
-            exp_solv = None
+            exp_solv = "FAILED_TO_DETECT"
         return exp_solv
 
     @staticmethod
@@ -462,7 +462,7 @@ class Bruker:
         elif solv_str.upper() in all_solvents.values():
             exp_solv = solv_str
         else:
-            exp_solv = None
+            exp_solv = "FAILED_TO_DETECT"
         return exp_solv
 
     @staticmethod
@@ -656,7 +656,7 @@ class JEOL:
         elif solv_str.upper() in all_solvents.values():
             exp_solv = solv_str
         else:
-            exp_solv = None
+            exp_solv = "FAILED_TO_DETECT"
         return exp_solv
 
     @staticmethod
