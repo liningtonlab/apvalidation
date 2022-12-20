@@ -22,6 +22,7 @@ all_solvents = {
     **dict.fromkeys(['ACETONITRILE', 'C2D3N_SPE'], 'C2D3N'),
     **dict.fromkeys(['ACETONITRILE-D3', 'ACETONITRILE D3', 'CD3CN_SPE'], 'CD3CN'),
     **dict.fromkeys(['BENZENE', 'C6D6_SPE'], 'C6D6'),
+    **dict.fromkeys(['<<no solvents available>'], 'NOT_AVALIBLE'),
 }
 
 class Varian:
@@ -269,7 +270,7 @@ class Varian:
                 for type_str in exp_list:
                     if type_str in exp_loc:
                         exp_type = type_str
-                    break
+                        break
             exp_type = f'1D {exp_type}'
             return exp_type
         else:
