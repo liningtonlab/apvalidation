@@ -22,7 +22,9 @@ all_solvents = {
     **dict.fromkeys(['ACETONITRILE', 'C2D3N_SPE'], 'C2D3N'),
     **dict.fromkeys(['ACETONITRILE-D3', 'ACETONITRILE D3', 'CD3CN_SPE'], 'CD3CN'),
     **dict.fromkeys(['BENZENE', 'C6D6_SPE'], 'C6D6'),
-    **dict.fromkeys(['<<no solvents available>', '<no solvents available>', '<<no solvents available>>'], None),
+    **dict.fromkeys(['METHANOL', 'MEOH'], 'CH3OH'),
+    **dict.fromkeys(['DIMETHYLFORMAMIDE', 'DMF'], 'C3H7NO'),
+    **dict.fromkeys(['<no solvents available', '<<no solvents available>', '<no solvents available>', '<<no solvents available>>'], None),
 }
 
 class Varian:
@@ -271,7 +273,7 @@ class Varian:
                     if type_str in exp_loc:
                         exp_type = type_str
                         break
-            exp_type = f'1D {exp_type}'
+            exp_type = f'1D {exp_type}'.strip()
             return exp_type
         else:
             exp_type = None
@@ -517,7 +519,7 @@ class Bruker:
                 if entry in possible_exp_str_1 or entry in possible_exp_str_2:
                     exp_type = entry
                     break
-            exp_type = f'1D {exp_type}'
+            exp_type = f'1D {exp_type}'.strip()
             return exp_type
 
     @staticmethod
