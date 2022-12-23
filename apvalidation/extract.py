@@ -6,6 +6,7 @@ import numpy as np
 import fileinput
 import sys
 import shutil
+from collections import OrderedDict
 
 
 all_solvents = {
@@ -233,7 +234,21 @@ class Varian:
             as HSQCTCOSY even for those that are not. Confusion. Try again lol.
         """
 
-        exp_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'DOSY', 'ROESY', 'NOESY']
+        # exp_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'DOSY', 'ROESY', 'NOESY']
+        ordered_exp_dict = OrderedDict([
+            ('HSQCTOCSY', 'HSQCTOCSY'),
+            ('COSY', 'COSY'),
+            ('HSQC', 'HSQC'),
+            ('HMQC', 'HMQC'),
+            ('HMBC', 'HMBC'),
+            ('TOCSY', 'TOCSY'),
+            ('HETLOC', 'HETLOC'),
+            ('MLEVPHSW', 'TOCSY'),
+            ('DOSY', 'DOSY'),
+            ('ROESY', 'ROESY'),
+            ('NOESY', 'NOESY')
+        ]
+        )
 
         try:
             exp_type_loc1 = param_dict['explist']['values'][0]
@@ -263,20 +278,22 @@ class Varian:
         exp_type = ''
         if exp_dim == '2D':
             for exp_loc in exp_loc_list:
-                for type_str in exp_list:
+                for type_str in ordered_exp_dict:
                     if type_str in exp_loc:
-                        exp_type = type_str
+                        exp_type = ordered_exp_dict[type_str]
+                        print(f"VARIAN EXP TYPE IS {exp_type}")
                         return exp_type
         elif exp_dim == '1D':
             for exp_loc in exp_loc_list:
-                for type_str in exp_list:
+                for type_str in ordered_exp_dict:
                     if type_str in exp_loc:
-                        exp_type = type_str
+                        exp_type = ordered_exp_dict[type_str]
                         break
             exp_type = f'1D {exp_type}'.strip()
+            print(f"VARIAN EXP TYPE IS {exp_type}")
             return exp_type
         else:
-            exp_type = None
+            exp_type = "FAILED_TO_DETECT"
             return exp_type
 
     @staticmethod
@@ -504,20 +521,35 @@ class Bruker:
         possible_exp_str_1 = param_dict['EXP']
         possible_exp_str_2 = param_dict['PULPROG']
 
-        exp_2d_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'ROESY', 'NOESY', 'DOSY']
+        # exp_2d_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'ROESY', 'NOESY', 'DOSY']
+
+        ordered_exp_dict = OrderedDict([
+            ('HSQCTOCSY', 'HSQCTOCSY'),
+            ('COSY', 'COSY'),
+            ('HSQC', 'HSQC'),
+            ('HMQC', 'HMQC'),
+            ('HMBC', 'HMBC'),
+            ('TOCSY', 'TOCSY'),
+            ('HETLOC', 'HETLOC'),
+            ('MLEVPHSW', 'TOCSY'),
+            ('ROESY', 'ROESY'),
+            ('NOESY', 'NOESY'),
+            ('DOSY', 'DOSY'),
+        ]
+        )
 
         exp_type = ''
         if exp_dim == '2D':
-            for entry in exp_2d_list:
+            for entry in ordered_exp_dict:
                 if entry in possible_exp_str_1.upper() or entry in possible_exp_str_2.upper():
-                    exp_type = entry
+                    exp_type = ordered_exp_dict[entry]
                     return exp_type
-            exp_type = None
+            exp_type = "FAILED_TO_DETECT"
             return exp_type
         else:
-            for entry in exp_2d_list:
+            for entry in ordered_exp_dict:
                 if entry in possible_exp_str_1 or entry in possible_exp_str_2:
-                    exp_type = entry
+                    exp_type = ordered_exp_dict[entry]
                     break
             exp_type = f'1D {exp_type}'.strip()
             return exp_type
@@ -697,13 +729,29 @@ class JEOL:
         """
         exp_str = param_dict['.PULSESEQUENCE'][0].upper()
 
-        exp_2d_list = ['HSQC-TOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'ROESY', 'NOESY', 'DOSY']
-        exp_type = None
+        # exp_2d_list = ['HSQC-TOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'ROESY', 'NOESY', 'DOSY']
+        ordered_exp_dict = OrderedDict([
+            ('HSQC-TOCSY', 'HSQCTOCSY'),
+            ('COSY', 'COSY'),
+            ('HSQC', 'HSQC'),
+            ('HMQC', 'HMQC'),
+            ('HMBC', 'HMBC'),
+            ('TOCSY', 'TOCSY'),
+            ('HETLOC', 'HETLOC'),
+            ('MLEVPHSW', 'TOCSY'),
+            ('ROESY', 'ROESY'),
+            ('NOESY', 'NOESY'),
+            ('DOSY', 'DOSY'),
+        ]
+        )
+        
+        exp_type = "FAILED_TO_DETECT"
 
         if exp_dim == '2D':
-            for entry in exp_2d_list:
+            for entry in ordered_exp_dict:
                 if entry in exp_str.upper():
-                    exp_type = entry
+                    exp_type = ordered_exp_dict[entry]
+                    print(f"JEOL EXP TYPE IS {exp_type}")
                     return exp_type
             return exp_type
         else:
