@@ -242,7 +242,7 @@ class Varian:
             ('HMQC', 'HMQC'),
             ('HMBC', 'HMBC'),
             ('TOCSY', 'TOCSY'),
-            ('HETLOC', 'HETLOC'),
+            ('HETLOC', 'TOCSY'),
             ('MLEVPHSW', 'TOCSY'),
             ('DOSY', 'DOSY'),
             ('ROESY', 'ROESY'),
@@ -281,7 +281,6 @@ class Varian:
                 for type_str in ordered_exp_dict:
                     if type_str in exp_loc:
                         exp_type = ordered_exp_dict[type_str]
-                        print(f"VARIAN EXP TYPE IS {exp_type}")
                         return exp_type
         elif exp_dim == '1D':
             for exp_loc in exp_loc_list:
@@ -290,7 +289,6 @@ class Varian:
                         exp_type = ordered_exp_dict[type_str]
                         break
             exp_type = f'1D {exp_type}'.strip()
-            print(f"VARIAN EXP TYPE IS {exp_type}")
             return exp_type
         else:
             exp_type = "FAILED_TO_DETECT"
@@ -530,7 +528,7 @@ class Bruker:
             ('HMQC', 'HMQC'),
             ('HMBC', 'HMBC'),
             ('TOCSY', 'TOCSY'),
-            ('HETLOC', 'HETLOC'),
+            ('HETLOC', 'TOCSY'),
             ('MLEVPHSW', 'TOCSY'),
             ('ROESY', 'ROESY'),
             ('NOESY', 'NOESY'),
@@ -737,7 +735,7 @@ class JEOL:
             ('HMQC', 'HMQC'),
             ('HMBC', 'HMBC'),
             ('TOCSY', 'TOCSY'),
-            ('HETLOC', 'HETLOC'),
+            ('HETLOC', 'TOCSY'),
             ('MLEVPHSW', 'TOCSY'),
             ('ROESY', 'ROESY'),
             ('NOESY', 'NOESY'),
@@ -751,7 +749,6 @@ class JEOL:
             for entry in ordered_exp_dict:
                 if entry in exp_str.upper():
                     exp_type = ordered_exp_dict[entry]
-                    print(f"JEOL EXP TYPE IS {exp_type}")
                     return exp_type
             return exp_type
         else:
