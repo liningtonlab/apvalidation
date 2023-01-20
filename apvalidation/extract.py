@@ -48,7 +48,6 @@ class Varian:
         param_dict_list = []
         for filepath in filepath_list:
             assert os.path.isfile(filepath)
-            # print(Varian.remove_personal_info(filepath=filepath))
             param_dict = ng.varian.read_procpar(filename=filepath)
             param_dict_list.append(param_dict)
         
@@ -246,7 +245,8 @@ class Varian:
             ('MLEVPHSW', 'TOCSY'),
             ('DOSY', 'DOSY'),
             ('ROESY', 'ROESY'),
-            ('NOESY', 'NOESY')
+            ('NOESY', 'NOESY'),
+            ('DEPT', 'DEPT')
         ]
         )
 
@@ -533,6 +533,7 @@ class Bruker:
             ('ROESY', 'ROESY'),
             ('NOESY', 'NOESY'),
             ('DOSY', 'DOSY'),
+            ('DEPT', 'DEPT'),
         ]
         )
 
@@ -740,6 +741,7 @@ class JEOL:
             ('ROESY', 'ROESY'),
             ('NOESY', 'NOESY'),
             ('DOSY', 'DOSY'),
+            ('DEPT', 'DEPT'),
         ]
         )
         
@@ -834,7 +836,13 @@ class Jcampdx_Handler:
             assert os.path.isfile(filepath)
             param_dict = ng.jcampdx.read(filename=filepath)
             param_dict_list.append(param_dict)
-        param_dict = param_dict_list[0]
+
+        # Band-aid to make para_dict consistent since some .jdx files produce a
+        # nested tuple/dict and some don't.
+        try:
+            param_dict = param_dict_list[0][0]['_datatype_NMRSPECTRUM']
+        except:
+            param_dict = param_dict_list[0]
     
         return param_dict
         
@@ -865,11 +873,10 @@ class Jcampdx_Handler:
         elif "Bruker" in manuf_name:
             manuf_name = "Bruker"
             return manuf_name
-        elif manuf_name in ["JCAMP-DX NMR", "JEOL Delta", "DELTA2_NMR"]:
+        elif manuf_name in ["JCAMP-DX NMR", "JEOL Delta", "DELTA2_NMR", "DELTA_NMR"]:
             manuf_name = "JEOL"
             return manuf_name
         else:
-            # print("NO manuf found")
             manuf_name = "Not found"
             return manuf_name
 
