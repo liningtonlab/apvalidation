@@ -15,14 +15,14 @@ all_solvents = {
     **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D', 'DEUTEROCHLOROFORM', 'CDCL3_SPE', 'CDCL3'], 'CDCl3'),
     **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE', 'METHYLENE CHLORIDE', 'METHYLENE-CHLORIDE', 'METHYLENE-CHLORI', 'CD2CL2_SPE'], 'CD2Cl2'),
     **dict.fromkeys(['ACETONE', 'C3D6O_SPE'], 'C3D6O'),
-    **dict.fromkeys(['METHANOL', 'DEUTERATED-METHANOL', 'MEOD', 'CD3OD_SPE'], 'CD3OD'),
+    **dict.fromkeys(['DEUTERATED-METHANOL', 'MEOD', 'CD3OD_SPE'], 'CD3OD'),
     **dict.fromkeys(['TOLUENE', 'C7D8_SPE'], 'C7D8'),
     **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O', 'DEUTERIUM OXIDE', 'D2O_SPE'], 'D2O'),
     **dict.fromkeys(['TRIFLUOROACETIC-ACID', 'TRIFLUOROACETIC ACID', 'C2DF3O2_SPE'], 'C2DF3O2'),
     **dict.fromkeys(['PYRIDINE', 'PYR', 'PYRIDINE-D5', 'C5D5N_SPE'], 'C5D5N'),
     **dict.fromkeys(['ACETONITRILE', 'C2D3N_SPE'], 'C2D3N'),
     **dict.fromkeys(['ACETONITRILE-D3', 'ACETONITRILE D3', 'CD3CN_SPE'], 'CD3CN'),
-    **dict.fromkeys(['BENZENE', 'C6D6_SPE'], 'C6D6'),
+    **dict.fromkeys(['BENZENE', 'C6D6_SPE', 'BENZENE-D6'], 'C6D6'),
     **dict.fromkeys(['METHANOL', 'MEOH'], 'CH3OH'),
     **dict.fromkeys(['DIMETHYLFORMAMIDE', 'DMF'], 'C3H7NO'),
     **dict.fromkeys(['<no solvents available', '<<no solvents available>', '<no solvents available>', '<<no solvents available>>'], None),
@@ -240,6 +240,7 @@ class Varian:
             ('HSQC', 'HSQC'),
             ('HMQC', 'HMQC'),
             ('HMBC', 'HMBC'),
+            ('HSQMBC', 'HSQMBC'),
             ('TOCSY', 'TOCSY'),
             ('HETLOC', 'TOCSY'),
             ('MLEVPHSW', 'TOCSY'),
@@ -684,6 +685,10 @@ class JEOL:
         :return: The solvent in string format.
         """
         solv_str = param_dict['$SOLVENT'][0]
+
+        print("solve_str is")
+        print(solv_str)
+
         if solv_str in all_solvents.keys():
             exp_solv = all_solvents[solv_str]
         elif solv_str.upper() in all_solvents.values():
