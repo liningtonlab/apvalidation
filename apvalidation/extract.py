@@ -17,7 +17,7 @@ all_solvents = {
     **dict.fromkeys(['ACETONE', 'C3D6O_SPE'], 'C3D6O'),
     **dict.fromkeys(['DEUTERATED-METHANOL', 'MEOD', 'CD3OD_SPE'], 'CD3OD'),
     **dict.fromkeys(['TOLUENE', 'C7D8_SPE'], 'C7D8'),
-    **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O', 'DEUTERIUM OXIDE', 'D2O_SPE'], 'D2O'),
+    **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O', 'DEUTERIUM OXIDE', 'D2O_SPE', 'H2O+D2O_SALT_3MM'], 'D2O'),
     **dict.fromkeys(['TRIFLUOROACETIC-ACID', 'TRIFLUOROACETIC ACID', 'C2DF3O2_SPE'], 'C2DF3O2'),
     **dict.fromkeys(['PYRIDINE', 'PYR', 'PYRIDINE-D5', 'C5D5N_SPE'], 'C5D5N'),
     **dict.fromkeys(['ACETONITRILE', 'C2D3N_SPE'], 'C2D3N'),
