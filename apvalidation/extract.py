@@ -14,7 +14,7 @@ all_solvents = {
     **dict.fromkeys(['TETRAHYDROFURAN', 'THF', 'D6-THF', 'THF-D6', 'C2D6OS_SPE'], 'C2D6OS'),
     **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D', 'DEUTEROCHLOROFORM', 'CDCL3_SPE', 'CDCL3'], 'CDCl3'),
     **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE', 'METHYLENE CHLORIDE', 'METHYLENE-CHLORIDE', 'METHYLENE-CHLORI', 'CD2CL2_SPE'], 'CD2Cl2'),
-    **dict.fromkeys(['ACETONE', 'C3D6O_SPE'], 'C3D6O'),
+    **dict.fromkeys(['ACETONE', 'C3D6O_SPE', 'ACETONE-D6'], 'C3D6O'),
     **dict.fromkeys(['DEUTERATED-METHANOL', 'MEOD', 'CD3OD_SPE'], 'CD3OD'),
     **dict.fromkeys(['TOLUENE', 'C7D8_SPE'], 'C7D8'),
     **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O', 'DEUTERIUM OXIDE', 'D2O_SPE', 'H2O+D2O_SALT_3MM'], 'D2O'),
@@ -247,7 +247,8 @@ class Varian:
             ('DOSY', 'DOSY'),
             ('ROESY', 'ROESY'),
             ('NOESY', 'NOESY'),
-            ('DEPT', 'DEPT')
+            ('DEPT', 'DEPT'),
+            ('H2BC', 'H2BC'),
         ]
         )
 
@@ -535,6 +536,7 @@ class Bruker:
             ('NOESY', 'NOESY'),
             ('DOSY', 'DOSY'),
             ('DEPT', 'DEPT'),
+            ('H2BC', 'H2BC'),
         ]
         )
 
@@ -747,6 +749,7 @@ class JEOL:
             ('NOESY', 'NOESY'),
             ('DOSY', 'DOSY'),
             ('DEPT', 'DEPT'),
+            ('H2BC', 'H2BC'),
         ]
         )
         
