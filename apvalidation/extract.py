@@ -23,7 +23,7 @@ all_solvents = {
     **dict.fromkeys(['ACETONITRILE', 'C2D3N_SPE'], 'C2D3N'),
     **dict.fromkeys(['ACETONITRILE-D3', 'ACETONITRILE D3', 'CD3CN_SPE'], 'CD3CN'),
     **dict.fromkeys(['BENZENE', 'C6D6_SPE', 'BENZENE-D6'], 'C6D6'),
-    **dict.fromkeys(['METHANOL', 'MEOH'], 'CH3OH'),
+    **dict.fromkeys(['METHANOL', 'MEOH', 'METHANOL-D3'], 'CH3OH'),
     **dict.fromkeys(['DIMETHYLFORMAMIDE', 'DMF'], 'C3H7NO'),
     **dict.fromkeys(['<no solvents available', '<<no solvents available>', '<no solvents available>', '<<no solvents available>>'], None),
 }
