@@ -188,11 +188,11 @@ class Varian:
         """
 
         if 'plt2Darg' in param_dict.keys():
-                exp_dim = '2D'
-                return exp_dim
+            exp_dim = '2D'
+            return exp_dim
 
         try:
-            exp_dim = param_dict['apptype']['values'][0][-2:]
+            exp_dim = param_dict['apptype']['values'][0][-2:].upper()
         except KeyError:
             exp_dim = None
 
@@ -687,9 +687,6 @@ class JEOL:
         :return: The solvent in string format.
         """
         solv_str = param_dict['$SOLVENT'][0]
-
-        print("solve_str is")
-        print(solv_str)
 
         if solv_str in all_solvents.keys():
             exp_solv = all_solvents[solv_str]
