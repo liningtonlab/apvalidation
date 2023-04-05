@@ -305,6 +305,8 @@ class Validate:
                 H_list = Validate.parse_text_to_list(H_text_block)
             except NoSplit:
                 return ("Failed to split H list, please check your separators.", "Error")
+        else:
+            H_list = None
                 
         if C_text_block:
             try:
@@ -316,6 +318,8 @@ class Validate:
                 C_list = Validate.parse_text_to_list(C_text_block)
             except NoSplit:
                 return ("Failed to split C list, please check your separators.", "Error")
+        else:
+            C_list = None
         
         
         # Check if each element in the parsed lists are either floats or ranges
