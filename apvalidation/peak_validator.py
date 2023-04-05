@@ -289,9 +289,9 @@ class Validate:
             return ("No hydrogen frequency provided", "Error")
         if C_text_block and (not c_frequency):
             return ("No carbon frequency provided", "Error")
-        if h_frequency or h_temperature and (not H_text_block):
+        if (h_frequency or h_temperature) and (not H_text_block):
             return ("No hydrogen values provided. Either add a list of values or remove the hydrogen frequency and temperature values.", "Error")
-        if c_frequency or c_temperature and (not C_text_block):
+        if (c_frequency or c_temperature) and (not C_text_block):
             return ("No carbon values provided. Either add a list of values or remove the carbon frequency and temperature values.", "Error")
 
         if H_text_block:
