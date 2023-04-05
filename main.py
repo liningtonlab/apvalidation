@@ -31,7 +31,7 @@ from apvalidation.file_validation import find_path_and_extract
 
 # find_path_and_extract("./apvalidation/test/jdx_split/SSW03M2 D3-3 2.zip", is_second_time = False)
 
-find_path_and_extract("./apvalidation/test/TEST_NO_1D_Detect.zip", is_second_time = False)
+find_path_and_extract("./apvalidation/test/Borrelidin_B_NMR_RAW.zip", is_second_time = False)
 
 # find_path_and_extract("./apvalidation/test/jdx_split/TEST ROGER JDX PROTON_NOSEY.zip", is_second_time = False)
 
