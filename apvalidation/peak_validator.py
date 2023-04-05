@@ -416,7 +416,7 @@ class Validate:
         if H_list and not C_list:
             warning_message[0] += f"No carbon list provided. Only hydrogen values will be submitted.\n"
         if C_list and not H_list:
-            warning_message[0] += f"No hydrong list provided. Only carbon values will be submitted.\n"
+            warning_message[0] += f"No hydrongen list provided. Only carbon values will be submitted.\n"
 
         # empty_message = ["", "Empty"]
         if not H_list and not C_list:
