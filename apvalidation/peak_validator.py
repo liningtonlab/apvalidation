@@ -289,6 +289,10 @@ class Validate:
             return ("No hydrogen frequency provided", "Error")
         if C_text_block and (not c_frequency):
             return ("No carbon frequency provided", "Error")
+        if h_frequency or h_temperature and (not H_text_block):
+            return ("No hydrogen values provided. Either add a list of values or remove the hydrogen frequency and temperature values.", "Error")
+        if c_frequency or c_temperature and (not C_text_block):
+            return ("No carbon values provided. Either add a list of values or remove the carbon frequency and temperature values.", "Error")
 
         if H_text_block:
             try:
@@ -312,7 +316,6 @@ class Validate:
                 C_list = Validate.parse_text_to_list(C_text_block)
             except NoSplit:
                 return ("Failed to split C list, please check your separators.", "Error")
-            
         
         
         # Check if each element in the parsed lists are either floats or ranges
@@ -409,6 +412,11 @@ class Validate:
                     return (f"Carbon Frequency value {exc.bad_value} MHz is out of the accepted range", "Error")
                 elif exc.error_type == "warning":
                     warning_message[0] += f"Carbon Frequency {exc.bad_value} MHz is outside of a the typical frequency value range.\n"
+        
+        if H_list and not C_list:
+            warning_message[0] += f"No carbon list provided. Only hydrogen values will be submitted.\n"
+        if C_list and not H_list:
+            warning_message[0] += f"No hydrong list provided. Only carbon values will be submitted.\n"
 
         # empty_message = ["", "Empty"]
         if not H_list and not C_list:
