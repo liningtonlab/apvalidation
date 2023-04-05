@@ -290,9 +290,9 @@ class Validate:
         if C_text_block and (not c_frequency):
             return ("No carbon frequency provided", "Error")
         if (h_frequency or h_temperature) and (not H_text_block):
-            return ("No hydrogen values provided. Either add a list of values or remove the hydrogen frequency and temperature values.", "Error")
+            return ("No hydrogen list provided. If you only wish to submit carbon lists please remove the hydrogen frequency and temperature values.", "Error")
         if (c_frequency or c_temperature) and (not C_text_block):
-            return ("No carbon values provided. Either add a list of values or remove the carbon frequency and temperature values.", "Error")
+            return ("No carbon list provided. If you only wish to submit hydrogen lists please remove the carbon frequency and temperature values.", "Error")
 
         if H_text_block:
             try:
@@ -418,9 +418,9 @@ class Validate:
                     warning_message[0] += f"Carbon Frequency {exc.bad_value} MHz is outside of a the typical frequency value range.\n"
         
         if H_list and not C_list:
-            warning_message[0] += f"No carbon list provided. Only hydrogen values will be submitted.\n"
+            warning_message[0] += f"No carbon list provided (only hydrogen values will be submitted).\n"
         if C_list and not H_list:
-            warning_message[0] += f"No hydrongen list provided. Only carbon values will be submitted.\n"
+            warning_message[0] += f"No hydrongen list provided (only carbon values will be submitted).\n"
 
         # empty_message = ["", "Empty"]
         if not H_list and not C_list:
@@ -435,7 +435,7 @@ class Validate:
         #     return tuple(empty_message)
 
         if warning_message[0]:
-            warning_message[0] = warning_message[0].rsplit('\n', 1)[0]
+            # warning_message[0] = warning_message[0].rsplit('\n', 1)[0]
             return tuple(warning_message)
 
         return ("Both lists are valid", "No Errors")
