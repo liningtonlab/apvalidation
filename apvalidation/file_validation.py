@@ -72,15 +72,15 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
             submitted_zip_file = repack_to_zip(submitted_zip_file)
             os.unlink(old_zip_file)
         else:
-            raise ValueError({
+            raise ValueError(json.dumps({
                 "Compression Error": {
                     submitted_zip_file: "File is not in a compressed (.zip, .rar, .7z, etc.) format."
                     + " Please compress your NMR data before uploading."
                 }
-            })
+            }))
 
     meta = MetaFinder(submitted_zip_file, zip_file_extention)
-    assert meta.error_message == {}, meta.error_message
+    assert meta.error_message == {}, json.dumps(meta.error_message)
 
     meta_file = meta.meta_info
     vendor_type = meta_file["vendor_name"]

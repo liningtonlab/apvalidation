@@ -45,7 +45,6 @@ def is_compressed_but_not_zip(zip_file_path:str, compression_extensions: list):
             if file_extension != ".zip":
                 print(f"file extension match as {file_extension}")
                 return True
-    print(f"file extension match not found")
     return False
     
 if __name__ == "__main__":
