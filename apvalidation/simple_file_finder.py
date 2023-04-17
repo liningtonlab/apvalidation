@@ -13,16 +13,21 @@ class MetaFinder:
     meta_name_by_vendor = {
         ".jdf": "Jcampdx", ".jdx": "Jcampdx", "acqu": "Bruker", "procpar": "Varian", "acqu2": "Bruker"
     }
-    zip_file_extention = [".7z",".ace", ".adf",".alz",".ape",".a",".arc", ".arj", ".bz2",".cab", ".Z",
-                          ".cpio",".deb",".dms",".flac",".gz",".iso",".lrz", ".lha", ".lzh", ".lz", ".lzma", 
-                          ".lzo", ".rpm", ".rar", ".rz", ".shn", ".tar", ".xz", ".zip", ".jar", ".zoo", ".zpaq"]
     
 
-    def __init__(self, input_zip: str):
-        self.error_message = []
+    def __init__(self, input_zip: str, zip_file_extention: list):
+        self.zip_file_extention = zip_file_extention
+        self.error_message = {}
         self.all_file_path = self.get_all_file_path(input_zip)
         self.meta_info = self.find_meta(self.all_file_path)
         self.validator(self.all_file_path)
+    
+    def append_error_message(self, error_type: str = None, file: str = None, message: str = None):
+        if error_type not in self.error_message:
+            self.error_message[error_type] = {}
+        if file not in self.error_message[error_type]:
+            self.error_message[error_type][file] = []
+        self.error_message[error_type][file].append(message)
         
     # Get all file path list from the submitted zip file
     def get_all_file_path(self, input_zip: str) -> list:
@@ -63,7 +68,7 @@ class MetaFinder:
             self._vendor_not_found_error(all_path_list)
             if not self.error_message:
                 # No known error are found
-                self.error_message.append("Only Varian, Jcampdx, Bruker files are accepted")
+                self.append_error_message('File Format Error', 'Uploaded File', 'Only Varian, Jcampdx, and Bruker files are accepted at this time')
 
         # Based on found meta data, go through file validation
         # for vendor in meta_info["vendor_name"]:
@@ -105,19 +110,22 @@ class MetaFinder:
     def _varian_validation(self, all_path_list: str, individual_folder_path: str):
         fid_path = self.key_file_finder(all_path_list, "fid", individual_folder_path)
         # assert fid_path, f"{individual_folder_path} : Fid file is missing"
-        if not fid_path : self.error_message.append(f"{individual_folder_path} : Fid file is missing or in an invalid directory location")
+        if not fid_path:
+            self.append_error_message('Failed to read NMR Data', individual_folder_path, 'Fid file is missing or in an invalid directory location')
         
 
     def _bruker_validation(self, all_path_list: str, individual_folder_path: str):
         fid_path = self.key_file_finder(all_path_list, "fid", individual_folder_path)
         ser_path = self.key_file_finder(all_path_list, "ser", individual_folder_path)
         # assert fid_path+ser_path, f"{individual_folder_path} : Fid/Ser file is missing"
-        if not fid_path and not ser_path : self.error_message.append(f"{individual_folder_path} : Fid file is missing or in an invalid directory location")
+        if not fid_path and not ser_path :
+            self.append_error_message('Failed to read NMR Data', individual_folder_path, 'Fid file is missing or in an invalid directory location')
 
     def _jcampdx_validation(self, all_path_list: str, individual_folder_path: str):
         jdx_path = self.key_file_finder(all_path_list, "jdx", individual_folder_path)
         # assert jdx_path, f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx file"
-        if not jdx_path : self.error_message.append(f"{individual_folder_path} : .jdf is not supported. Please convert to .jdx files using the export function in JEOL Delta or MestreNova")
+        if not jdx_path :
+            self.append_error_message('File Format Error', individual_folder_path, '.jdf is not supported. Please convert to .jdx files using the export function in JEOL Delta or MestreNova')
 
     def _vendor_not_found_error(self, all_path_list: str):
         self._invalid_file_detector(all_path_list, '.mnova', '.mnova is not currently supported. Please submit original raw NMR files.')
@@ -126,10 +134,12 @@ class MetaFinder:
             self._invalid_file_detector(all_path_list, extention, f'Please make sure that the submission does not include nested {extention} file. You can put all original NMR files in the same zip folder')
         
     def _invalid_file_detector(self, all_path_list: str, keyword : str, error_message : str):
-        self.error_message.extend([f"{path} : {error_message}" for path in all_path_list if path.endswith(keyword)])        
+        # self.error_message.extend([f"{path} : {error_message}" for path in all_path_list if path.endswith(keyword)])
+        for path in all_path_list:
+            if path.endswith(keyword):
+                self.append_error_message('Vendor Not Supported Error', path, error_message)
 
     
-
 if __name__ == '__main__':
     res = MetaFinder(sys.argv[1]).meta_info
     print(res)

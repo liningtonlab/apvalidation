@@ -36,7 +36,17 @@ def repack_to_zip(zip_file_path:str):
     return unzip_file_name
 
 def is_zip(zip_file_path:str):
-    return Path(zip_file_path).suffix.lower() == '.zip'
+    return Path(zip_file_path).suffix.lower() == ".zip"
+
+def is_compressed_but_not_zip(zip_file_path:str, compression_extensions: list):
+    file_extension = Path(zip_file_path).suffix.lower()
+    for extension in compression_extensions:
+        if file_extension == extension:
+            if file_extension != ".zip":
+                print(f"file extension match as {file_extension}")
+                return True
+    print(f"file extension match not found")
+    return False
     
 if __name__ == "__main__":
     # res = repack_to_zip(sys.argv[1])

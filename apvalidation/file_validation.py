@@ -1,7 +1,7 @@
 from apvalidation import extract as extractor
 from apvalidation.simple_file_finder import MetaFinder
 from apvalidation.extract_core import extract_core_file
-from apvalidation.patoolutil import is_zip, repack_to_zip
+from apvalidation.patoolutil import is_zip, repack_to_zip, is_compressed_but_not_zip
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 
 
@@ -20,29 +20,75 @@ import json
 from pathlib import Path
 import re
 
-def find_path_and_extract(submitted_zip_file: str, is_second_time = False) -> json:
+zip_file_extention = [
+    ".zip",
+    ".rar",
+    ".7z",
+    ".tar",
+    ".ace",
+    ".adf",
+    ".alz",
+    ".ape",
+    ".a",
+    ".arc",
+    ".arj",
+    ".bz2",
+    ".cab",
+    ".Z",
+    ".cpio",
+    ".deb",
+    ".dms",
+    ".flac",
+    ".gz",
+    ".iso",
+    ".lrz",
+    ".lha",
+    ".lzh",
+    ".lz",
+    ".lzma",
+    ".lzo",
+    ".rpm",
+    ".rz",
+    ".shn",
+    ".xz",
+    ".jar",
+    ".zoo",
+    ".zpaq",
+]
+
+
+def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json:
     """
     This function integrates file_finder and paramExtractor.
     :param submitted_zip_file: user submitted zip file path
     :return: Experiment parameters
     """
-       
-    
+
     if not is_zip(submitted_zip_file):
-        old_zip_file = submitted_zip_file
-        submitted_zip_file = repack_to_zip(submitted_zip_file)
-        os.unlink(old_zip_file)
-           
-    meta = MetaFinder(submitted_zip_file)
-    assert meta.error_message == [], meta.error_message  
-    
+        if is_compressed_but_not_zip(
+            submitted_zip_file, zip_file_extention
+        ) == True:
+            old_zip_file = submitted_zip_file
+            submitted_zip_file = repack_to_zip(submitted_zip_file)
+            os.unlink(old_zip_file)
+        else:
+            raise ValueError({
+                "Compression Error": {
+                    submitted_zip_file: "File is not in a compressed (.zip, .rar, .7z, etc.) format."
+                    + " Please compress your NMR data before uploading."
+                }
+            })
+
+    meta = MetaFinder(submitted_zip_file, zip_file_extention)
+    assert meta.error_message == {}, meta.error_message
+
     meta_file = meta.meta_info
     vendor_type = meta_file["vendor_name"]
     file_root = meta_file["meta_file"]
     existing_folder_names = []
     jcamp = False
-    
-    with zipfile.ZipFile(submitted_zip_file, 'r') as zipObj:
+
+    with zipfile.ZipFile(submitted_zip_file, "r") as zipObj:
         # Extract all the contents of zip file in current directory
         res_dict = []
         # for params_path, vendor in file_root, vendor_type:
@@ -69,9 +115,9 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time = False) -> js
                 param_dict = extractor.Bruker.read(unzipped_path_name)
                 params = extractor.Bruker.find_params(param_dict)
                 add_path_vendor(path, params, vendor_type[i], res_dict)
-                
+
             # file_root_without_file_name = str(Path(path).parent)
-            
+
             if vendor_type[i] == "Jcampdx":
                 jcamp = True
                 # spilit_file_dir = f"{str(Path(submitted_zip_file).parent)}/jdx_spilt"
@@ -79,7 +125,6 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time = False) -> js
                 if not is_second_time:
                     loc = separate_mnova_jdx(unzipped_path_name[0], loc)
 
-                
                 # for path in os.listdir(loc):
                 #     if Path(path).suffix == '.jdx':
                 #         full_path = os.path.join(loc, path)
@@ -89,13 +134,13 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time = False) -> js
                 #         params = extractor.Jcampdx_Handler.find_params(param_dict)[0]
                 #         print(params)
                 #         add_path_vendor(path, params, manuf, res_dict)
-            
-            os.unlink(tf.name) # Delete temporary file
+
+            os.unlink(tf.name)  # Delete temporary file
 
         if jcamp:
             res_dict = extract_jcamp(loc)
         json_params = json.dumps(res_dict, indent=4)
-        
+
         # for i, vendor in enumerate(vendor_type):
         #     # Select core files and extract under name_format directory
         #     # Directory name format : <nuc_1>_<nuc_2>_<experiment_type>
@@ -105,28 +150,28 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time = False) -> js
         #         one_d_name = res_dict[i]["nuc_1"] + "_"
         #     else:
         #         one_d_name = ""
-                
+
         #     folder_name = one_d_name + two_d_name + res_dict[i]["experiment_type"]
         #     repeat_exp_num = existing_folder_names.count(folder_name)
         #     existing_folder_names.append(folder_name)
         #     if repeat_exp_num >= 1:
         #         folder_name = folder_name + " ({})".format(repeat_exp_num)
-                        
+
         #     parent_dir = os.getcwd()
         #     # indiv_exp_path = str(re.search("^(.+)/([^/]+)$", file_root[i][0])[1])
         #     indiv_exp_path = f"{str(Path(file_root[i][0]).parent)}/"
         #     param_file = res_dict[i]['original_data_path']
         #     # extract_core_file(submitted_zip_file, indiv_exp_path, vendor_type[i], folder_name, parent_dir, param_file)
         #     extract_jdx(loc,param_file,folder_name,parent_dir)
-            
+
         # print(json_params)
         return json_params
 
-    
+
 def extract_jcamp(loc):
     res_dict = []
     for path in os.listdir(loc):
-        if Path(path).suffix == '.jdx':
+        if Path(path).suffix == ".jdx":
             full_path = os.path.join(loc, path)
             param_dict = extractor.Jcampdx_Handler.read([full_path])
             manuf = extractor.Jcampdx_Handler.find_manuf(param_dict=param_dict)
@@ -134,12 +179,16 @@ def extract_jcamp(loc):
             add_path_vendor(path, params, manuf, res_dict)
     return res_dict
 
+
 def create_temporary_file(core_file_read):
-    tf = tempfile.NamedTemporaryFile(delete=False)  # Create a temporary file that has path
+    tf = tempfile.NamedTemporaryFile(
+        delete=False
+    )  # Create a temporary file that has path
     tf.write(core_file_read)  # Paste parameter file from zip file to temporary file
     assert os.path.isfile(tf.name)
     tf.close()
     return tf
+
 
 def add_path_vendor(path, params, vendor_type, res_dict):
     file_root_without_file_name = str(path)
@@ -148,8 +197,9 @@ def add_path_vendor(path, params, vendor_type, res_dict):
     params["original_data_path"] = file_root_without_file_name
     params["vendor"] = vendor_type
     res_dict.append(params)
-    
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     find_path_and_extract(sys.argv[1])
     # find_path_and_extract("/Users/jonghyeokkim/Downloads/NMR/12-speciofoline.zip", True)
     # extract_jcamp(sys.argv[1])
