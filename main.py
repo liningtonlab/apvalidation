@@ -33,7 +33,12 @@ from apvalidation.file_validation import find_path_and_extract
 
 # find_path_and_extract("./apvalidation/test/ycld34.zip", is_second_time = False)
 # find_path_and_extract("./apvalidation/test/Borrelidin_B_NMR_RAW.zip", is_second_time = False)
-find_path_and_extract("./apvalidation/test/Borrelidin_B.mnova", is_second_time = False)
+# find_path_and_extract("./apvalidation/test/Borrelidin_B.mnova", is_second_time = False)
+# find_path_and_extract("./apvalidation/test/Aulosirazole A Single Compound.zip", is_second_time = False)
+# find_path_and_extract("./apvalidation/test/Granaticin_C.zip", is_second_time = False)
+# find_path_and_extract("./apvalidation/test/Borrelidin_B_NMR_RAW.zip", is_second_time = False)
+find_path_and_extract("./apvalidation/test/compound_KZFMHNJGNPWLAV-DEAAMUPLSA-N.zip", is_second_time = False)
+
 
 # find_path_and_extract("./apvalidation/test/jdx_split/TEST ROGER JDX PROTON_NOSEY.zip", is_second_time = False)
 

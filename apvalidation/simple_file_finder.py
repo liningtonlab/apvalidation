@@ -111,7 +111,11 @@ class MetaFinder:
         fid_path = self.key_file_finder(all_path_list, "fid", individual_folder_path)
         # assert fid_path, f"{individual_folder_path} : Fid file is missing"
         if not fid_path:
-            self.append_error_message('Failed to read NMR Data', individual_folder_path, 'Fid file is missing or in an invalid directory location')
+            self.append_error_message(
+                'Failed to read NMR Data',
+                individual_folder_path,
+                'Fid file is missing or in an invalid directory location. This file contains information about your NMR peaks and is required.'
+            )
         
 
     def _bruker_validation(self, all_path_list: str, individual_folder_path: str):
@@ -128,7 +132,9 @@ class MetaFinder:
             self.append_error_message('File Format Error', individual_folder_path, '.jdf is not supported. Please convert to .jdx files using the export function in JEOL Delta or MestreNova')
 
     def _vendor_not_found_error(self, all_path_list: str):
-        self._invalid_file_detector(all_path_list, '.mnova', '.mnova is not currently supported. Please submit original raw NMR files.')
+        self._invalid_file_detector(all_path_list,
+                                    '.mnova',
+                                    '.mnova is not currently supported. Please submit original raw NMR files.')
         self._invalid_file_detector(all_path_list, '.nmrML', '.nmrML is not currently supported. Please submit original raw NMR files or .jdx files instead.')
         for extention in self.zip_file_extention:
             self._invalid_file_detector(all_path_list, extention, f'Please make sure that the submission does not include nested {extention} file. You can put all original NMR files in the same zip folder')
