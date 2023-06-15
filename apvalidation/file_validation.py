@@ -139,8 +139,12 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
 
         if jcamp:
             res_dict = extract_jcamp(loc)
-            
-        res_dict['is_jdx'] = jcamp
+            for exp in res_dict:
+                exp['is_jdx'] = True
+        
+        print("res_dict is")
+        print(res_dict)
+        
         json_params = json.dumps(res_dict, indent=4)
 
         # for i, vendor in enumerate(vendor_type):
@@ -198,6 +202,7 @@ def add_path_vendor(path, params, vendor_type, res_dict):
         file_root_without_file_name = "/"
     params["original_data_path"] = file_root_without_file_name
     params["vendor"] = vendor_type
+    params["is_jdx"] = False # Default set is_jdx False and do proper check later
     res_dict.append(params)
 
 
