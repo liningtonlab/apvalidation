@@ -142,9 +142,6 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
             for exp in res_dict:
                 exp['is_jdx'] = True
         
-        print("res_dict is")
-        print(res_dict)
-        
         json_params = json.dumps(res_dict, indent=4)
 
         # for i, vendor in enumerate(vendor_type):
