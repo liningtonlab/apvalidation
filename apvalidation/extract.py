@@ -10,23 +10,71 @@ from collections import OrderedDict
 
 
 all_solvents = {
-    **dict.fromkeys(['DMSO', 'DIMETHYL SULFOXIDE', 'DIMETHYL-SULFOXIDE', 'DMSO-D6', 'dmso-d6', 'd6-dmso', 'D6-DMSO'], 'C2D6OS'),
-    **dict.fromkeys(['TETRAHYDROFURAN', 'THF', 'D6-THF', 'THF-D6', 'C2D6OS_SPE'], 'C2D6OS'),
-    **dict.fromkeys(['CHLOROFORM', 'CHLOROFORM-D', 'DEUTEROCHLOROFORM', 'CDCL3_SPE', 'CDCL3'], 'CDCl3'),
-    **dict.fromkeys(['DICHLOROMETHANE', 'DEUTERATED-DICHLOROMETHANE', 'METHYLENE CHLORIDE', 'METHYLENE-CHLORIDE', 'METHYLENE-CHLORI', 'CD2CL2_SPE'], 'CD2Cl2'),
-    **dict.fromkeys(['ACETONE', 'C3D6O_SPE', 'ACETONE-D6'], 'C3D6O'),
-    **dict.fromkeys(['DEUTERATED-METHANOL', 'MEOD', 'CD3OD_SPE'], 'CD3OD'),
-    **dict.fromkeys(['TOLUENE', 'C7D8_SPE'], 'C7D8'),
-    **dict.fromkeys(['HEAVY-WATER', 'OXIDANE', 'DEUTERIUM-OXIDE', 'H2O+D2O', 'DEUTERIUM OXIDE', 'D2O_SPE', 'H2O+D2O_SALT_3MM'], 'D2O'),
-    **dict.fromkeys(['TRIFLUOROACETIC-ACID', 'TRIFLUOROACETIC ACID', 'C2DF3O2_SPE'], 'C2DF3O2'),
-    **dict.fromkeys(['PYRIDINE', 'PYR', 'PYRIDINE-D5', 'C5D5N_SPE'], 'C5D5N'),
-    **dict.fromkeys(['ACETONITRILE', 'C2D3N_SPE'], 'C2D3N'),
-    **dict.fromkeys(['ACETONITRILE-D3', 'ACETONITRILE D3', 'CD3CN_SPE'], 'CD3CN'),
-    **dict.fromkeys(['BENZENE', 'C6D6_SPE', 'BENZENE-D6'], 'C6D6'),
-    **dict.fromkeys(['METHANOL', 'MEOH', 'METHANOL-D3'], 'CH3OH'),
-    **dict.fromkeys(['DIMETHYLFORMAMIDE', 'DMF'], 'C3H7NO'),
-    **dict.fromkeys(['<no solvents available', '<<no solvents available>', '<no solvents available>', '<<no solvents available>>'], None),
+    **dict.fromkeys(
+        [
+            "DMSO",
+            "DIMETHYL SULFOXIDE",
+            "DIMETHYL-SULFOXIDE",
+            "DMSO-D6",
+            "dmso-d6",
+            "d6-dmso",
+            "D6-DMSO",
+        ],
+        "C2D6OS",
+    ),
+    **dict.fromkeys(
+        ["TETRAHYDROFURAN", "THF", "D6-THF", "THF-D6", "C2D6OS_SPE"], "C2D6OS"
+    ),
+    **dict.fromkeys(
+        ["CHLOROFORM", "CHLOROFORM-D", "DEUTEROCHLOROFORM", "CDCL3_SPE", "CDCL3"],
+        "CDCl3",
+    ),
+    **dict.fromkeys(
+        [
+            "DICHLOROMETHANE",
+            "DEUTERATED-DICHLOROMETHANE",
+            "METHYLENE CHLORIDE",
+            "METHYLENE-CHLORIDE",
+            "METHYLENE-CHLORI",
+            "CD2CL2_SPE",
+        ],
+        "CD2Cl2",
+    ),
+    **dict.fromkeys(["ACETONE", "C3D6O_SPE", "ACETONE-D6"], "C3D6O"),
+    **dict.fromkeys(["DEUTERATED-METHANOL", "MEOD", "CD3OD_SPE"], "CD3OD"),
+    **dict.fromkeys(["TOLUENE", "C7D8_SPE"], "C7D8"),
+    **dict.fromkeys(
+        [
+            "HEAVY-WATER",
+            "OXIDANE",
+            "DEUTERIUM-OXIDE",
+            "H2O+D2O",
+            "DEUTERIUM OXIDE",
+            "D2O_SPE",
+            "H2O+D2O_SALT_3MM",
+        ],
+        "D2O",
+    ),
+    **dict.fromkeys(
+        ["TRIFLUOROACETIC-ACID", "TRIFLUOROACETIC ACID", "C2DF3O2_SPE"], "C2DF3O2"
+    ),
+    **dict.fromkeys(["PYRIDINE", "PYR", "PYRIDINE-D5", "C5D5N_SPE"], "C5D5N"),
+    **dict.fromkeys(["ACETONITRILE", "C2D3N_SPE"], "C2D3N"),
+    **dict.fromkeys(["ACETONITRILE-D3", "ACETONITRILE D3", "CD3CN_SPE"], "CD3CN"),
+    **dict.fromkeys(["BENZENE", "C6D6_SPE", "BENZENE-D6"], "C6D6"),
+    **dict.fromkeys(["METHANOL", "MEOH", "METHANOL-D3"], "CH3OH"),
+    **dict.fromkeys(["DIMETHYLFORMAMIDE", "DMF"], "C3H7NO"),
+    **dict.fromkeys(
+        [
+            "<no solvents available",
+            "<<no solvents available>",
+            "<no solvents available>",
+            "<<no solvents available>>",
+        ],
+        None,
+    ),
 }
+
 
 class Varian:
     """
@@ -50,7 +98,7 @@ class Varian:
             assert os.path.isfile(filepath)
             param_dict = ng.varian.read_procpar(filename=filepath)
             param_dict_list.append(param_dict)
-        
+
         return param_dict_list
 
     @staticmethod
@@ -64,7 +112,7 @@ class Varian:
                             Probably returned from the read method.
         :return: dictionary containing only the preferred parameters
         """
-        
+
         param_dict = param_dict_list[0]
         exp_dim = Varian.find_dim(param_dict)
         exp_type = Varian.find_exp_type(param_dict, exp_dim)
@@ -73,15 +121,15 @@ class Varian:
         exp_solv = Varian.find_solvent(param_dict)
         exp_temp = Varian.find_temp(param_dict)
 
-        pref_params = {'experiment_type': exp_type,
-                       'nuc_1': exp_nuc1,
-                       'nuc_2': exp_nuc2,
-                       'frequency': exp_freq,
-                       'solvent': exp_solv,
-                       'temperature': exp_temp
-                       }
+        pref_params = {
+            "experiment_type": exp_type,
+            "nuc_1": exp_nuc1,
+            "nuc_2": exp_nuc2,
+            "frequency": exp_freq,
+            "solvent": exp_solv,
+            "temperature": exp_temp,
+        }
         return pref_params
-
 
     @staticmethod
     def remove_personal_info(filepath):
@@ -95,10 +143,11 @@ class Varian:
         """
         Varian.replace_procpar_property(filepath, "go_id", 1, '""')
         Varian.replace_procpar_property(filepath, "emailaddr", 1, '""')
-    
 
     @staticmethod
-    def replace_procpar_property(filepath, tag, replace_index_after_tag, replacement_line):
+    def replace_procpar_property(
+        filepath, tag, replace_index_after_tag, replacement_line
+    ):
         """
         Replaces specifed properties in a propcar filed with a provided string.
 
@@ -125,26 +174,29 @@ class Varian:
                 elif re.match("^[0-9 ]+\W", line):
                     leading_str = str(replace_index_after_tag)
 
-                if replace is True and line.startswith(leading_str) and leading_str != "":
+                if (
+                    replace is True
+                    and line.startswith(leading_str)
+                    and leading_str != ""
+                ):
                     replace = False
                     line = f"{leading_str} {replacement_line}\n"
                 if tag in line:
                     replace = True
 
-                sys.stdout.write(line) 
+                sys.stdout.write(line)
         except:
             os.remove(copypath)
             return False
-        
+
         os.remove(filepath)
         os.rename(copypath, filepath)
-                
-        return True
 
+        return True
 
     @staticmethod
     def find_temp(param_dict):
-        temp_number = int(param_dict['temp']['values'][0])
+        temp_number = int(param_dict["temp"]["values"][0])
         if temp_number >= 250:
             return temp_number
         else:
@@ -162,7 +214,7 @@ class Varian:
         :return: a string containing the chemical formula of the solvent used.
         """
         try:
-            solv_str = param_dict['solvent']['values'][0]
+            solv_str = param_dict["solvent"]["values"][0]
             if solv_str is not None:
                 solv_str = solv_str.upper()
         except KeyError:
@@ -187,24 +239,23 @@ class Varian:
         :return: dimension of the experiment
         """
 
-        if 'plt2Darg' in param_dict.keys():
-            exp_dim = '2D'
+        if "plt2Darg" in param_dict.keys():
+            exp_dim = "2D"
             return exp_dim
 
         try:
-            exp_dim = param_dict['apptype']['values'][0][-2:].upper()
+            exp_dim = param_dict["apptype"]["values"][0][-2:].upper()
         except KeyError:
             exp_dim = None
 
-        if exp_dim in ['1D', '2D']:
+        if exp_dim in ["1D", "2D"]:
             return exp_dim
 
-        elif exp_dim not in ['1D', '2D']:
+        elif exp_dim not in ["1D", "2D"]:
             try:
-                exp_dim = str(param_dict['procdim']['values'][0]) + "D"
+                exp_dim = str(param_dict["procdim"]["values"][0]) + "D"
             except KeyError:
                 exp_dim = None
-            
 
         if exp_dim not in ["1D", "2D", None]:
             exp_dim = None
@@ -234,63 +285,65 @@ class Varian:
         """
 
         # exp_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'DOSY', 'ROESY', 'NOESY']
-        ordered_exp_dict = OrderedDict([
-            ('HSQCTOCSY', 'HSQCTOCSY'),
-            ('COSY', 'COSY'),
-            ('HSQC', 'HSQC'),
-            ('HMQC', 'HMQC'),
-            ('HMBC', 'HMBC'),
-            ('HSQMBC', 'HSQMBC'),
-            ('TOCSY', 'TOCSY'),
-            ('HETLOC', 'TOCSY'),
-            ('MLEVPHSW', 'TOCSY'),
-            ('DOSY', 'DOSY'),
-            ('ROESY', 'ROESY'),
-            ('NOESY', 'NOESY'),
-            ('DEPT', 'DEPT'),
-            ('H2BC', 'H2BC'),
-        ]
+        ordered_exp_dict = OrderedDict(
+            [
+                ("HSQCTOCSY", "HSQCTOCSY"),
+                ("COSY", "COSY"),
+                ("HSQC", "HSQC"),
+                ("HMQC", "HMQC"),
+                ("HMBC", "HMBC"),
+                ("HSQMBC", "HSQMBC"),
+                ("TOCSY", "TOCSY"),
+                ("HETLOC", "TOCSY"),
+                ("MLEVPHSW", "TOCSY"),
+                ("DOSY", "DOSY"),
+                ("ROESY", "ROESY"),
+                ("NOESY", "NOESY"),
+                ("DEPT", "DEPT"),
+                ("H2BC", "H2BC"),
+                ("HOMO2DJ", "HOMO2DJ"),
+            ]
         )
 
         try:
-            exp_type_loc1 = param_dict['explist']['values'][0]
+            exp_type_loc1 = param_dict["explist"]["values"][0]
         except KeyError:
             exp_type_loc1 = ""
 
         try:
-            exp_type_loc2 = param_dict['apptype']['values'][0]
+            exp_type_loc2 = param_dict["apptype"]["values"][0]
         except KeyError:
             exp_type_loc2 = ""
         try:
-            long_string = param_dict['ap']['values'][0]
-            start_indicator = long_string.find('pwx:3;1:')+len('pwx:3;1:')
-            end_indicator = long_string.find(':j1xh:')
+            long_string = param_dict["ap"]["values"][0]
+            start_indicator = long_string.find("pwx:3;1:") + len("pwx:3;1:")
+            end_indicator = long_string.find(":j1xh:")
             exp_type_loc3 = long_string[start_indicator:end_indicator]
         except KeyError:
             exp_type_loc3 = ""
 
         try:
-            exp_type_loc4 = param_dict['pslabel']['values'][0]
+            exp_type_loc4 = param_dict["pslabel"]["values"][0]
         except KeyError:
             exp_type_loc4 = ""
 
         exp_loc_list = [exp_type_loc1, exp_type_loc2, exp_type_loc3, exp_type_loc4]
         exp_loc_list = [x.upper() for x in exp_loc_list]
-        
-        exp_type = ''
-        if exp_dim == '2D':
+
+        exp_type = ""
+        if exp_dim == "2D":
             for exp_loc in exp_loc_list:
                 for type_str in ordered_exp_dict:
                     if type_str in exp_loc:
                         exp_type = ordered_exp_dict[type_str]
                         return exp_type
-        elif exp_dim == '1D':
+        elif exp_dim == "1D":
             for exp_loc in exp_loc_list:
                 for type_str in ordered_exp_dict:
                     if type_str in exp_loc:
                         exp_type = ordered_exp_dict[type_str]
                         break
-            exp_type = f'1D {exp_type}'.strip()
+            exp_type = f"1D {exp_type}".strip()
             return exp_type
         else:
             exp_type = "FAILED_TO_DETECT"
@@ -308,13 +361,13 @@ class Varian:
         :param exp_dim: the dimension of the experiment
         :return: a single float or a tuple of floats depending on the dimension
         """
-        
-        if exp_dim == '2D':
-            freq1 = round(float(param_dict['reffrq']['values'][0]), 9)
-            freq2 = round(float(param_dict['reffrq1']['values'][0]), 9)
+
+        if exp_dim == "2D":
+            freq1 = round(float(param_dict["reffrq"]["values"][0]), 9)
+            freq2 = round(float(param_dict["reffrq1"]["values"][0]), 9)
             freq_val = (freq1, freq2)
         else:
-            freq_val = [round(float(param_dict['reffrq']['values'][0]), 9)]
+            freq_val = [round(float(param_dict["reffrq"]["values"][0]), 9)]
         return freq_val
 
     @staticmethod
@@ -326,20 +379,20 @@ class Varian:
         :param exp_dim: dimension of the experiment
         :return: dimension of the experiment
         """
-        explist_keyword_dict = {'PROTON': '1H', 'CARBON': '13C'}
+        explist_keyword_dict = {"PROTON": "1H", "CARBON": "13C"}
         rewrite_nucs_dict = {"H1": "1H", "C13": "13C", "N15": "15N"}
 
-        if exp_dim == '1D':
+        if exp_dim == "1D":
             try:
-                atom_name = param_dict['explist']['values'][0]
+                atom_name = param_dict["explist"]["values"][0]
                 exp_nuc1 = explist_keyword_dict[atom_name]
                 exp_nuc2 = None
             except KeyError:
-                atom_name = param_dict['tn']['values'][0]
+                atom_name = param_dict["tn"]["values"][0]
                 exp_nuc1 = rewrite_nucs_dict[atom_name]
                 exp_nuc2 = None
 
-        elif exp_dim == '2D':
+        elif exp_dim == "2D":
             exp_nuc1, exp_nuc2 = Varian.help_find_2d_nuc(param_dict)
         else:
             exp_nuc1 = None
@@ -358,24 +411,51 @@ class Varian:
         :return: the two nuclei involved in the experiment.
         """
         nuc_dict = {
-            "H1": [(0.99875, 1.00125), (3.971172962, 3.98111332), (9.864197531, 9.888888889),
-                   (1.061652936, 1.064310391), (2.467572576, 2.473749228)],
-            "C13": [(0.25025, 0.25275), (0.9950298211, 1.004970179),
-                    (2.471604938, 2.496296296), (0.2660111613, 0.2686686155), (0.6182828907, 0.6244595429)],
-            "N15": [(0.1, 0.1025), (0.3976143141, 0.407554672),
-                    (0.987654321, 1.012345679), (0.1062981664, 0.1089556205), (0.2470660902, 0.2532427424)],
-            "F": [(0.9395, 0.942), (3.735586481, 3.745526839),
-                  (9.279012346, 9.303703704), (0.9986712729, 1.001328727), (2.321185917, 2.327362569)],
-            "P": [(0.4035, 0.406), (1.604373757, 1.614314115),
-                  (3.985185185, 4.009876543), (0.4289131012, 0.4315705554), (0.9969116739, 1.003088326)]
+            "H1": [
+                (0.99875, 1.00125),
+                (3.971172962, 3.98111332),
+                (9.864197531, 9.888888889),
+                (1.061652936, 1.064310391),
+                (2.467572576, 2.473749228),
+            ],
+            "C13": [
+                (0.25025, 0.25275),
+                (0.9950298211, 1.004970179),
+                (2.471604938, 2.496296296),
+                (0.2660111613, 0.2686686155),
+                (0.6182828907, 0.6244595429),
+            ],
+            "N15": [
+                (0.1, 0.1025),
+                (0.3976143141, 0.407554672),
+                (0.987654321, 1.012345679),
+                (0.1062981664, 0.1089556205),
+                (0.2470660902, 0.2532427424),
+            ],
+            "F": [
+                (0.9395, 0.942),
+                (3.735586481, 3.745526839),
+                (9.279012346, 9.303703704),
+                (0.9986712729, 1.001328727),
+                (2.321185917, 2.327362569),
+            ],
+            "P": [
+                (0.4035, 0.406),
+                (1.604373757, 1.614314115),
+                (3.985185185, 4.009876543),
+                (0.4289131012, 0.4315705554),
+                (0.9969116739, 1.003088326),
+            ],
         }
 
         nuc_df = pd.DataFrame(nuc_dict)
         nuc_df.index = ["H1", "C13", "N15", "F", "P"]
 
-        nuc_1 = param_dict['tn']['values'][0]
-        nuc_2 = ''
-        freq_ratio = float(param_dict['reffrq']['values'][0]) / float(param_dict['reffrq1']['values'][0])
+        nuc_1 = param_dict["tn"]["values"][0]
+        nuc_2 = ""
+        freq_ratio = float(param_dict["reffrq"]["values"][0]) / float(
+            param_dict["reffrq1"]["values"][0]
+        )
 
         for frq_range in nuc_df[nuc_1]:
             if frq_range[0] < freq_ratio < frq_range[1]:
@@ -397,16 +477,17 @@ class Bruker:
 
     1. Change the read function so that it may take a list of filenames instead of just a single filename.
         This is to accomodate the fact that 2D data will be analyzed by looking at both acqu and acqu2
-    
+
     2. Change the find_dim function to simply look at the number of files that have been read in from the read function.
         If there is one file then the dimension is 1D and if there are two files then the dimension is 2D.
 
     3. Change the find_nuclei function to look at both the acqu and the acqu2 files for 2D data. For now we will only consider NUC1
         to be the nuclei relevant to the experiment. This can be changed under further inspection.
 
-    4. Find experiment type should be the same as long as find_dim works correctly as the its just looking up the key. If find_dim 
+    4. Find experiment type should be the same as long as find_dim works correctly as the its just looking up the key. If find_dim
         works correctly and you find this is not the case then come back to here and write your findings.
     """
+
     """
     A class containing the methods to help with the extraction of
     experiment parameters from NMR data from Bruker
@@ -429,7 +510,7 @@ class Bruker:
             assert os.path.isfile(filepath)
             param_dict = ng.bruker.read_jcamp(filename=filepath)
             param_dict_list.append(param_dict)
-        
+
         return param_dict_list
 
     @staticmethod
@@ -451,14 +532,20 @@ class Bruker:
         exp_solv = Bruker.find_solvent(param_dict)
         exp_temp = Bruker.find_temp(param_dict)
 
-        pref_params = {'experiment_type': exp_type, 'nuc_1': exp_nuc1, 'nuc_2': exp_nuc2, 'frequency': exp_freq,
-                       'solvent': exp_solv, 'temperature': exp_temp}
+        pref_params = {
+            "experiment_type": exp_type,
+            "nuc_1": exp_nuc1,
+            "nuc_2": exp_nuc2,
+            "frequency": exp_freq,
+            "solvent": exp_solv,
+            "temperature": exp_temp,
+        }
 
         return pref_params
 
     @staticmethod
     def find_temp(param_dict):
-        temp_number = round(float(param_dict['TE']))
+        temp_number = round(float(param_dict["TE"]))
         if temp_number >= 250:
             return temp_number
         else:
@@ -474,7 +561,7 @@ class Bruker:
         :return: The solvent in string format.
         """
 
-        solv_str = param_dict['SOLVENT']
+        solv_str = param_dict["SOLVENT"]
 
         if solv_str.upper() in all_solvents.keys():
             exp_solv = all_solvents[solv_str.upper()]
@@ -486,7 +573,6 @@ class Bruker:
 
     @staticmethod
     def find_dim(param_dict_list):
-
         """
         Changes to be made to this function:
         1. Change the argument to a list of param_dicts. If there are more than one in the list
@@ -502,9 +588,9 @@ class Bruker:
         """
         exp_dim = None
         if len(param_dict_list) == 2:
-            exp_dim = '2D'
+            exp_dim = "2D"
         elif len(param_dict_list) == 1:
-            exp_dim = '1D'
+            exp_dim = "1D"
 
         return exp_dim
 
@@ -518,32 +604,36 @@ class Bruker:
         :param exp_dim: dimension of the experiment
         :return: type of experiment in string. (1D experiments are not given a type)
         """
-        possible_exp_str_1 = param_dict['EXP']
-        possible_exp_str_2 = param_dict['PULPROG']
+        possible_exp_str_1 = param_dict["EXP"]
+        possible_exp_str_2 = param_dict["PULPROG"]
 
         # exp_2d_list = ['HSQCTOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'ROESY', 'NOESY', 'DOSY']
 
-        ordered_exp_dict = OrderedDict([
-            ('HSQCTOCSY', 'HSQCTOCSY'),
-            ('COSY', 'COSY'),
-            ('HSQC', 'HSQC'),
-            ('HMQC', 'HMQC'),
-            ('HMBC', 'HMBC'),
-            ('TOCSY', 'TOCSY'),
-            ('HETLOC', 'TOCSY'),
-            ('MLEVPHSW', 'TOCSY'),
-            ('ROESY', 'ROESY'),
-            ('NOESY', 'NOESY'),
-            ('DOSY', 'DOSY'),
-            ('DEPT', 'DEPT'),
-            ('H2BC', 'H2BC'),
-        ]
+        ordered_exp_dict = OrderedDict(
+            [
+                ("HSQCTOCSY", "HSQCTOCSY"),
+                ("COSY", "COSY"),
+                ("HSQC", "HSQC"),
+                ("HMQC", "HMQC"),
+                ("HMBC", "HMBC"),
+                ("TOCSY", "TOCSY"),
+                ("HETLOC", "TOCSY"),
+                ("MLEVPHSW", "TOCSY"),
+                ("ROESY", "ROESY"),
+                ("NOESY", "NOESY"),
+                ("DOSY", "DOSY"),
+                ("DEPT", "DEPT"),
+                ("H2BC", "H2BC"),
+            ]
         )
 
-        exp_type = ''
-        if exp_dim == '2D':
+        exp_type = ""
+        if exp_dim == "2D":
             for entry in ordered_exp_dict:
-                if entry in possible_exp_str_1.upper() or entry in possible_exp_str_2.upper():
+                if (
+                    entry in possible_exp_str_1.upper()
+                    or entry in possible_exp_str_2.upper()
+                ):
                     exp_type = ordered_exp_dict[entry]
                     return exp_type
             exp_type = "FAILED_TO_DETECT"
@@ -553,7 +643,7 @@ class Bruker:
                 if entry in possible_exp_str_1 or entry in possible_exp_str_2:
                     exp_type = ordered_exp_dict[entry]
                     break
-            exp_type = f'1D {exp_type}'.strip()
+            exp_type = f"1D {exp_type}".strip()
             return exp_type
 
     @staticmethod
@@ -568,36 +658,36 @@ class Bruker:
         :param exp_dim: the dimension of the experiment
         :return: a single float or a tuple of floats depending on the dimension
         """
-        if exp_dim == '1D':
-            freq_val = round(float(param_dict['SFO1']), 9)
+        if exp_dim == "1D":
+            freq_val = round(float(param_dict["SFO1"]), 9)
             return [freq_val]
         else:
-            freq1 = round(float(param_dict['SFO1']), 9)
-            freq2 = round(float(param_dict['SFO2']), 9)
+            freq1 = round(float(param_dict["SFO1"]), 9)
+            freq2 = round(float(param_dict["SFO2"]), 9)
             freq_val = (freq1, freq2)
             return freq_val
 
     @staticmethod
     def find_nuc(param_dict_list, exp_dim):
         """
-        Helper function.
-        Determine the nuclei that are used in the experiment.
+         Helper function.
+         Determine the nuclei that are used in the experiment.
 
-       :param param_dict: a large dictionary containing all the parameters.
-                            Probably returned from the read method.
-        :param exp_dim: the dimension of the experiment
-        :return: nucleus 1 and nucleus 2 in string format
+        :param param_dict: a large dictionary containing all the parameters.
+                             Probably returned from the read method.
+         :param exp_dim: the dimension of the experiment
+         :return: nucleus 1 and nucleus 2 in string format
         """
         param_dict_1D = param_dict_list[0]
-        if exp_dim == '2D':
+        if exp_dim == "2D":
             param_dict_2D = param_dict_list[1]
 
         exp_nuc2 = None
-        if exp_dim == '1D':
-            exp_nuc1 = param_dict_1D['NUC1']
-        elif exp_dim == '2D':
-            exp_nuc1 = param_dict_1D['NUC1']
-            exp_nuc2 = param_dict_2D['NUC1']
+        if exp_dim == "1D":
+            exp_nuc1 = param_dict_1D["NUC1"]
+        elif exp_dim == "2D":
+            exp_nuc1 = param_dict_1D["NUC1"]
+            exp_nuc2 = param_dict_2D["NUC1"]
         else:
             exp_nuc1 = None
 
@@ -628,7 +718,7 @@ class JEOL:
             assert os.path.isfile(filepath)
             param_dict = ng.jcampdx.read(filename=filepath)
             param_dict_list.append(param_dict)
-        
+
         return param_dict_list
 
     @staticmethod
@@ -646,7 +736,7 @@ class JEOL:
         except:
             param_dict = param_dict_list[0]
         try:
-            param_dict = param_dict['_datatype_NMRSPECTRUM'][0]
+            param_dict = param_dict["_datatype_NMRSPECTRUM"][0]
         except KeyError:
             try:
                 param_dict = param_dict["_datatype_LINK"][0]
@@ -660,22 +750,27 @@ class JEOL:
         exp_solv = JEOL.find_solvent(param_dict)
         exp_temp = JEOL.find_temp(param_dict)
 
-        pref_params = {'experiment_type': exp_type, 'nuc_1': exp_nuc_1, 'nuc_2': exp_nuc_2, 'frequency': exp_freq,
-                       'solvent': exp_solv.upper(), 'temperature': exp_temp}
+        pref_params = {
+            "experiment_type": exp_type,
+            "nuc_1": exp_nuc_1,
+            "nuc_2": exp_nuc_2,
+            "frequency": exp_freq,
+            "solvent": exp_solv.upper(),
+            "temperature": exp_temp,
+        }
 
         return pref_params
 
     @staticmethod
     def find_temp(param_dict):
         try:
-            temp_number = int(param_dict['$TEMPSET'][0])
+            temp_number = int(param_dict["$TEMPSET"][0])
             if temp_number >= 250:
                 return temp_number
             else:
                 return temp_number + 273
         except TypeError:
             return None
-
 
     @staticmethod
     def find_solvent(param_dict):
@@ -686,7 +781,7 @@ class JEOL:
         :param param_dict: Dictionary containing all the parameters for the experiment.
         :return: The solvent in string format.
         """
-        solv_str = param_dict['$SOLVENT'][0]
+        solv_str = param_dict["$SOLVENT"][0]
 
         if solv_str in all_solvents.keys():
             exp_solv = all_solvents[solv_str]
@@ -707,14 +802,13 @@ class JEOL:
         :return: dimension of the experiment.
         """
 
-        
         try:
-            exp_dim = param_dict['NUMDIM'][0] + 'D'
+            exp_dim = param_dict["NUMDIM"][0] + "D"
         except KeyError:
             exp_dim = None
         if exp_dim == None:
             try:
-                exp_dim = param_dict['$DIMENSIONS'][0] + 'D'
+                exp_dim = param_dict["$DIMENSIONS"][0] + "D"
             except KeyError:
                 exp_dim = None
 
@@ -730,29 +824,30 @@ class JEOL:
         :param exp_dim: dimension of the experiment
         :return: type of experiment in string. (1D experiments are not given a type)
         """
-        exp_str = param_dict['.PULSESEQUENCE'][0].upper()
+        exp_str = param_dict[".PULSESEQUENCE"][0].upper()
 
         # exp_2d_list = ['HSQC-TOCSY', 'COSY', 'HSQC', 'HMQC', 'HMBC', 'TOCSY', 'ROESY', 'NOESY', 'DOSY']
-        ordered_exp_dict = OrderedDict([
-            ('HSQC-TOCSY', 'HSQCTOCSY'),
-            ('COSY', 'COSY'),
-            ('HSQC', 'HSQC'),
-            ('HMQC', 'HMQC'),
-            ('HMBC', 'HMBC'),
-            ('TOCSY', 'TOCSY'),
-            ('HETLOC', 'TOCSY'),
-            ('MLEVPHSW', 'TOCSY'),
-            ('ROESY', 'ROESY'),
-            ('NOESY', 'NOESY'),
-            ('DOSY', 'DOSY'),
-            ('DEPT', 'DEPT'),
-            ('H2BC', 'H2BC'),
-        ]
+        ordered_exp_dict = OrderedDict(
+            [
+                ("HSQC-TOCSY", "HSQCTOCSY"),
+                ("COSY", "COSY"),
+                ("HSQC", "HSQC"),
+                ("HMQC", "HMQC"),
+                ("HMBC", "HMBC"),
+                ("TOCSY", "TOCSY"),
+                ("HETLOC", "TOCSY"),
+                ("MLEVPHSW", "TOCSY"),
+                ("ROESY", "ROESY"),
+                ("NOESY", "NOESY"),
+                ("DOSY", "DOSY"),
+                ("DEPT", "DEPT"),
+                ("H2BC", "H2BC"),
+            ]
         )
-        
+
         exp_type = "FAILED_TO_DETECT"
 
-        if exp_dim == '2D':
+        if exp_dim == "2D":
             for entry in ordered_exp_dict:
                 if entry in exp_str.upper():
                     exp_type = ordered_exp_dict[entry]
@@ -774,40 +869,40 @@ class JEOL:
         :param exp_dim: the dimension of the experiment
         :return: a single float or a tuple of floats depending on the dimension
         """
-        
-        if exp_dim == '2D':
-            freq1 = round(float(param_dict['$XFREQ'][0]), 9)
-            freq2 = round(float(param_dict['$YFREQ'][0]), 9)
+
+        if exp_dim == "2D":
+            freq1 = round(float(param_dict["$XFREQ"][0]), 9)
+            freq2 = round(float(param_dict["$YFREQ"][0]), 9)
             freq = (freq1, freq2)
             return freq
         else:
-            freq = round(float(param_dict['$XFREQ'][0]), 9)
+            freq = round(float(param_dict["$XFREQ"][0]), 9)
             return [freq]
 
     @staticmethod
     def find_nuc(param_dict, exp_dim):
         """
-        Helper function.
-        Determine the nuclei that are used in the experiment.
+         Helper function.
+         Determine the nuclei that are used in the experiment.
 
-       :param param_dict: a large dictionary containing all the parameters.
-                            Probably returned from the read method.
-        :param exp_dim: the dimension of the experiment
-        :return: nucleus 1 and nucleus 2 in string format
+        :param param_dict: a large dictionary containing all the parameters.
+                             Probably returned from the read method.
+         :param exp_dim: the dimension of the experiment
+         :return: nucleus 1 and nucleus 2 in string format
         """
-        if exp_dim == '2D':
+        if exp_dim == "2D":
             try:
-                nuc_1 = param_dict['.NUCLEUS'][0].split(', ')[1]
-                nuc_2 = param_dict['.NUCLEUS'][0].split(', ')[0]
-            except: 
+                nuc_1 = param_dict[".NUCLEUS"][0].split(", ")[1]
+                nuc_2 = param_dict[".NUCLEUS"][0].split(", ")[0]
+            except:
                 pass
             try:
-                nuc_1 = param_dict['.NUCLEUS'][0].split(',')[1]
-                nuc_2 = param_dict['.NUCLEUS'][0].split(',')[0]
+                nuc_1 = param_dict[".NUCLEUS"][0].split(",")[1]
+                nuc_2 = param_dict[".NUCLEUS"][0].split(",")[0]
             except:
                 pass
         else:
-            nuc_1 = param_dict['.OBSERVENUCLEUS'][0][1:]
+            nuc_1 = param_dict[".OBSERVENUCLEUS"][0][1:]
             nuc_2 = None
 
         return nuc_1, nuc_2
@@ -816,7 +911,7 @@ class JEOL:
 class Jcampdx_Handler:
     """
     A class containing the methods to help with the extraction of
-    experiment parameters from NMR data from jdx format. This class handles jcamps 
+    experiment parameters from NMR data from jdx format. This class handles jcamps
     by following these steps:
     1. Classify the file as Bruker, Varian.
     2. Format the jdx file to match the nmrglue read outputs.
@@ -845,19 +940,19 @@ class Jcampdx_Handler:
         # Band-aid to make para_dict consistent since some .jdx files produce a
         # nested tuple/dict and some don't.
         try:
-            param_dict = param_dict_list[0][0]['_datatype_NMRSPECTRUM']
+            param_dict = param_dict_list[0][0]["_datatype_NMRSPECTRUM"]
         except:
             param_dict = param_dict_list[0]
-    
+
         return param_dict
-        
+
     @staticmethod
     def find_manuf(param_dict):
         """
         find the manufacturer that produced the data file that is being inspected.
 
         :param param_dict_list: a list of dictionaries read in from the read function
-        :return: the name of the manufacturer 
+        :return: the name of the manufacturer
         """
 
         try:
@@ -908,12 +1003,11 @@ class Jcampdx_Handler:
             output_list.append(Bruker.find_params(bruker_structured_dict_list))
 
         elif manuf == "JEOL":
-
             jeol_structured_dict_list = Jcampdx_Handler.format_jeol_combined(param_dict)
             output_list.append(JEOL.find_params(jeol_structured_dict_list))
 
         return output_list
-    
+
     @staticmethod
     def format_varian(jdx_read_output):
         """
@@ -950,11 +1044,10 @@ class Jcampdx_Handler:
                     key_holder = key
             else:
                 line = line[2:]
-                line = line.replace('"', '')
+                line = line.replace('"', "")
                 value_stack.append(line)
 
         return [param_dict]
-
 
     @staticmethod
     def format_bruker(read_jdx_output):
@@ -968,12 +1061,12 @@ class Jcampdx_Handler:
         param_dict = read_jdx_output[0]
 
         line_list = []
-        try: 
-            line_list = param_dict['_comments']
+        try:
+            line_list = param_dict["_comments"]
         except KeyError:
             line_list = "Not found"
         if line_list == "Not found":
-            try: 
+            try:
                 line_list = param_dict["_datatype_LINK"][0]["_comments"]
             except KeyError:
                 line_list = "Not found"
@@ -982,39 +1075,38 @@ class Jcampdx_Handler:
 
         for index, item in enumerate(line_list):
             if "##TITLE= " in item:
-                file_seps.append([index,0])
+                file_seps.append([index, 0])
             if "##END=" in item:
                 matching_list = file_seps[-1]
-                matching_list[1] = index+1
+                matching_list[1] = index + 1
 
         file_list = []
         for curr_file in file_seps:
-            file_list.append(line_list[curr_file[0]:curr_file[1]])
+            file_list.append(line_list[curr_file[0] : curr_file[1]])
 
-        if 'Parameter file' in file_list[1][0]:
+        if "Parameter file" in file_list[1][0]:
             dim = "2D"
         else:
             dim = "1D"
-        
+
         if dim == "1D":
             line_list = file_list[0]
             param_dict = {}
             for line in line_list:
-                    if line.startswith("##"):
-                        split_line = line.split("=")
-                        key = split_line[0]
-                        value = split_line[1]
+                if line.startswith("##"):
+                    split_line = line.split("=")
+                    key = split_line[0]
+                    value = split_line[1]
 
-                        key = key.replace("#", "")
-                        key = key.replace("$", "")
-                        value = re.sub("[< | >]*", "", value)
+                    key = key.replace("#", "")
+                    key = key.replace("$", "")
+                    value = re.sub("[< | >]*", "", value)
 
-                        param_dict[key] = value
-        
+                    param_dict[key] = value
+
             return [param_dict]
 
         elif dim == "2D":
-
             dim_1_line_list = file_list[1]
             dim_2_line_list = file_list[0]
             param_dict_dim1 = {}
@@ -1044,7 +1136,6 @@ class Jcampdx_Handler:
                     param_dict_dim2[key] = value
             return [param_dict_dim1, param_dict_dim2]
 
-
     @staticmethod
     def format_jeol_combined(jdx_read_output):
         """
@@ -1054,21 +1145,21 @@ class Jcampdx_Handler:
         :return: list of dictionaries, these are formatted for the Varian Class methods.
         """
         try:
-            param_dict = jdx_read_output[0]['_datatype_LINK']
+            param_dict = jdx_read_output[0]["_datatype_LINK"]
         except KeyError:
             try:
                 param_dict = jdx_read_output
             except KeyError:
                 param_dict = "None"
-        
+
         # re-name and format frequency keys so they match the delta version of JEOL data.
         try:
-            freq_list = param_dict[0]['.OBSERVEFREQUENCY'][1]
+            freq_list = param_dict[0][".OBSERVEFREQUENCY"][1]
             freq_list = freq_list.split(",")
             param_dict[0]["$XFREQ"] = [freq_list[0]]
             param_dict[0]["$YFREQ"] = [freq_list[1]]
         except:
-            freq_list = param_dict[0]['.OBSERVEFREQUENCY'][0]
+            freq_list = param_dict[0][".OBSERVEFREQUENCY"][0]
             param_dict[0]["$XFREQ"] = [freq_list]
 
         # add SOLVENT keys
@@ -1078,4 +1169,3 @@ class Jcampdx_Handler:
         param_dict[0]["$TEMPSET"] = [None]
 
         return [jdx_read_output]
-

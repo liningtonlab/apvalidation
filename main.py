@@ -24,22 +24,4 @@ from apvalidation.file_validation import find_path_and_extract
 # input_file = "./procpar"
 # Varian.remove_personal_info(input_file)
 
-# find_path_and_extract("./apvalidation/test/jdx_split/TEST_JEOL.zip", is_second_time = False)
-# find_path_and_extract("./apvalidation/test/jdx_split/TEST ROGER JDX proton_only.zip", is_second_time = False)
-# find_path_and_extract("./apvalidation/test/jdx_split/TEST ROGER JDX FULL.zip", is_second_time = False)
-# find_path_and_extract("./apvalidation/test/jdx_split/TEST ROGER JDX NO COSY.zip", is_second_time = False)
-
-# find_path_and_extract("./apvalidation/test/jdx_split/SSW03M2 D3-3 2.zip", is_second_time = False)
-
-# find_path_and_extract("./apvalidation/test/ycld34.zip", is_second_time = False)
-# find_path_and_extract("./apvalidation/test/Borrelidin_B_NMR_RAW.zip", is_second_time = False)
-# find_path_and_extract("./apvalidation/test/Borrelidin_B.mnova", is_second_time = False)
-find_path_and_extract("./apvalidation/test/compound_zip.zip", is_second_time = False)
-# find_path_and_extract("./apvalidation/test/Granaticin_C.zip", is_second_time = False)
-# find_path_and_extract("./apvalidation/test/Borrelidin_B_NMR_RAW.zip", is_second_time = False)
-# find_path_and_extract("./apvalidation/test/compound_KZFMHNJGNPWLAV-DEAAMUPLSA-N.zip", is_second_time = False)
-
-
-# find_path_and_extract("./apvalidation/test/jdx_split/TEST ROGER JDX PROTON_NOSEY.zip", is_second_time = False)
-
-# find_path_and_extract("./apvalidation/test/original_data_SIIRGYXKTQZYMV-DGPRMSGASA-N.zip", is_second_time = False)
+find_path_and_extract("./apvalidation/test/Granaticin_C.zip", is_second_time = False)

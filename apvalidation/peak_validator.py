@@ -153,7 +153,9 @@ class Validate:
         mol = Chem.MolFromSmiles(smiles)
         mol = Chem.AddHs(mol)
 
+        # atom_query: A QueryAtom that matches atoms where AtomNum is equal to the target value
         atom_query = rdqueries.AtomNumEqualsQueryAtom(atom_num)
+        # Count the number of the specified atom (H or C) in the smils string
         number_of_atoms_1 = len(mol.GetAtomsMatchingQuery(atom_query))
 
         # number_of_atoms_2 = 0
@@ -200,7 +202,7 @@ class Validate:
                     if value < -2 or value > 20:
                         has_error = True
                         error_values.append(value)
-                    elif value < -1 or value > 16:
+                    elif value <= -1 or value > 16:
                         has_warning = True
                         warning_values.append(value)
                 except ErrorBadRange as exc:

@@ -118,7 +118,7 @@ def save_separate_files(merged_groups, save_path):
         
         single_file = open(f"{save_path}/{group_title}", "w+")
         for index, item in enumerate(group):
-            print(f"writing to {group_title} item #{index} being {item}....")
+            # print(f"writing to {group_title} item #{index} being {item}....")
             single_file.write(item["value"]+"\n")
         single_file.close()
     return save_path

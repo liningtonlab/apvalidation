@@ -63,10 +63,8 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
     :param submitted_zip_file: user submitted zip file path
     :return: Experiment parameters
     """
-    print(f"submitted zip file is {submitted_zip_file}")
 
     if not is_zip(submitted_zip_file):
-        print("is not zip!")
         if is_compressed_but_not_zip(
             submitted_zip_file, zip_file_extention
         ) == True:
@@ -80,7 +78,6 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
                     + " Please compress your NMR data before uploading."
                 }
             }))
-    print("is zip!")
 
     meta = MetaFinder(submitted_zip_file, zip_file_extention)
     assert meta.error_message == {}, json.dumps(meta.error_message)
@@ -142,6 +139,8 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
 
         if jcamp:
             res_dict = extract_jcamp(loc)
+            
+        res_dict['is_jdx'] = jcamp
         json_params = json.dumps(res_dict, indent=4)
 
         # for i, vendor in enumerate(vendor_type):
