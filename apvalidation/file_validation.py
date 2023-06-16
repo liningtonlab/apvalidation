@@ -96,9 +96,11 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
         for i, vendor in enumerate(vendor_type):
             if vendor == "Jcampdx" and len(file_root[i]) > 1:
                 vendor_type.pop(i)
+                filetype.pop(i)
                 tmp = file_root.pop(i)
                 for j in range(len(tmp)):
                     vendor_type.append("Jcampdx")
+                    filetype.append("Jcampdx")
                     file_root.append([tmp[j]])
         for i, path_list in enumerate(file_root):
             unzipped_path_name = []
@@ -138,6 +140,10 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
 
             os.unlink(tf.name)  # Delete temporary file
         
+        
+        if jcamp:
+            res_dict = extract_jcamp(loc)
+        
         json_params = json.dumps(res_dict, indent=4)
 
         # for i, vendor in enumerate(vendor_type):
@@ -163,7 +169,6 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
         #     # extract_core_file(submitted_zip_file, indiv_exp_path, vendor_type[i], folder_name, parent_dir, param_file)
         #     extract_jdx(loc,param_file,folder_name,parent_dir)
 
-        # print(json_params)
         return json_params
 
 
@@ -175,7 +180,7 @@ def extract_jcamp(loc):
             param_dict = extractor.Jcampdx_Handler.read([full_path])
             manuf = extractor.Jcampdx_Handler.find_manuf(param_dict=param_dict)
             params = extractor.Jcampdx_Handler.find_params(param_dict)[0]
-            add_path_vendor(path, params, manuf, "jdx", res_dict)
+            add_path_vendor(path, params, manuf, "Jcampdx", res_dict)
     return res_dict
 
 
@@ -189,7 +194,7 @@ def create_temporary_file(core_file_read):
     return tf
 
 
-def add_path_vendor(path, params, vendor_type, filetype, res_dict):
+def add_path_vendor(path, params, vendor_type, filetype, res_dict):    
     file_root_without_file_name = str(path)
     if file_root_without_file_name == ".":
         file_root_without_file_name = "/"

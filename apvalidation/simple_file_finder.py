@@ -60,7 +60,10 @@ class MetaFinder:
         # Set Filetype to native for the manuf and fix later if neccesary
         filetype_list = []
         for vendor in vendor_list:
-            filetype_list += vendor + "_native"
+            if vendor == "Jcampdx":
+                filetype_list.append("Jcampdx")
+            else:
+                filetype_list.append(vendor + "_native")
                 
         param_path_list = list(core_path_dict.values())
         meta_info = {"vendor_name": vendor_list, "filetype": filetype_list, "meta_file": param_path_list}

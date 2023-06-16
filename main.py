@@ -24,7 +24,11 @@ from apvalidation.file_validation import find_path_and_extract
 # input_file = "./procpar"
 # Varian.remove_personal_info(input_file)
 
-metadata = find_path_and_extract("./apvalidation/test/test_jdx.zip", is_second_time = False)
+# metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
+# print(metadata)
+
+# metadata = find_path_and_extract("./apvalidation/test/JEOL.zip", is_second_time = False)
+# print(metadata)
+
+metadata = find_path_and_extract("./apvalidation/test/Borrelidin_B_NMR_RAW.zip", is_second_time = False)
 print(metadata)
-
-
