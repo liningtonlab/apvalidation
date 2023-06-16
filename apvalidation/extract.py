@@ -623,7 +623,7 @@ class Bruker:
                 ("NOESY", "NOESY"),
                 ("DOSY", "DOSY"),
                 ("DEPT", "DEPT"),
-                ("H2BC", "H2BC"),
+                ("H2BC", "H2BC")
             ]
         )
 

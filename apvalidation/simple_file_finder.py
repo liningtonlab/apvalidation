@@ -56,8 +56,14 @@ class MetaFinder:
             lst = self.param_file_finder(all_path_list, name, core_path_dict)
             if lst:
                 vendor_list += lst
+        
+        # Set Filetype to native for the manuf and fix later if neccesary
+        filetype_list = []
+        for vendor in vendor_list:
+            filetype_list += vendor + "_native"
+                
         param_path_list = list(core_path_dict.values())
-        meta_info = {"vendor_name": vendor_list, "meta_file": param_path_list}
+        meta_info = {"vendor_name": vendor_list, "filetype": filetype_list, "meta_file": param_path_list}
 
         return meta_info
     

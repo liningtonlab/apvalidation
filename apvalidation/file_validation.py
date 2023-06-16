@@ -84,6 +84,7 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
 
     meta_file = meta.meta_info
     vendor_type = meta_file["vendor_name"]
+    filetype = meta_file["filetype"]
     file_root = meta_file["meta_file"]
     existing_folder_names = []
     jcamp = False
@@ -110,11 +111,11 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
             if vendor_type[i] == "Varian":
                 param_dict = extractor.Varian.read(unzipped_path_name)
                 params = extractor.Varian.find_params(param_dict)
-                add_path_vendor(path, params, vendor_type[i], res_dict)
+                add_path_vendor(path, params, vendor_type[i], filetype[i], res_dict)
             elif vendor_type[i] == "Bruker":
                 param_dict = extractor.Bruker.read(unzipped_path_name)
                 params = extractor.Bruker.find_params(param_dict)
-                add_path_vendor(path, params, vendor_type[i], res_dict)
+                add_path_vendor(path, params, vendor_type[i], filetype[i], res_dict)
 
             # file_root_without_file_name = str(Path(path).parent)
 
@@ -136,11 +137,6 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
                 #         add_path_vendor(path, params, manuf, res_dict)
 
             os.unlink(tf.name)  # Delete temporary file
-
-        if jcamp:
-            res_dict = extract_jcamp(loc)
-            for exp in res_dict:
-                exp['is_jdx'] = True
         
         json_params = json.dumps(res_dict, indent=4)
 
@@ -179,7 +175,7 @@ def extract_jcamp(loc):
             param_dict = extractor.Jcampdx_Handler.read([full_path])
             manuf = extractor.Jcampdx_Handler.find_manuf(param_dict=param_dict)
             params = extractor.Jcampdx_Handler.find_params(param_dict)[0]
-            add_path_vendor(path, params, manuf, res_dict)
+            add_path_vendor(path, params, manuf, "jdx", res_dict)
     return res_dict
 
 
@@ -193,13 +189,13 @@ def create_temporary_file(core_file_read):
     return tf
 
 
-def add_path_vendor(path, params, vendor_type, res_dict):
+def add_path_vendor(path, params, vendor_type, filetype, res_dict):
     file_root_without_file_name = str(path)
     if file_root_without_file_name == ".":
         file_root_without_file_name = "/"
     params["original_data_path"] = file_root_without_file_name
     params["vendor"] = vendor_type
-    params["is_jdx"] = False # Default set is_jdx False and do proper check later
+    params["filetype"] = filetype
     res_dict.append(params)
 
 
