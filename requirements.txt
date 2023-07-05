@@ -2,12 +2,13 @@ atomicwrites==1.4.0
 attrs==21.4.0
 certifi==2021.10.8
 charset-normalizer==2.0.12
+clamav
 colorama==0.4.4
 idna==3.3
 iniconfig==1.1.1
 nmrglue==0.8
 numpy==1.21.4
-packaging==21.3
+packaging==23.1
 pandas==1.4.0
 patool==1.12
 Pillow==9.0.1

@@ -28,7 +28,7 @@ requirements = [
 
 setuptools.setup(
     name='apvalidation',
-    version='0.5.42',
+    version='0.5.43',
     author='liningtonlabs',
     author_email='liningtonlabstest@gmail.com',
     description='Testing installation of Package',
@@ -38,4 +38,10 @@ setuptools.setup(
     license='MIT',
     packages=['apvalidation'],
     install_requires=requirements,
+    # Antivirus install and update setup
+    entry_points={
+        'console_scripts': [
+            'apv-update-virus-scan=apvalidation.update_virus_scan:update_scans',
+        ],
+    }
 )
