@@ -19,6 +19,7 @@ import tempfile
 import json
 from pathlib import Path
 import re
+import warnings
 
 zip_file_extention = [
     ".zip",
@@ -57,7 +58,10 @@ zip_file_extention = [
 ]
 
 
-def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json:
+def find_path_and_extract(
+    submitted_zip_file: str,
+    is_second_time=False
+) -> json:
     """
     This function integrates file_finder and paramExtractor.
     :param submitted_zip_file: user submitted zip file path
@@ -79,7 +83,10 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
                 }
             }))
 
-    meta = MetaFinder(submitted_zip_file, zip_file_extention)
+    meta = MetaFinder(
+        submitted_zip_file,
+        zip_file_extention
+    )
     assert meta.error_message == {}, json.dumps(meta.error_message)
 
     meta_file = meta.meta_info
@@ -170,6 +177,8 @@ def find_path_and_extract(submitted_zip_file: str, is_second_time=False) -> json
         #     extract_jdx(loc,param_file,folder_name,parent_dir)
 
         return json_params
+
+
 
 
 def extract_jcamp(loc):

@@ -15,7 +15,11 @@ class MetaFinder:
     }
     
 
-    def __init__(self, input_zip: str, zip_file_extention: list):
+    def __init__(
+        self,
+        input_zip: str,
+        zip_file_extention: list
+    ):
         self.zip_file_extention = zip_file_extention
         self.error_message = {}
         self.all_file_path = self.get_all_file_path(input_zip)
