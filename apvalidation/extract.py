@@ -238,10 +238,17 @@ class Varian:
                             Probably returned from the read method.
         :return: dimension of the experiment
         """
+        
+        if "plotoption" in param_dict.keys():
+            for option in param_dict['plotoption']['values']:
+                if option.startswith("plot2D"):
+                    # print("2D INDICATOR: " + option)
+                    exp_dim = "2D"
+                    return exp_dim
 
-        if "plt2Darg" in param_dict.keys():
-            exp_dim = "2D"
-            return exp_dim
+        # if "plt2Darg" in param_dict.keys():
+        #     exp_dim = "2D"
+        #     return exp_dim
 
         try:
             exp_dim = param_dict["apptype"]["values"][0][-2:].upper()

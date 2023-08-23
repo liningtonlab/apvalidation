@@ -30,5 +30,9 @@ from apvalidation.file_validation import find_path_and_extract
 # metadata = find_path_and_extract("./apvalidation/test/JEOL.zip", is_second_time = False)
 # print(metadata)
 
-metadata = find_path_and_extract("./apvalidation/test/test_inmr.zip", is_second_time = False)
+# metadata = find_path_and_extract("./apvalidation/test/test_inmr.zip", is_second_time = False)
+metadata = find_path_and_extract("./apvalidation/test/test_1d_1h.zip", is_second_time = False)
 print(metadata)
+
+metadata2 = find_path_and_extract("./apvalidation/test/Borrelidin_B_gCOSY.zip", is_second_time = False)
+print(metadata2)
