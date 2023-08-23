@@ -619,11 +619,13 @@ class Bruker:
                 ("TOCSY", "TOCSY"),
                 ("HETLOC", "TOCSY"),
                 ("MLEV", "TOCSY"),
+                ("DIPSI2ESGPPH", "TOCSY"),
                 ("ROESY", "ROESY"),
                 ("NOESY", "NOESY"),
                 ("DOSY", "DOSY"),
                 ("DEPT", "DEPT"),
-                ("H2BC", "H2BC")
+                ("H2BC", "H2BC"),
+                ("A_1H", "1D")
             ]
         )
 
