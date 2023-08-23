@@ -625,7 +625,6 @@ class Bruker:
                 ("DOSY", "DOSY"),
                 ("DEPT", "DEPT"),
                 ("H2BC", "H2BC"),
-                ("A_1H", "1D")
             ]
         )
 
@@ -681,9 +680,10 @@ class Bruker:
          :return: nucleus 1 and nucleus 2 in string format
         """
         param_dict_1D = param_dict_list[0]
+        
         if exp_dim == "2D":
             param_dict_2D = param_dict_list[1]
-
+            
         exp_nuc2 = None
         if exp_dim == "1D":
             exp_nuc1 = param_dict_1D["NUC1"]

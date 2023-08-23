@@ -111,6 +111,7 @@ def find_path_and_extract(
                     file_root.append([tmp[j]])
         for i, path_list in enumerate(file_root):
             unzipped_path_name = []
+            
             for path in path_list:
                 core_file_read = zipObj.read(path)
                 tf = create_temporary_file(core_file_read)

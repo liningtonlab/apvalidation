@@ -40,9 +40,10 @@ class MetaFinder:
         path_in_zip = submitted_zip.namelist()
         
         # MAC zip saves some files that interrupt nmr glue, this script exclude the interrupting files
+        # Also make sure no duplicates wind up in the path list
         all_path_list = []
         for path in path_in_zip:
-            if re.search("__MACOSX",path) is None:
+            if (re.search("__MACOSX",path) is None) and (not path in all_path_list):
                 all_path_list.append(path)
                 
         return all_path_list
@@ -70,6 +71,7 @@ class MetaFinder:
                 filetype_list.append(vendor + "_native")
                 
         param_path_list = list(core_path_dict.values())
+        
         meta_info = {"vendor_name": vendor_list, "filetype": filetype_list, "meta_file": param_path_list}
 
         return meta_info
@@ -109,7 +111,7 @@ class MetaFinder:
                 except:
                     core_path_dict[parent_dir] = [path]
                     vendor_list.append(MetaFinder.meta_name_by_vendor[keyword])
-                    
+        
         return vendor_list
 
     @staticmethod
