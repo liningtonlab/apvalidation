@@ -27,24 +27,23 @@ from apvalidation.file_validation import find_path_and_extract
 # metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
 # print(metadata)
 
-# metadata = find_path_and_extract("./apvalidation/test/JEOL_test_failed_exp_type.zip", is_second_time = False)
-# print(metadata)
+# test_dir_path = "./apvalidation/test"
+# for filename in os.listdir(test_dir_path):
+#     file_path = os.path.join(test_dir_path, filename)
 
-test_dir_path = "./apvalidation/test"
-for filename in os.listdir(test_dir_path):
-    file_path = os.path.join(test_dir_path, filename)
+#     # Check if the file ends with ".zip"
+#     if filename.endswith(".zip") and os.path.isfile(file_path):
+#         # Execute the code on the ZIP file
+#         print("--------------------------------")
+#         print(f"processing file {file_path}")
+#         try:
+#             metadata = find_path_and_extract(file_path, is_second_time = False)
+#             print("VVVVVVVVVVVV sucessfully processed VVVVVVVVVVV")
+#             print(metadata)
+#         except Exception as e:
+#             print("FFFFFFFFFFFFF failed to process FFFFFFFFFFFFF")
+#             print(e)
+            
 
-    # Check if the file ends with ".zip"
-    if filename.endswith(".zip") and os.path.isfile(file_path):
-        # Execute the code on the ZIP file
-        print("--------------------------------")
-        print(f"processing file {file_path}")
-        try:
-            metadata = find_path_and_extract(file_path, is_second_time = False)
-            print("VVVVVVVVVVVV sucessfully processed VVVVVVVVVVV")
-            print(metadata)
-        except Exception as e:
-            print("FFFFFFFFFFFFF failed to process FFFFFFFFFFFFF")
-            print(e)
-            
-            
+metadata = find_path_and_extract("./apvalidation/test/FAKE_DJF.jdf", is_second_time = False)
+print(metadata)
