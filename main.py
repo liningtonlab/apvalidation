@@ -45,5 +45,6 @@ from apvalidation.file_validation import find_path_and_extract
 #             print(e)
             
 
+
 metadata = find_path_and_extract("./apvalidation/test/FAKE_DJF.jdf", is_second_time = False)
 print(metadata)
