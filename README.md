@@ -66,7 +66,7 @@ Using the two reasons above the [mnova_jdx_reader.py](https://github.com/liningt
 ## 3. Reading the Parameter Files.
 Once the extraction is at this step, all files should be in an acceptable format for [nmrglue](https://www.nmrglue.com/) to process.
 
-The final step is to now extract the parameters from the data file to determine information about the experiment. This is done through the Varian, Bruker, and Jcampdx_Handler classes in [extract.py](https://github.com/liningtonlab/apvalidation/blob/main/apvalidation/extract.py). The parameters to be extracted are:
+The final step is to now extract the parameters from the data file to determine information about the experiment. This is done through the Varian, Bruker, and Jcampdx classes in [extract.py](https://github.com/liningtonlab/apvalidation/blob/main/apvalidation/extract.py). The parameters to be extracted are:
 
 - experiment type
 - F2 nucleus
@@ -79,11 +79,11 @@ The final step is to now extract the parameters from the data file to determine 
 ### The Extraction Code
 The following code can all be found in [extract.py](https://github.com/liningtonlab/apvalidation/blob/main/apvalidation/extract.py).
 
-There are three main classes defined in extract.py. These are Varian, Bruker, and Jcampdx_Handler. Each of these classes are specialized to handle different types of data files. 
+There are three main classes defined in extract.py. These are Varian, Bruker, and Jcampdx. Each of these classes are specialized to handle different types of data files. 
 
 - procpar --> Varian
 - acqu --> Bruker
-- jdx --> Jcampdx_Handler
+- jdx --> Jcampdx
 
 Each of these classes contain methods which are able to read and parse the corresponding file. Most of the methods in the classes are helper functions which are not meant for user use. As a user there are two main methods that you should be concerned with; find_params() and read(). 
 - read(): This method does exactly what is sounds like, it reads the raw parameter file. The input to this method should be a string representation of the filepath to the desired parameter file. The output is a python dictionary object which stores the contents of the file in key, value pairs.

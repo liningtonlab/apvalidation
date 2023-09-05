@@ -1,12 +1,17 @@
-from apvalidation import extract as extractor
+from apvalidation.extract import Varian, Bruker, JEOL, Jcampdx
 from apvalidation.simple_file_finder import MetaFinder
 from apvalidation.extract_core import extract_core_file
 from apvalidation.patoolutil import is_zip, repack_to_zip, is_compressed_but_not_zip
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 
+varian_extractor = Varian()
+bruker_extractor = Bruker()
+jeol_extractor = JEOL()
+jcampdx_extractor = Jcampdx()
+
 
 # Local Test Import
-# import extract as extractor
+# from apvalidation.extract import Varian, Bruker, Jcampdx
 # from simple_file_finder import MetaFinder
 # from extract_core import extract_core_file, extract_jdx
 # from patoolutil import is_zip, repack_to_zip
@@ -19,7 +24,6 @@ import tempfile
 import json
 from pathlib import Path
 import re
-import warnings
 
 zip_file_extention = [
     ".zip",
@@ -119,12 +123,12 @@ def find_path_and_extract(
 
             # Get param according to the vendor name
             if vendor_type[i] == "Varian":
-                param_dict = extractor.Varian.read(unzipped_path_name)
-                params = extractor.Varian.find_params(param_dict)
+                param_dict = varian_extractor.read(unzipped_path_name)
+                params = varian_extractor.find_params(param_dict)
                 add_path_vendor(path, params, vendor_type[i], filetype[i], res_dict)
             elif vendor_type[i] == "Bruker":
-                param_dict = extractor.Bruker.read(unzipped_path_name)
-                params = extractor.Bruker.find_params(param_dict)
+                param_dict = bruker_extractor.read(unzipped_path_name)
+                params = bruker_extractor.find_params(param_dict)
                 add_path_vendor(path, params, vendor_type[i], filetype[i], res_dict)
 
             # file_root_without_file_name = str(Path(path).parent)
@@ -139,10 +143,10 @@ def find_path_and_extract(
                 # for path in os.listdir(loc):
                 #     if Path(path).suffix == '.jdx':
                 #         full_path = os.path.join(loc, path)
-                #         param_dict = extractor.Jcampdx_Handler.read([full_path])
-                #         manuf = extractor.Jcampdx_Handler.find_manuf(param_dict=param_dict)
+                #         param_dict = jcampdx_extractor.read([full_path])
+                #         manuf = jcampdx_extractor.find_manuf(param_dict=param_dict)
                 #         print(f"manuf: {manuf}")
-                #         params = extractor.Jcampdx_Handler.find_params(param_dict)[0]
+                #         params = jcampdx_extractor.find_params(param_dict)[0]
                 #         print(params)
                 #         add_path_vendor(path, params, manuf, res_dict)
 
@@ -187,9 +191,9 @@ def extract_jcamp(loc):
     for path in os.listdir(loc):
         if Path(path).suffix == ".jdx":
             full_path = os.path.join(loc, path)
-            param_dict = extractor.Jcampdx_Handler.read([full_path])
-            manuf = extractor.Jcampdx_Handler.find_manuf(param_dict=param_dict)
-            params = extractor.Jcampdx_Handler.find_params(param_dict)[0]
+            param_dict = jcampdx_extractor.read([full_path])
+            manuf = jcampdx_extractor.find_manuf(param_dict=param_dict)
+            params = jcampdx_extractor.find_params(param_dict)[0]
             add_path_vendor(path, params, manuf, "Jcampdx", res_dict)
     return res_dict
 
@@ -208,7 +212,7 @@ def add_path_vendor(path, params, vendor_type, filetype, res_dict):
     file_root_without_file_name = str(path)
     if file_root_without_file_name == ".":
         file_root_without_file_name = "/"
-    params["original_data_path"] = file_root_without_file_name
+    params["original_data_path"] = file_root_without_file_name.strip()
     params["vendor"] = vendor_type
     params["filetype"] = filetype
     res_dict.append(params)

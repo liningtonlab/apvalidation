@@ -1,5 +1,5 @@
 import os
-from apvalidation.extract import Jcampdx_Handler
+from apvalidation.extract import Jcampdx
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 from apvalidation.peak_validator import Validate
 from apvalidation.file_validation import find_path_and_extract
@@ -10,8 +10,8 @@ from apvalidation.file_validation import find_path_and_extract
 # print(saved_path)
 
 # for filename in os.listdir(saved_path):
-#     read_output = Jcampdx_Handler.read([os.path.join(saved_path, filename)])
-#     find_param_output = Jcampdx_Handler.find_params(read_output)
+#     read_output = Jcampdx.read([os.path.join(saved_path, filename)])
+#     find_param_output = Jcampdx.find_params(read_output)
 #     print(f"find_paramoutput = {find_param_output}")
 
 
@@ -27,12 +27,24 @@ from apvalidation.file_validation import find_path_and_extract
 # metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
 # print(metadata)
 
-# metadata = find_path_and_extract("./apvalidation/test/JEOL.zip", is_second_time = False)
+# metadata = find_path_and_extract("./apvalidation/test/JEOL_test_failed_exp_type.zip", is_second_time = False)
 # print(metadata)
 
-# metadata = find_path_and_extract("./apvalidation/test/test_inmr.zip", is_second_time = False)
-metadata = find_path_and_extract("./apvalidation/test/test_1d_1h.zip", is_second_time = False)
-print(metadata)
+test_dir_path = "./apvalidation/test"
+for filename in os.listdir(test_dir_path):
+    file_path = os.path.join(test_dir_path, filename)
 
-metadata2 = find_path_and_extract("./apvalidation/test/Borrelidin_B_gCOSY.zip", is_second_time = False)
-print(metadata2)
+    # Check if the file ends with ".zip"
+    if filename.endswith(".zip") and os.path.isfile(file_path):
+        # Execute the code on the ZIP file
+        print("--------------------------------")
+        print(f"processing file {file_path}")
+        try:
+            metadata = find_path_and_extract(file_path, is_second_time = False)
+            print("VVVVVVVVVVVV sucessfully processed VVVVVVVVVVV")
+            print(metadata)
+        except Exception as e:
+            print("FFFFFFFFFFFFF failed to process FFFFFFFFFFFFF")
+            print(e)
+            
+            
