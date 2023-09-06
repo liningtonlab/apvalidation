@@ -36,6 +36,6 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/liningtonlab/ap_validation",
     license="MIT",
-    packages=setuptools.find_packages(),
+    packages=["apvalidation"],
     install_requires=requirements,
 )
