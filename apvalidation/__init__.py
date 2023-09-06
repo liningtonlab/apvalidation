@@ -1,6 +1,5 @@
 __all__ = [
     "extract",
-    "extract_classes",
     "extract_core",
     "file_validation",
     "request_standard",
@@ -14,7 +13,6 @@ __all__ = [
 from apvalidation import (
     extract,
     extract_core,
-    extract_classes,
     file_validation,
     request_standard,
     simple_file_finder,
