@@ -1,13 +1,14 @@
-from apvalidation.extract import Varian, Bruker, JEOL, Jcampdx
+# from apvalidation.extract import Varian, Bruker, JEOL, Jcampdx
+import apvalidation.extract as extract
 from apvalidation.simple_file_finder import MetaFinder
 from apvalidation.extract_core import extract_core_file
 from apvalidation.patoolutil import is_zip, repack_to_zip, is_compressed_but_not_zip
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 
-varian_extractor = Varian()
-bruker_extractor = Bruker()
-jeol_extractor = JEOL()
-jcampdx_extractor = Jcampdx()
+varian_extractor = extract.Varian()
+bruker_extractor = extract.Bruker()
+jeol_extractor = extract.JEOL()
+jcampdx_extractor = extract.Jcampdx()
 
 
 # Local Test Import

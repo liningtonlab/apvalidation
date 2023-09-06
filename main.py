@@ -1,5 +1,5 @@
 import os
-from apvalidation.extract import Jcampdx
+from apvalidation.extract_classes import Jcampdx
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 from apvalidation.peak_validator import Validate
 from apvalidation.file_validation import find_path_and_extract
