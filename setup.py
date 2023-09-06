@@ -1,4 +1,5 @@
 import setuptools
+import glob
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -28,7 +29,7 @@ requirements = [
 
 setuptools.setup(
     name="apvalidation",
-    version="0.5.56",
+    version="0.5.57",
     author="liningtonlabs",
     author_email="liningtonlabstest@gmail.com",
     description="Testing installation of Package",
