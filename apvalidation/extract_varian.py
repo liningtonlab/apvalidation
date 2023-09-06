@@ -7,12 +7,15 @@ import sys
 import shutil
 import json
 
-with open('apvalidation/metadata_standardizers/experiment_standardizer.json', 'r') as file:
+current_dir = os.path.dirname(__file__)
+
+experiment_standardizer_path = os.path.join(current_dir, 'metadata_standardizers', 'experiment_standardizer.json')
+with open(experiment_standardizer_path, 'r') as file:
     exp_dict = json.load(file) 
-    
-with open('apvalidation/metadata_standardizers/solvent_standardizer.json', 'r') as file:
-    all_solvents = json.load(file)
-    
+
+solvent_standardizer_path = os.path.join(current_dir, 'metadata_standardizers', 'solvent_standardizer.json')
+with open(solvent_standardizer_path, 'r') as file:
+    all_solvents = json.load(file) 
 
 class Varian:
     """

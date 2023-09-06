@@ -1,5 +1,5 @@
 import os
-from apvalidation.extract import Jcampdx
+from apvalidation.extract_jcampdx import Jcampdx
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 from apvalidation.peak_validator import Validate
 from apvalidation.file_validation import find_path_and_extract
@@ -19,13 +19,13 @@ from apvalidation.file_validation import find_path_and_extract
 # print("result")
 # print(result)
 
-# from apvalidation.extract import Varian
+# from apvalidation.extract_varian import Varian
 
 # input_file = "./procpar"
 # Varian.remove_personal_info(input_file)
 
-# metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
-# print(metadata)
+metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
+print(metadata)
 
 # test_dir_path = "./apvalidation/test"
 # for filename in os.listdir(test_dir_path):
@@ -45,5 +45,4 @@ from apvalidation.file_validation import find_path_and_extract
 #             print(e)
             
 
-metadata = find_path_and_extract("./apvalidation/test/FAKE_DJF.jdf", is_second_time = False)
-print(metadata)
+
