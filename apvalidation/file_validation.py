@@ -1,4 +1,4 @@
-from apvalidation.extract import Varian, Bruker, JEOL, Jcampdx
+from .extract import Varian, Bruker, JEOL, Jcampdx
 from apvalidation.simple_file_finder import MetaFinder
 from apvalidation.extract_core import extract_core_file
 from apvalidation.patoolutil import is_zip, repack_to_zip, is_compressed_but_not_zip

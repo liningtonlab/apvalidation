@@ -4,6 +4,5 @@ from .bruker import Bruker
 from .jeol import JEOL
 from .jcampdx import Jcampdx
 
-
-# You can also define what gets imported when using 'from apvalidation.extract import *'
+# Optionally, you can define what gets imported when using 'from apvalidation.extract import *'
 __all__ = ["Varian", "Bruker", "Jcampdx", "JEOL"]
