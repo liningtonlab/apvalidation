@@ -36,7 +36,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/liningtonlab/ap_validation",
     license="MIT",
-    data_files=[('metadata_standardizers', ['apvalidation/metadata_standardizers/*'])],
+    data_files=[('apvalidation', ['apvalidation/metadata_standardizers/*'])],
     packages=["apvalidation"],
     install_requires=requirements,
 )
