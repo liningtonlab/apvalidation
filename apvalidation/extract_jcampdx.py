@@ -3,9 +3,9 @@ import re
 import nmrglue as ng
 import json
 
-from .varian import Varian
-from .bruker import Bruker
-from .jeol import JEOL
+from .extract_varian import Varian
+from .extract_bruker import Bruker
+from .extract_jeol import JEOL
 
 with open('apvalidation/metadata_standardizers/experiment_standardizer.json', 'r') as file:
     exp_dict = json.load(file) 

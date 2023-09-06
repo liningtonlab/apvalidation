@@ -1,5 +1,5 @@
 import os
-from apvalidation.extract_classes import Jcampdx
+from apvalidation.extract_jcampdx import Jcampdx
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 from apvalidation.peak_validator import Validate
 from apvalidation.file_validation import find_path_and_extract
@@ -19,7 +19,7 @@ from apvalidation.file_validation import find_path_and_extract
 # print("result")
 # print(result)
 
-# from apvalidation.extract import Varian
+# from apvalidation.extract_varian import Varian
 
 # input_file = "./procpar"
 # Varian.remove_personal_info(input_file)
