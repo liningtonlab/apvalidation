@@ -3,10 +3,10 @@ import nmrglue as ng
 import json
 from collections import OrderedDict
 
-with open('apvalidation/experiment_standardizer.json', 'r') as file:
+with open('apvalidation/metadata_standardizers/experiment_standardizer.json', 'r') as file:
     exp_dict = json.load(file) 
     
-with open('apvalidation/solvent_standardizer.json', 'r') as file:
+with open('apvalidation/metadata_standardizers/solvent_standardizer.json', 'r') as file:
     all_solvents = json.load(file)
     
     
