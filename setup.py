@@ -39,7 +39,9 @@ setuptools.setup(
     license="MIT",
     package_data={
         "apvalidation": [
-            "npmrd_data_exchange/*",
+            "npmrd_data_exchange/standardization_files/*.json",
+            "npmrd_data_exchange/validation/validator.py",
+            "npmrd_data_exchange/standardization/standardizer.py",
             "extract/*.py",
         ],
     },
