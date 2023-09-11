@@ -38,8 +38,10 @@ setuptools.setup(
     url="https://github.com/liningtonlab/apvalidation",
     license="MIT",
     package_data={
-        'apvalidation': ['npmrd_data_exchange/*'],
-        'apvalidation': ['extract/*.py'],
+        "apvalidation": [
+            "npmrd_data_exchange/*",
+            "extract/*.py",
+        ],
     },
     include_package_data=True,
     packages=["apvalidation"],
