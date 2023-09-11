@@ -4,12 +4,13 @@ import json
 from collections import OrderedDict
 
 current_dir = os.path.dirname(__file__)
+submodule_dir = os.path.join(current_dir, 'npmrd_data_exchange')
 
-experiment_standardizer_path = os.path.join(current_dir, 'metadata_standardizers', 'experiment_standardizer.json')
+experiment_standardizer_path = os.path.join(submodule_dir, 'standardization_files', 'experiment_standardizer.json')
 with open(experiment_standardizer_path, 'r') as file:
     exp_dict = json.load(file) 
 
-solvent_standardizer_path = os.path.join(current_dir, 'metadata_standardizers', 'solvent_standardizer.json')
+solvent_standardizer_path = os.path.join(submodule_dir, 'standardization_files', 'solvent_standardizer.json')
 with open(solvent_standardizer_path, 'r') as file:
     all_solvents = json.load(file) 
     

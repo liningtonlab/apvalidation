@@ -9,6 +9,19 @@ To install the apvalidation package into your own Python project, just use pip a
 pip install @git+https://github.com/liningtonlab/apvalidation.git
 ```
 
+## (REQUIRED FOR DEVELOPMENT) Submodule Installation
+If you are planning to clone this repo to your computer it is important to note that it relies on external files in order to perform standardization steps. This package was added to this repo like such...
+
+```
+git submodule add https://github.com/np-mrd/npmrd_data_exchange.git npmrd_data_exchange
+```
+
+In order to update this submodule whenever these files change remember to run...
+
+```
+git submodule update --remote
+```
+
 # Functionality
 The code in this repository has four main functionalities.
 1. Traverse the deposited NMR zip folder to determine the type of machine used in the experiments (Bruker, Varian, or JEOL) and the filetype of the data.

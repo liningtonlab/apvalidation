@@ -29,16 +29,19 @@ requirements = [
 
 setuptools.setup(
     name="apvalidation",
-    version="0.5.57",
+    version="0.5.58",
     author="liningtonlabs",
     author_email="liningtonlabstest@gmail.com",
     description="Testing installation of Package",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/liningtonlab/ap_validation",
+    url="https://github.com/liningtonlab/apvalidation",
     license="MIT",
+    # package_data={
+    #     'apvalidation': ['metadata_standardizers/*.json'],
+    # },
     package_data={
-        'apvalidation': ['metadata_standardizers/*.json'],
+        'apvalidation': ['npmrd_data_exchange/standardization_files/*.json'],  # Include all files in the package directory
     },
     include_package_data=True,
     packages=["apvalidation"],
