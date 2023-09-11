@@ -37,11 +37,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/liningtonlab/apvalidation",
     license="MIT",
-    # package_data={
-    #     'apvalidation': ['metadata_standardizers/*.json'],
-    # },
     package_data={
-        'apvalidation': ['npmrd_data_exchange/standardization_files/*.json'],  # Include all files in the package directory
+        'apvalidation': ['npmrd_data_exchange/*'],
+        'apvalidation': ['extract/*.py'],
     },
     include_package_data=True,
     packages=["apvalidation"],

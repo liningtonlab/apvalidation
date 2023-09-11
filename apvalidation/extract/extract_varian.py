@@ -8,9 +8,8 @@ import shutil
 import json
 
 current_dir = os.path.dirname(__file__)
-
-current_dir = os.path.dirname(__file__)
-submodule_dir = os.path.join(current_dir, 'npmrd_data_exchange')
+one_level_up = os.path.dirname(current_dir)
+submodule_dir = os.path.join(one_level_up, 'npmrd_data_exchange')
 
 experiment_standardizer_path = os.path.join(submodule_dir, 'standardization_files', 'experiment_standardizer.json')
 with open(experiment_standardizer_path, 'r') as file:

@@ -1,8 +1,8 @@
 # from apvalidation.extract import Varian, Bruker, JEOL, Jcampdx
-from apvalidation.extract_bruker import Bruker as bruker_extractor
-from apvalidation.extract_varian import Varian as varian_extractor
-from apvalidation.extract_jeol import JEOL as jeol_extractor
-from apvalidation.extract_jcampdx import Jcampdx as jcampdx_extractor
+from apvalidation.extract.extract_bruker import Bruker as bruker_extractor
+from apvalidation.extract.extract_varian import Varian as varian_extractor
+from apvalidation.extract.extract_jeol import JEOL as jeol_extractor
+from apvalidation.extract.extract_jcampdx import Jcampdx as jcampdx_extractor
 from apvalidation.simple_file_finder import MetaFinder
 from apvalidation.extract_core import extract_core_file
 from apvalidation.patoolutil import is_zip, repack_to_zip, is_compressed_but_not_zip
