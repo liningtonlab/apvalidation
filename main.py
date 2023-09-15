@@ -1,7 +1,7 @@
 import os
 from apvalidation.extract.extract_jcampdx import Jcampdx
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
-from apvalidation.peak_validator import Validate
+from apvalidation.peak_validator import Validate as Peak_Validate
 from apvalidation.file_validation import find_path_and_extract
 
 # input_file = "test_files/MNOVA_jdx/Combined JEOL jdx/combinedJEOLpart2.jdx"
@@ -15,17 +15,40 @@ from apvalidation.file_validation import find_path_and_extract
 #     print(f"find_paramoutput = {find_param_output}")
 
 
-# result = Validate.validate("13.0, (13.5-13.9), 12.4 - 14.6, 10.0", "(11.5-15.2), 64.7", "CC", "D2O")
-# print("result")
-# print(result)
+# result = Peak_Validate.validate(
+#     H_text_block="13.0, (13.5-13.9), 12.4 - 14.6, 10.0",
+#     C_text_block="20, 20, 20",
+#     smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
+#     solvent="D2O",
+#     h_frequency=300,
+#     h_temperature=300,
+#     c_frequency=300,
+#     c_temperature=300,
+#     reference="DMSO",
+# )
+
+result = Peak_Validate.validate(
+    H_text_block="10, 11; 12",
+    C_text_block="20, 20, 20",
+    smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
+    solvent="D2O",
+    h_frequency=300,
+    h_temperature=300,
+    c_frequency=300,
+    c_temperature=300,
+    reference="DMSO",
+)
+
+print("result")
+print(result)
 
 # from apvalidation.extract_varian import Varian
 
 # input_file = "./procpar"
 # Varian.remove_personal_info(input_file)
 
-metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
-print(metadata)
+# metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
+# print(metadata)
 
 # test_dir_path = "./apvalidation/test"
 # for filename in os.listdir(test_dir_path):
@@ -43,6 +66,3 @@ print(metadata)
 #         except Exception as e:
 #             print("FFFFFFFFFFFFF failed to process FFFFFFFFFFFFF")
 #             print(e)
-            
-
-

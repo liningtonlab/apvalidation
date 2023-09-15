@@ -25,6 +25,9 @@ class InvalidCharacters(Exception):
 class NoSplit(Exception):
     pass
 
+class MultipleSeparators(Exception):
+    pass
+
 class InvalidValueType(Exception):
     pass
 
@@ -73,19 +76,26 @@ class Validate:
             :return: If works, return the split list. If split does not work, raise a NoSplit exception.
         """
         char_list = [",", ";", "\n", "\t", "\\t", "    "]
-        split = False
+        
+        num_separators = 0
+        for char in valid_text:
+            if char in char_list:
+                num_separators += 1
+        if num_separators >= 2:
+            raise MultipleSeparators
+        
         for split_char in char_list:
             split_text = valid_text.split(split_char)
-            if split_text[-1] == "":
-                split_text.pop()
+            
+            # Remove empty strings using list comprehension
+            split_text = [value for value in split_text if value.strip() != ""]
+            
+            print(split_text)
             if len(split_text) == 1:
                 continue
             else:
-                split = True
                 break
- 
-        if split == False:
-            raise NoSplit
+        
         return split_text
 
     @staticmethod
@@ -305,8 +315,8 @@ class Validate:
             # Parse the text blocks into lists based on the separators
             try:
                 H_list = Validate.parse_text_to_list(H_text_block)
-            except NoSplit:
-                return ("Failed to split H list, please check your separators.", "Error")
+            except MultipleSeparators:
+                return ("Multiple separators detected. Please ensure only one separateor type is used of: i.e. use only ',' or ';' to separate your values", "Error")
         else:
             H_list = None
                 
