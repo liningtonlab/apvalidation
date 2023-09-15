@@ -28,7 +28,7 @@ from apvalidation.file_validation import find_path_and_extract
 # )
 
 result = Peak_Validate.validate(
-    H_text_block="10, 11; 12",
+    H_text_block="10; 11; 12",
     C_text_block="20, 20, 20",
     smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
     solvent="D2O",

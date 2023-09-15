@@ -73,13 +73,14 @@ class Validate:
             different list formats to try.
 
             :param valid_text: The text to split
-            :return: If works, return the split list. If split does not work, raise a NoSplit exception.
+            :return: If works, return the split list. If split does not work, raise a MultipleSeparators exception.
         """
         char_list = [",", ";", "\n", "\t", "\\t", "    "]
         
+        # Raise error if more than one separator is being used
         num_separators = 0
-        for char in valid_text:
-            if char in char_list:
+        for char in char_list:
+            if char in valid_text:
                 num_separators += 1
         if num_separators >= 2:
             raise MultipleSeparators
@@ -328,8 +329,8 @@ class Validate:
                     return ("Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error")
             try:
                 C_list = Validate.parse_text_to_list(C_text_block)
-            except NoSplit:
-                return ("Failed to split C list, please check your separators.", "Error")
+            except MultipleSeparators:
+                return ("Multiple separators detected. Please ensure only one separateor type is used of: i.e. use only ',' or ';' to separate your values.", "Error")
         else:
             C_list = None
         
