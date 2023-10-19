@@ -91,7 +91,6 @@ class Validate:
             # Remove empty strings using list comprehension
             split_text = [value for value in split_text if value.strip() != ""]
             
-            print(split_text)
             if len(split_text) == 1:
                 continue
             else:
