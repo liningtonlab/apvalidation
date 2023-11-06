@@ -1,7 +1,6 @@
 from unidecode import unidecode
 
 def remove_unicode_from_paramter_file(file_path):
-    print(f"removing unicode from {file_path}")
     # Open the file in binary mode
     with open(file_path, 'rb') as file:
         # Read the binary content
