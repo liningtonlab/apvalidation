@@ -94,7 +94,7 @@ def find_path_and_extract(
     meta_file = meta.meta_info
     vendor_type = meta_file["vendor_name"]
     filetype = meta_file["filetype"]
-    file_root = meta_file["meta_file"]
+    file_root = meta_file["file_root"]
     existing_folder_names = []
     jcamp = False
 
@@ -133,10 +133,13 @@ def find_path_and_extract(
 
             if vendor_type[i] == "Jcampdx":
                 jcamp = True
+                jcamp_file_extension = path_list[0].split(".")[-1]
+                
                 # spilit_file_dir = f"{str(Path(submitted_zip_file).parent)}/jdx_spilt"
                 loc = os.path.splitext(submitted_zip_file)[0]
+                
                 if not is_second_time:
-                    loc = separate_mnova_jdx(unzipped_path_name[0], loc)
+                    loc = separate_mnova_jdx(unzipped_path_name[0], loc, jcamp_file_extension)
 
                 # for path in os.listdir(loc):
                 #     if Path(path).suffix == '.jdx':
@@ -149,7 +152,6 @@ def find_path_and_extract(
                 #         add_path_vendor(path, params, manuf, res_dict)
 
             os.unlink(tf.name)  # Delete temporary file
-        
         
         if jcamp:
             res_dict = extract_jcamp(loc)
@@ -187,7 +189,7 @@ def find_path_and_extract(
 def extract_jcamp(loc):
     res_dict = []
     for path in os.listdir(loc):
-        if Path(path).suffix == ".jdx":
+        if Path(path).suffix == ".jdx" or Path(path).suffix == ".dx":
             full_path = os.path.join(loc, path)
             param_dict = jcampdx_extractor.read([full_path])
             manuf = jcampdx_extractor.find_manuf(param_dict=param_dict)

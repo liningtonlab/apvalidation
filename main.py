@@ -52,19 +52,32 @@ from apvalidation.file_validation import find_path_and_extract
 # print(metadata)
 
 
-# metadata = find_path_and_extract("./apvalidation/test/JEOL.zip", is_second_time = False)
+# metadata = find_path_and_extract("./apvalidation/test/Lagriamide_B.zip", is_second_time = False)
 # print(metadata)
+
+
+
+# print("\n\n----------------------\n\n")
+print("-------JEOL_as_FAKE_dx.zip-------")
+metadata = find_path_and_extract("./apvalidation/test/JEOL_as_FAKE_dx.zip", is_second_time = False)
+print(metadata)
+
+print("-------JEOL.zip-------")
+metadata = find_path_and_extract("./apvalidation/test/JEOL.zip", is_second_time = False)
+print(metadata)
+
+
 
 # file_name = "./apvalidation/test/JEOL.zip"
 # extracted_experiment_folder = "./apvalidation/test/output"
 
 
-extract_jdx(
-    "./apvalidation/test/",
-    "JEOL.zip",
-    "jeol_output",
-    "./apvalidation/test/output/",
-)
+# extract_jdx(
+#     "./apvalidation/test/",
+#     "JEOL.zip",
+#     "jeol_output",
+#     "./apvalidation/test/output/",
+# )
 
 
 # test_dir_path = "./apvalidation/test"

@@ -3,6 +3,8 @@ import nmrglue as ng
 import json
 from collections import OrderedDict
 
+from .remove_unicode import remove_unicode_from_paramter_file
+
 current_dir = os.path.dirname(__file__)
 one_level_up = os.path.dirname(current_dir)
 submodule_dir = os.path.join(one_level_up, 'npmrd_data_exchange')
@@ -53,7 +55,16 @@ class Bruker:
         param_dict_list = []
         for filepath in filepath_list:
             assert os.path.isfile(filepath)
-            param_dict = ng.bruker.read_jcamp(filename=filepath)
+            try:
+                param_dict = ng.bruker.read_jcamp(filename=filepath)
+            # If exception due to non-unicode character error remove it and try again
+            except Exception as e:
+                try:
+                    if str(e).startswith("'utf-8' codec can't decode byte"):
+                        remove_unicode_from_paramter_file(filepath)
+                        param_dict = ng.bruker.read_jcamp(filename=filepath)
+                except:
+                    pass
             param_dict_list.append(param_dict)
 
         return param_dict_list

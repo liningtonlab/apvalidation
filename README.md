@@ -51,7 +51,7 @@ find_meta function returns a dictionary with vendor and parameter file paths.
 #### Example Return
 ```
 MetaFinder.find_meta("/Downloads/NMR/Aspochalasin I.zip")
-{ 'vendor_name': ['bruker','bruker','bruker'], 'meta_file': [['/nrm/1/acqu',/nrm/1/acqu2'],['/nrm/2'],['/nrm/3']]}
+{ 'vendor_name': ['bruker','bruker','bruker'], 'file_root': [['/nrm/1/acqu',/nrm/1/acqu2'],['/nrm/2'],['/nrm/3']]}
 ```
 
 validator function append found error to error_message. If a new error is found, update private functions to handle the error

@@ -8,11 +8,14 @@ from numpy import split
 
 varian = ["fid", "procpar", "log", "text", "log 2", "procpar 2", "text 2"]
 bruker = ["fid", "ser", "acqu", "acqu2", "acqus", "acqu2s"]
-jcamp = ["jdx"]
+jcamp = ["jdx", "dx"]
 
 def extract_jdx(split_folder, file_name, folder_name, parent_dir):
     dst_dir = os.path.join(parent_dir, folder_name)
-    os.makedirs(dst_dir, exist_ok=False)
+    if os.path.exists(dst_dir) and os.path.isdir(dst_dir):
+        pass
+    else:
+        os.makedirs(dst_dir, exist_ok=True)
     copy_me_file = os.path.join(split_folder, file_name)
     shutil.copy2(copy_me_file, dst_dir)
 

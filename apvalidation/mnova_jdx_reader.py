@@ -60,7 +60,7 @@ def find_deep_groups(line_level_list, max_depth):
 
     return groups
 
-def make_filename(group, group_num):
+def make_filename(group, group_num, jcamp_file_extension):
     """
         determine the name of the single experiment jdx file being saved.
         :param item: a single line in the group being checked
@@ -70,7 +70,7 @@ def make_filename(group, group_num):
     done = False
     group_title = None
     seq_title = None
-
+    
     for item in group:
         if item["value"].startswith("##TITLE="):
             
@@ -82,23 +82,22 @@ def make_filename(group, group_num):
             done = True
 
         if done is True:
-            final_title = f"{group_title}_{seq_title}_exp_{group_num+1}.jdx"
+            final_title = f"{group_title}_{seq_title}_exp_{group_num+1}.{jcamp_file_extension}"
             return final_title
 
     return "NoTitle"
 
 
 
-def save_separate_files(merged_groups, save_path):
+def save_separate_files(merged_groups, save_path, jcamp_file_extension):
     """
-        save separate jdx files for each experiment found in the input file. 
+        save separate jdx or dx files for each experiment found in the input file. 
         These files are saved into the folder path provided.
         :param merged_groups: a list of the groups, each element of the list 
                                 should be saved as its own jdx file
         :param save_path: a filepath pointing to the folder to save the files to.
         :return: the folder path which the files were saved to
     """
-
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     # else:
@@ -114,7 +113,7 @@ def save_separate_files(merged_groups, save_path):
 
     for index, group in enumerate(merged_groups):
 
-        group_title = make_filename(group, index)
+        group_title = make_filename(group, index, jcamp_file_extension)
         
         single_file = open(f"{save_path}/{group_title}", "w+")
         for index, item in enumerate(group):
@@ -124,7 +123,7 @@ def save_separate_files(merged_groups, save_path):
     return save_path
 
     
-def separate_mnova_jdx(input_filepath, save_location):
+def separate_mnova_jdx(input_filepath, save_location, jcamp_file_extension):
     """
         use the above functions to fully separate a combined jdx file and save
         it as a folder of separate files (one per experiment)
@@ -146,6 +145,6 @@ def separate_mnova_jdx(input_filepath, save_location):
         line_level_list.append({"value": line, "level": depth})
 
     deep_groups = find_deep_groups(line_level_list, max_depth)
-    saved_folder = save_separate_files(deep_groups, f"{save_location}")
+    saved_folder = save_separate_files(deep_groups, f"{save_location}", jcamp_file_extension)
     return saved_folder
 
