@@ -25,6 +25,7 @@ requirements = [
     "rdkit-pypi>=2021.9.4",
     "requests==2.27.1",
     "patool==1.12",
+    "Unidecode==1.3.7",
 ]
 
 setuptools.setup(
