@@ -146,14 +146,14 @@ class MetaFinder:
         for path in path_list:
             for extension in MetaFinder.support_coming_soon_extensions:
                 if path.endswith(extension):
-                    raise FileExtensionError(f"{extension} is not currently supported, however, we are looking" 
-                            + "into supporting this format in the future. For now please convert"
+                    raise FileExtensionError(f"'{extension}' file format is not currently supported, however, we are looking" 
+                            + " into supporting this format in the future. For now please convert"
                             + " your nmr files to '.jdx' using MestReNova before zipping and uploading."
                     )
             
             for extension in MetaFinder.not_supported_extensions:
                 if path.endswith(extension):
-                    raise FileExtensionError(f"{extension} is not supported. Please convert" 
+                    raise FileExtensionError(f"'{extension}' file format is not supported. Please convert" 
                         + " your nmr files to '.jdx' using MestReNova before zipping and uploading."
                     )
         else:
