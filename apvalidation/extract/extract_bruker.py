@@ -82,6 +82,8 @@ class Bruker:
         param_dict = param_dict_list[0]
 
         exp_dim = Bruker.find_dim(param_dict_list)
+        # print("\n\n\n\nparam_dict in find_params is")
+        # print(param_dict)
         exp_type = Bruker.find_exp_type(param_dict, exp_dim)
         exp_nuc1, exp_nuc2 = Bruker.find_nuc(param_dict_list, exp_dim)
         exp_freq = Bruker.find_freq(param_dict, exp_dim)
@@ -160,6 +162,7 @@ class Bruker:
         :param exp_dim: dimension of the experiment
         :return: type of experiment in string. (1D experiments are not given a type)
         """
+        
         possible_exp_str_1 = param_dict["EXP"]
         possible_exp_str_2 = param_dict["PULPROG"]
 

@@ -1,4 +1,5 @@
 import os
+import nmrglue as ng
 from apvalidation.extract.extract_jcampdx import Jcampdx
 from apvalidation.extract_core import extract_jdx
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
@@ -56,25 +57,45 @@ from apvalidation.file_validation import find_path_and_extract
 # print(metadata)
 
 
+# regular_jdx = ng.jcampdx.read(filename="/workspaces/apvalidation/apvalidation/test/JEOL/ I1_85_02_ PULSE ACQUISITION_exp_1.jdx")
+# print("regular_jdx is")
+# print(regular_jdx)
 
-# print("\n\n----------------------\n\n")
-print("-------JEOL_as_FAKE_dx.zip-------")
-metadata = find_path_and_extract("./apvalidation/test/JEOL_as_FAKE_dx.zip", is_second_time = False)
-print(metadata)
+# print("\n--------------------\n")
 
-print("-------JEOL.zip-------")
-metadata = find_path_and_extract("./apvalidation/test/JEOL.zip", is_second_time = False)
-print(metadata)
-
-
-
-# file_name = "./apvalidation/test/JEOL.zip"
-# extracted_experiment_folder = "./apvalidation/test/output"
+# regular_jdx = ng.jcampdx.read(filename="/workspaces/apvalidation/apvalidation/test/JEOL_DX/1H NMR to check_ zg30_exp_1.dx")
+# print("DX is")
+# print(regular_jdx)
 
 
+# print("\n\n\n-------JEOL.zip-------")
+# metadata = find_path_and_extract("./apvalidation/test/JEOL.zip", is_second_time = False)
+# # print(metadata)
 # extract_jdx(
 #     "./apvalidation/test/",
 #     "JEOL.zip",
+#     "jeol_output",
+#     "./apvalidation/test/output/",
+# )
+
+
+
+# print("\n\n\n-------test_bruker_jdx.zip-------")
+# metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
+# print(metadata)
+
+
+print("\n\n\n-------Granaticin_C.zip-------")
+metadata = find_path_and_extract("./apvalidation/test/Granaticin_C.zip", is_second_time = False)
+# print(metadata)
+
+
+print("\n\n\n-------JEOL_DX.zip-------")
+metadata = find_path_and_extract("./apvalidation/test/JEOL_DX.zip", is_second_time = False)
+# print(metadata)
+# extract_jdx(
+#     "./apvalidation/test/",
+#     "JEOL_DX.zip",
 #     "jeol_output",
 #     "./apvalidation/test/output/",
 # )

@@ -3,6 +3,12 @@ import sys
 from zipfile import ZipFile
 import re
 from typing import Dict, List
+import json
+
+class FileExtensionError(Exception):
+    def __init__(self, message="Unsupported File Extension"):
+        self.message = message
+        super().__init__(self.message)
 
 class MetaFinder:
 
@@ -11,14 +17,23 @@ class MetaFinder:
     """
 
     meta_name_by_vendor = {
-        ".jdf": "Jcampdx",
+        # ".jdf": "Jcampdx",
         ".jdx": "Jcampdx",
-        ".dx": "Jcampdx",
+        # ".dx": "Jcampdx",
         "acqu": "Bruker",
         "procpar": "Varian",
         "acqu2": "Bruker"
     }
     
+    support_coming_soon_extensions = [
+        ".dx",
+        ".mnova"
+    ]
+    
+    not_supported_extensions = [
+        ".jdf",
+        ".nmrml"
+    ]
 
     def __init__(
         self,
@@ -56,16 +71,23 @@ class MetaFinder:
     # Given the path list, determine vendor and param file path for each experiment(directory)
     def find_meta(self, all_path_list: str) -> Dict[str, list]:
         
-        meta_file_name_list = list(MetaFinder.meta_name_by_vendor.keys())
+        meta_name_by_vendor = list(MetaFinder.meta_name_by_vendor.keys())
 
         # Search for a meta data file names
         vendor_name_list = []
         core_path_dict = {}
-        for name in meta_file_name_list:
-            lst = self.param_file_finder(all_path_list, name, core_path_dict)
+        for name in meta_name_by_vendor:
+            lst = self.param_file_finder(self, all_path_list, name, core_path_dict)
             if lst:
                 vendor_name_list += lst
         
+        print("vendor_name_list is")
+        print(vendor_name_list)
+        
+        if not vendor_name_list:
+            print("CHECKING FOR UNUSPPORTED EXTENSION")
+            self.check_for_unsupported_file(self, all_path_list)
+
         # Set Filetype to native for the manuf and fix later if neccesary
         filetype_list = []
         for vendor in vendor_name_list:
@@ -105,7 +127,7 @@ class MetaFinder:
 
 
     @staticmethod
-    def param_file_finder(path_list: str, keyword: str, core_path_dict: dict) -> List[str]:
+    def param_file_finder(self, path_list: list, keyword: str, core_path_dict: dict) -> List[str]:
         vendor_list = []
         for path in path_list:
             if path.endswith(keyword):
@@ -118,6 +140,27 @@ class MetaFinder:
                     vendor_list.append(MetaFinder.meta_name_by_vendor[keyword])
         
         return vendor_list
+    
+    @staticmethod
+    def check_for_unsupported_file(self, path_list: list) -> List[str]:
+        for path in path_list:
+            for extension in MetaFinder.support_coming_soon_extensions:
+                if path.endswith(extension):
+                    raise FileExtensionError(f"{extension} is not currently supported, however, we are looking" 
+                            + "into supporting this format in the future. For now please convert"
+                            + " your nmr files to '.jdx' using MestReNova before zipping and uploading."
+                    )
+            
+            for extension in MetaFinder.not_supported_extensions:
+                if path.endswith(extension):
+                    raise FileExtensionError(f"{extension} is not supported. Please convert" 
+                        + " your nmr files to '.jdx' using MestReNova before zipping and uploading."
+                    )
+        else:
+            raise FileExtensionError(f"Filetype is not supported. Please consult the instructions"
+                + " and upload files in a supported format."    
+            )
+            
 
     @staticmethod
     def key_file_finder(path_list: str, keyword: str, start_with: str) -> List[str]:
