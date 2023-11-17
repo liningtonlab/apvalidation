@@ -388,9 +388,9 @@ class Validate:
                 error_list = Validate.check_data_type(C_list)
                 if sum(error_list) != len(C_list):
                     error_value_list = []
-                    for index, b_val in enumerate(H_list):
+                    for index, b_val in enumerate(C_list):
                         if b_val is False:
-                            error_value_list.append(H_list[index])
+                            error_value_list.append(C_list[index])
                         else:
                             continue
                     raise InvalidValueType

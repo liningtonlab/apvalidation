@@ -29,20 +29,19 @@ from apvalidation.file_validation import find_path_and_extract
 #     reference="DMSO",
 # )
 
-# result = Peak_Validate.validate(
-#     H_text_block="10; 11; 12",
-#     C_text_block="20, 20, 20",
-#     smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
-#     solvent="D2O",
-#     h_frequency=300,
-#     h_temperature=300,
-#     c_frequency=300,
-#     c_temperature=300,
-#     reference="DMSO",
-# )
-
-# print("result")
-# print(result)
+result = Peak_Validate.validate(
+    H_text_block="",
+    C_text_block="10.1, 20, 20",
+    smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
+    solvent="D2O",
+    h_frequency=None,
+    h_temperature=None,
+    c_frequency=300,
+    c_temperature=300,
+    reference="DMSO",
+)
+print("peak result")
+print(result)
 
 # from apvalidation.extract_varian import Varian
 
@@ -70,7 +69,7 @@ from apvalidation.file_validation import find_path_and_extract
 
 # print("\n\n\n-------JEOL.zip-------")
 # metadata = find_path_and_extract("./apvalidation/test/JEOL.zip", is_second_time = False)
-# # print(metadata)
+# print(metadata)
 # extract_jdx(
 #     "./apvalidation/test/",
 #     "JEOL.zip",
@@ -85,13 +84,13 @@ from apvalidation.file_validation import find_path_and_extract
 # print(metadata)
 
 
-print("\n\n\n-------Granaticin_C.zip-------")
-metadata = find_path_and_extract("./apvalidation/test/Granaticin_C.zip", is_second_time = False)
+# print("\n\n\n-------Granaticin_C.zip-------")
+# metadata = find_path_and_extract("./apvalidation/test/Granaticin_C.zip", is_second_time = False)
 # print(metadata)
 
 
-print("\n\n\n-------JEOL_DX.zip-------")
-metadata = find_path_and_extract("./apvalidation/test/JEOL_DX.zip", is_second_time = False)
+# print("\n\n\n-------JEOL_DX.zip-------")
+# metadata = find_path_and_extract("./apvalidation/test/JEOL_DX.zip", is_second_time = False)
 # print(metadata)
 # extract_jdx(
 #     "./apvalidation/test/",
