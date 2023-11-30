@@ -29,19 +29,19 @@ from apvalidation.file_validation import find_path_and_extract
 #     reference="DMSO",
 # )
 
-result = Peak_Validate.validate(
-    H_text_block="",
-    C_text_block="10.1, 20, 20",
-    smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
-    solvent="D2O",
-    h_frequency=None,
-    h_temperature=None,
-    c_frequency=300,
-    c_temperature=300,
-    reference="DMSO",
-)
-print("peak result")
-print(result)
+# result = Peak_Validate.validate(
+#     H_text_block="",
+#     C_text_block="10.1, 20, 20",
+#     smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
+#     solvent="D2O",
+#     h_frequency=None,
+#     h_temperature=None,
+#     c_frequency=300,
+#     c_temperature=300,
+#     reference="DMSO",
+# )
+# print("peak result")
+# print(result)
 
 # from apvalidation.extract_varian import Varian
 
@@ -98,6 +98,10 @@ print(result)
 #     "jeol_output",
 #     "./apvalidation/test/output/",
 # )
+
+
+metadata = find_path_and_extract("./apvalidation/test/test_double_jdx_undetected.zip", is_second_time = False)
+print(metadata)
 
 
 # test_dir_path = "./apvalidation/test"

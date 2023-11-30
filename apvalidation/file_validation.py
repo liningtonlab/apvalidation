@@ -89,6 +89,10 @@ def find_path_and_extract(
         submitted_zip_file,
         zip_file_extention
     )
+    
+    print("meta.meta_info is")
+    print(meta.meta_info)
+    
     assert meta.error_message == {}, json.dumps(meta.error_message)
 
     meta_file = meta.meta_info
@@ -114,11 +118,14 @@ def find_path_and_extract(
         for i, path_list in enumerate(file_root):
             unzipped_path_name = []
             
+            print("path_list is")
+            print(path_list)
+            
             for path in path_list:
                 core_file_read = zipObj.read(path)
                 tf = create_temporary_file(core_file_read)
                 unzipped_path_name.append(tf.name)
-
+            
             # Get param according to the vendor name
             if vendor_type[i] == "Varian":
                 param_dict = varian_extractor.read(unzipped_path_name)
@@ -188,6 +195,11 @@ def find_path_and_extract(
 
 def extract_jcamp(loc):
     res_dict = []
+    
+    print("loc / os.listdir(loc) is")
+    print(loc)
+    print(os.listdir(loc))
+    
     for path in os.listdir(loc):
         if Path(path).suffix == ".jdx" or Path(path).suffix == ".dx":
             full_path = os.path.join(loc, path)

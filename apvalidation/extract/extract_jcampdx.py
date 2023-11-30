@@ -111,7 +111,7 @@ class Jcampdx:
         output_list = []
         manuf = Jcampdx.find_manuf(param_dict)
         
-        print(f"JCAMP MANUF IS {manuf}")
+        # print(f"JCAMP MANUF IS {manuf}")
 
         if manuf == "Varian":
             varian_structured_dict_list = Jcampdx.format_varian(param_dict)

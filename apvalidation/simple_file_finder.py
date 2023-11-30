@@ -81,8 +81,8 @@ class MetaFinder:
             if lst:
                 vendor_name_list += lst
         
-        print("vendor_name_list is")
-        print(vendor_name_list)
+        # print("vendor_name_list is")
+        # print(vendor_name_list)
         
         if not vendor_name_list:
             print("CHECKING FOR UNUSPPORTED EXTENSION")

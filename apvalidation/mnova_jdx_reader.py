@@ -1,4 +1,5 @@
 import os, shutil
+import uuid
 
 def add_indents(line_list):
     """
@@ -71,21 +72,25 @@ def make_filename(group, group_num, jcamp_file_extension):
     group_title = None
     seq_title = None
     
+    seq_titles = ["##.PULSE SEQUENCE=", "##.PULSESEQUENCE="]
+    
     for item in group:
         if item["value"].startswith("##TITLE="):
-            
             group_title = item["value"].split("=")[1]
             group_title = group_title.split("/")[-1]
+            print(f"group_title is {group_title}")
 
-        if item["value"].startswith("##.PULSE SEQUENCE="):
-            seq_title = item["value"].split("=")[1]
-            done = True
+        for st in seq_titles:
+            if item["value"].startswith(st):
+                seq_title = item["value"].split("=")[1]
+                print(f"seq_title is {seq_title}")
+                done = True
 
         if done is True:
             final_title = f"{group_title}_{seq_title}_exp_{group_num+1}.{jcamp_file_extension}"
             return final_title
 
-    return "NoTitle"
+    return f"FailedToDetectTitle_{uuid.uuid4().hex[:5]}.{jcamp_file_extension}"
 
 
 
@@ -145,6 +150,6 @@ def separate_mnova_jdx(input_filepath, save_location, jcamp_file_extension):
         line_level_list.append({"value": line, "level": depth})
 
     deep_groups = find_deep_groups(line_level_list, max_depth)
-    saved_folder = save_separate_files(deep_groups, f"{save_location}", jcamp_file_extension)
+    saved_folder = save_separate_files(deep_groups, save_location, jcamp_file_extension)
     return saved_folder
 
