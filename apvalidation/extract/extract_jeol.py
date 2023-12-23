@@ -174,7 +174,10 @@ class JEOL:
 
         if exp_dim == "2D":
             freq1 = round(float(param_dict["$XFREQ"][0]), 9)
-            freq2 = round(float(param_dict["$YFREQ"][0]), 9)
+            try:
+                freq2 = round(float(param_dict["$YFREQ"][0]), 9)
+            except:
+                freq2 = None
             freq = (freq1, freq2)
             return freq
         else:

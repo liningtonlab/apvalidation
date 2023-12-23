@@ -99,10 +99,13 @@ from apvalidation.file_validation import find_path_and_extract
 #     "./apvalidation/test/output/",
 # )
 
+# metadata = find_path_and_extract("./apvalidation/test/JEOL.zip")
+# print(metadata)
 
-metadata = find_path_and_extract("./apvalidation/test/test_double_jdx_undetected.zip", is_second_time = False)
+# print("----")
+
+metadata = find_path_and_extract("./apvalidation/test/endolide_E_NMR_RAW.zip")
 print(metadata)
-
 
 # test_dir_path = "./apvalidation/test"
 # for filename in os.listdir(test_dir_path):

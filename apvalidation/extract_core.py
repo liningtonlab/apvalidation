@@ -7,7 +7,7 @@ import os
 from numpy import split
 
 varian = ["fid", "procpar", "log", "text", "log 2", "procpar 2", "text 2"]
-bruker = ["fid", "ser", "acqu", "acqu2", "acqus", "acqu2s"]
+bruker = ["fid", "ser", "acqus", "acqu", "acqu2", "acqu2s"]
 jcamp = ["jdx", "dx"]
 
 def extract_jdx(split_folder, file_name, folder_name, parent_dir):

@@ -90,9 +90,6 @@ def find_path_and_extract(
         zip_file_extention
     )
     
-    print("meta.meta_info is")
-    print(meta.meta_info)
-    
     assert meta.error_message == {}, json.dumps(meta.error_message)
 
     meta_file = meta.meta_info
@@ -117,9 +114,6 @@ def find_path_and_extract(
                     file_root.append([tmp[j]])
         for i, path_list in enumerate(file_root):
             unzipped_path_name = []
-            
-            print("path_list is")
-            print(path_list)
             
             for path in path_list:
                 core_file_read = zipObj.read(path)
