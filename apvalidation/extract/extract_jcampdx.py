@@ -19,7 +19,6 @@ solvent_standardizer_path = os.path.join(submodule_dir, 'standardization_files',
 with open(solvent_standardizer_path, 'r') as file:
     all_solvents = json.load(file) 
 
-
 class Jcampdx:
     """
     A class containing the methods to help with the extraction of
@@ -59,8 +58,8 @@ class Jcampdx:
             except:
                 param_dict = param_dict_list[0]
         
-        # print("\n\n-------------param_dict after unnest-------------")
-        # print(param_dict)
+        # print("param_dict is")
+        # print(param_dict[0].keys())
 
         return param_dict
 

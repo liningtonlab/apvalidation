@@ -102,7 +102,6 @@ def find_path_and_extract(
     with zipfile.ZipFile(submitted_zip_file, "r") as zipObj:
         # Extract all the contents of zip file in current directory
         res_dict = []
-        # for params_path, vendor in file_root, vendor_type:
         for i, vendor in enumerate(vendor_type):
             if vendor == "Jcampdx" and len(file_root[i]) > 1:
                 vendor_type.pop(i)
@@ -201,6 +200,9 @@ def extract_jcamp(loc):
             manuf = jcampdx_extractor.find_manuf(param_dict=param_dict)
             params = jcampdx_extractor.find_params(param_dict)[0]
             add_path_vendor(path, params, manuf, "Jcampdx", res_dict)
+    
+    print("res_dict is")
+    print(res_dict)
     return res_dict
 
 

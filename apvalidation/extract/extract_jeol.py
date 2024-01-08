@@ -171,6 +171,13 @@ class JEOL:
         :param exp_dim: the dimension of the experiment
         :return: a single float or a tuple of floats depending on the dimension
         """
+        
+        # print("param_dict is")
+        # print(param_dict.keys())
+        # for key, value in param_dict.items():
+        #     if (key != "$PARAMETERFILE") and (key != "DATATABLE"):
+        #         # print(f"{key} - {value}")
+        #         pass
 
         if exp_dim == "2D":
             freq1 = round(float(param_dict["$XFREQ"][0]), 9)
@@ -197,19 +204,16 @@ class JEOL:
         """
         if exp_dim == "2D":
             try:
-                nuc_1 = param_dict[".NUCLEUS"][0].split(", ")[1]
-                nuc_2 = param_dict[".NUCLEUS"][0].split(", ")[0]
-            except:
-                pass
-            try:
-                nuc_1 = param_dict[".NUCLEUS"][0].split(",")[1]
-                nuc_2 = param_dict[".NUCLEUS"][0].split(",")[0]
+                nuc_values = param_dict[".NUCLEUS"][0].split(",")
+                nuc_1 = nuc_values[1]
+                nuc_2 = nuc_values[0]
             except:
                 pass
         else:
+        # If experiment is 1D then look 
             nuc_1 = param_dict[".OBSERVENUCLEUS"][0][1:]
             nuc_2 = None
-        
+            
         if isinstance(nuc_1, str):
             nuc_1 = nuc_1.strip()
         if isinstance(nuc_2, str):

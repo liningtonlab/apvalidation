@@ -104,7 +104,10 @@ from apvalidation.file_validation import find_path_and_extract
 
 # print("----")
 
-metadata = find_path_and_extract("./apvalidation/test/endolide_E_NMR_RAW.zip")
+# metadata = find_path_and_extract("./apvalidation/test/salarin_C_failed_exp_type.zip")
+# print(metadata)
+
+metadata = find_path_and_extract("./apvalidation/test/endolide_E_NMR_RAW_HMBC_ONLY.zip")
 print(metadata)
 
 # test_dir_path = "./apvalidation/test"
