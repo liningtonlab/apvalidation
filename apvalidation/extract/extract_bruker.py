@@ -182,7 +182,7 @@ class Bruker:
                 if entry in possible_exp_str_1 or entry in possible_exp_str_2:
                     exp_type = exp_dict[entry]
                     break
-            exp_type = f"1D {exp_type}".strip()
+            exp_type = f"1D_{exp_type}".strip()
             return exp_type
 
     @staticmethod

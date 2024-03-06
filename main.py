@@ -107,8 +107,8 @@ from apvalidation.file_validation import find_path_and_extract
 # metadata = find_path_and_extract("./apvalidation/test/salarin_C_failed_exp_type.zip")
 # print(metadata)
 
-metadata = find_path_and_extract("./apvalidation/test/endolide_E_NMR_RAW_HMBC_ONLY.zip")
-print(metadata)
+# metadata = find_path_and_extract("./apvalidation/test/endolide_E_NMR_RAW_HMBC_ONLY.zip")
+# print(metadata)
 
 # test_dir_path = "./apvalidation/test"
 # for filename in os.listdir(test_dir_path):
@@ -126,3 +126,7 @@ print(metadata)
 #         except Exception as e:
 #             print("FFFFFFFFFFFFF failed to process FFFFFFFFFFFFF")
 #             print(e)
+
+
+metadata = find_path_and_extract("./apvalidation/test/test_dept.zip")
+print(metadata)
