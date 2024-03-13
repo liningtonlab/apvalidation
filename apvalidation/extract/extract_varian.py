@@ -271,7 +271,12 @@ class Varian:
                     if type_str in exp_loc:
                         exp_type = exp_dict[type_str]
                         break
-            exp_type = f"1D {exp_type}".strip()
+            
+            if exp_type:
+                exp_type = f"1D_{exp_type}".strip()
+            else:
+                exp_type = "1D"
+                
             return exp_type
         else:
             exp_type = "FAILED_TO_DETECT"

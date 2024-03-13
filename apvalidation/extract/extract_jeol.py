@@ -216,7 +216,15 @@ class JEOL:
             
         if isinstance(nuc_1, str):
             nuc_1 = nuc_1.strip()
+            if "proton" in nuc_1.lower():
+                nuc_1 = "1H"
+            if "carbon13" in nuc_1.lower():
+                nuc_1 = "13C"
         if isinstance(nuc_2, str):
             nuc_2 = nuc_2.strip()
+            if "proton" in nuc_2.lower():
+                nuc_2 = "1H"
+            if "carbon13" in nuc_2.lower():
+                nuc_2 = "13C"
 
         return nuc_1, nuc_2

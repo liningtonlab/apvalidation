@@ -127,6 +127,8 @@ from apvalidation.file_validation import find_path_and_extract
 #             print("FFFFFFFFFFFFF failed to process FFFFFFFFFFFFF")
 #             print(e)
 
-
-metadata = find_path_and_extract("./apvalidation/test/test_dept.zip")
+metadata = find_path_and_extract("./apvalidation/test/original_data_OUOOPZLKXKPBSH-ZFPZKZBNSA-N.zip")
 print(metadata)
+
+# metadata = find_path_and_extract("./apvalidation/test/test_dept.zip")
+# print(metadata)
