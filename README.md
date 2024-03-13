@@ -9,6 +9,19 @@ To install the apvalidation package into your own Python project, just use pip a
 pip install @git+https://github.com/liningtonlab/apvalidation.git
 ```
 
+## (REQUIRED FOR DEVELOPMENT) Submodule Installation
+If you are planning to clone this repo to your computer it is important to note that it relies on external files in order to perform standardization steps. This package was added to this repo like such...
+
+```
+git submodule add https://github.com/np-mrd/npmrd_data_exchange.git npmrd_data_exchange
+```
+
+In order to update this submodule whenever these files change remember to run...
+
+```
+git submodule update --remote
+```
+
 # Functionality
 The code in this repository has four main functionalities.
 1. Traverse the deposited NMR zip folder to determine the type of machine used in the experiments (Bruker, Varian, or JEOL) and the filetype of the data.
@@ -38,7 +51,7 @@ find_meta function returns a dictionary with vendor and parameter file paths.
 #### Example Return
 ```
 MetaFinder.find_meta("/Downloads/NMR/Aspochalasin I.zip")
-{ 'vendor_name': ['bruker','bruker','bruker'], 'meta_file': [['/nrm/1/acqu',/nrm/1/acqu2'],['/nrm/2'],['/nrm/3']]}
+{ 'vendor_name': ['bruker','bruker','bruker'], 'file_root': [['/nrm/1/acqu',/nrm/1/acqu2'],['/nrm/2'],['/nrm/3']]}
 ```
 
 validator function append found error to error_message. If a new error is found, update private functions to handle the error

@@ -1,8 +1,8 @@
 # from apvalidation.extract import Varian, Bruker, JEOL, Jcampdx
-from apvalidation.extract_bruker import Bruker as bruker_extractor
-from apvalidation.extract_varian import Varian as varian_extractor
-from apvalidation.extract_jeol import JEOL as jeol_extractor
-from apvalidation.extract_jcampdx import Jcampdx as jcampdx_extractor
+from apvalidation.extract.extract_bruker import Bruker as bruker_extractor
+from apvalidation.extract.extract_varian import Varian as varian_extractor
+from apvalidation.extract.extract_jeol import JEOL as jeol_extractor
+from apvalidation.extract.extract_jcampdx import Jcampdx as jcampdx_extractor
 from apvalidation.simple_file_finder import MetaFinder
 from apvalidation.extract_core import extract_core_file
 from apvalidation.patoolutil import is_zip, repack_to_zip, is_compressed_but_not_zip
@@ -89,19 +89,19 @@ def find_path_and_extract(
         submitted_zip_file,
         zip_file_extention
     )
+    
     assert meta.error_message == {}, json.dumps(meta.error_message)
 
     meta_file = meta.meta_info
     vendor_type = meta_file["vendor_name"]
     filetype = meta_file["filetype"]
-    file_root = meta_file["meta_file"]
+    file_root = meta_file["file_root"]
     existing_folder_names = []
     jcamp = False
 
     with zipfile.ZipFile(submitted_zip_file, "r") as zipObj:
         # Extract all the contents of zip file in current directory
         res_dict = []
-        # for params_path, vendor in file_root, vendor_type:
         for i, vendor in enumerate(vendor_type):
             if vendor == "Jcampdx" and len(file_root[i]) > 1:
                 vendor_type.pop(i)
@@ -118,7 +118,7 @@ def find_path_and_extract(
                 core_file_read = zipObj.read(path)
                 tf = create_temporary_file(core_file_read)
                 unzipped_path_name.append(tf.name)
-
+            
             # Get param according to the vendor name
             if vendor_type[i] == "Varian":
                 param_dict = varian_extractor.read(unzipped_path_name)
@@ -133,10 +133,13 @@ def find_path_and_extract(
 
             if vendor_type[i] == "Jcampdx":
                 jcamp = True
+                jcamp_file_extension = path_list[0].split(".")[-1]
+                
                 # spilit_file_dir = f"{str(Path(submitted_zip_file).parent)}/jdx_spilt"
                 loc = os.path.splitext(submitted_zip_file)[0]
+                
                 if not is_second_time:
-                    loc = separate_mnova_jdx(unzipped_path_name[0], loc)
+                    loc = separate_mnova_jdx(unzipped_path_name[0], loc, jcamp_file_extension)
 
                 # for path in os.listdir(loc):
                 #     if Path(path).suffix == '.jdx':
@@ -149,7 +152,6 @@ def find_path_and_extract(
                 #         add_path_vendor(path, params, manuf, res_dict)
 
             os.unlink(tf.name)  # Delete temporary file
-        
         
         if jcamp:
             res_dict = extract_jcamp(loc)
@@ -186,13 +188,21 @@ def find_path_and_extract(
 
 def extract_jcamp(loc):
     res_dict = []
+    
+    print("loc / os.listdir(loc) is")
+    print(loc)
+    print(os.listdir(loc))
+    
     for path in os.listdir(loc):
-        if Path(path).suffix == ".jdx":
+        if Path(path).suffix == ".jdx" or Path(path).suffix == ".dx":
             full_path = os.path.join(loc, path)
             param_dict = jcampdx_extractor.read([full_path])
             manuf = jcampdx_extractor.find_manuf(param_dict=param_dict)
             params = jcampdx_extractor.find_params(param_dict)[0]
             add_path_vendor(path, params, manuf, "Jcampdx", res_dict)
+    
+    print("res_dict is")
+    print(res_dict)
     return res_dict
 
 
@@ -210,7 +220,7 @@ def add_path_vendor(path, params, vendor_type, filetype, res_dict):
     file_root_without_file_name = str(path)
     if file_root_without_file_name == ".":
         file_root_without_file_name = "/"
-    params["original_data_path"] = file_root_without_file_name.strip()
+    params["original_data_path"] = file_root_without_file_name
     params["vendor"] = vendor_type
     params["filetype"] = filetype
     res_dict.append(params)

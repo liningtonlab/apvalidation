@@ -3,20 +3,21 @@ import re
 import nmrglue as ng
 import json
 
-from apvalidation.extract_varian import Varian
-from apvalidation.extract_bruker import Bruker
-from apvalidation.extract_jeol import JEOL
+from apvalidation.extract.extract_varian import Varian
+from apvalidation.extract.extract_bruker import Bruker
+from apvalidation.extract.extract_jeol import JEOL
 
 current_dir = os.path.dirname(__file__)
+one_level_up = os.path.dirname(current_dir)
+submodule_dir = os.path.join(one_level_up, 'npmrd_data_exchange')
 
-experiment_standardizer_path = os.path.join(current_dir, 'metadata_standardizers', 'experiment_standardizer.json')
+experiment_standardizer_path = os.path.join(submodule_dir, 'standardization_files', 'experiment_standardizer.json')
 with open(experiment_standardizer_path, 'r') as file:
     exp_dict = json.load(file) 
 
-solvent_standardizer_path = os.path.join(current_dir, 'metadata_standardizers', 'solvent_standardizer.json')
+solvent_standardizer_path = os.path.join(submodule_dir, 'standardization_files', 'solvent_standardizer.json')
 with open(solvent_standardizer_path, 'r') as file:
     all_solvents = json.load(file) 
-
 
 class Jcampdx:
     """
@@ -52,7 +53,13 @@ class Jcampdx:
         try:
             param_dict = param_dict_list[0][0]["_datatype_NMRSPECTRUM"]
         except:
-            param_dict = param_dict_list[0]
+            try:
+                param_dict = param_dict_list[0][0]["_datatype_NDNMRSPECTRUM"]
+            except:
+                param_dict = param_dict_list[0]
+        
+        # print("param_dict is")
+        # print(param_dict[0].keys())
 
         return param_dict
 
@@ -109,7 +116,7 @@ class Jcampdx:
             output_list.append(Varian.find_params(varian_structured_dict_list))
 
         elif manuf == "Bruker":
-            bruker_structured_dict_list = Jcampdx.format_bruker(param_dict)
+            bruker_structured_dict_list = Jcampdx.format_bruker(param_dict) # THIS IS WHAT'S BREAKING THE .DX (probably)!!!!!!!
             output_list.append(Bruker.find_params(bruker_structured_dict_list))
 
         elif manuf == "JEOL":

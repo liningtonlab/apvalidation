@@ -22,7 +22,6 @@ def validate_struct(smiles, img_path, asInchiKey=False):
     rdCoordGen.AddCoords(mol)
     if mol is not None and asInchiKey == False:
         generated_img_path = f"{img_path}/{smiles}.png"
-        print(f"Length of filepath: {len(generated_img_path)}")
         Chem.Draw.MolToFile(mol, generated_img_path, size=(800, 800), fitImage=True)
         return smiles, generated_img_path
     elif mol is not None and asInchiKey == True:

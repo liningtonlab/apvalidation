@@ -1,7 +1,9 @@
 import os
-from apvalidation.extract_jcampdx import Jcampdx
+import nmrglue as ng
+from apvalidation.extract.extract_jcampdx import Jcampdx
+from apvalidation.extract_core import extract_jdx
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
-from apvalidation.peak_validator import Validate
+from apvalidation.peak_validator import Validate as Peak_Validate
 from apvalidation.file_validation import find_path_and_extract
 
 # input_file = "test_files/MNOVA_jdx/Combined JEOL jdx/combinedJEOLpart2.jdx"
@@ -15,8 +17,30 @@ from apvalidation.file_validation import find_path_and_extract
 #     print(f"find_paramoutput = {find_param_output}")
 
 
-# result = Validate.validate("13.0, (13.5-13.9), 12.4 - 14.6, 10.0", "(11.5-15.2), 64.7", "CC", "D2O")
-# print("result")
+# result = Peak_Validate.validate(
+#     H_text_block="13.0, (13.5-13.9), 12.4 - 14.6, 10.0",
+#     C_text_block="20, 20, 20",
+#     smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
+#     solvent="D2O",
+#     h_frequency=300,
+#     h_temperature=300,
+#     c_frequency=300,
+#     c_temperature=300,
+#     reference="DMSO",
+# )
+
+# result = Peak_Validate.validate(
+#     H_text_block="",
+#     C_text_block="10.1, 20, 20",
+#     smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
+#     solvent="D2O",
+#     h_frequency=None,
+#     h_temperature=None,
+#     c_frequency=300,
+#     c_temperature=300,
+#     reference="DMSO",
+# )
+# print("peak result")
 # print(result)
 
 # from apvalidation.extract_varian import Varian
@@ -24,8 +48,67 @@ from apvalidation.file_validation import find_path_and_extract
 # input_file = "./procpar"
 # Varian.remove_personal_info(input_file)
 
-metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
-print(metadata)
+# metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
+# print(metadata)
+
+
+# metadata = find_path_and_extract("./apvalidation/test/Lagriamide_B.zip", is_second_time = False)
+# print(metadata)
+
+
+# regular_jdx = ng.jcampdx.read(filename="/workspaces/apvalidation/apvalidation/test/JEOL/ I1_85_02_ PULSE ACQUISITION_exp_1.jdx")
+# print("regular_jdx is")
+# print(regular_jdx)
+
+# print("\n--------------------\n")
+
+# regular_jdx = ng.jcampdx.read(filename="/workspaces/apvalidation/apvalidation/test/JEOL_DX/1H NMR to check_ zg30_exp_1.dx")
+# print("DX is")
+# print(regular_jdx)
+
+
+# print("\n\n\n-------JEOL.zip-------")
+# metadata = find_path_and_extract("./apvalidation/test/JEOL.zip", is_second_time = False)
+# print(metadata)
+# extract_jdx(
+#     "./apvalidation/test/",
+#     "JEOL.zip",
+#     "jeol_output",
+#     "./apvalidation/test/output/",
+# )
+
+
+
+# print("\n\n\n-------test_bruker_jdx.zip-------")
+# metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
+# print(metadata)
+
+
+# print("\n\n\n-------Granaticin_C.zip-------")
+# metadata = find_path_and_extract("./apvalidation/test/Granaticin_C.zip", is_second_time = False)
+# print(metadata)
+
+
+# print("\n\n\n-------JEOL_DX.zip-------")
+# metadata = find_path_and_extract("./apvalidation/test/JEOL_DX.zip", is_second_time = False)
+# print(metadata)
+# extract_jdx(
+#     "./apvalidation/test/",
+#     "JEOL_DX.zip",
+#     "jeol_output",
+#     "./apvalidation/test/output/",
+# )
+
+# metadata = find_path_and_extract("./apvalidation/test/JEOL.zip")
+# print(metadata)
+
+# print("----")
+
+# metadata = find_path_and_extract("./apvalidation/test/salarin_C_failed_exp_type.zip")
+# print(metadata)
+
+# metadata = find_path_and_extract("./apvalidation/test/endolide_E_NMR_RAW_HMBC_ONLY.zip")
+# print(metadata)
 
 # test_dir_path = "./apvalidation/test"
 # for filename in os.listdir(test_dir_path):
@@ -43,6 +126,9 @@ print(metadata)
 #         except Exception as e:
 #             print("FFFFFFFFFFFFF failed to process FFFFFFFFFFFFF")
 #             print(e)
-            
 
+metadata = find_path_and_extract("./apvalidation/test/original_data_OUOOPZLKXKPBSH-ZFPZKZBNSA-N.zip")
+print(metadata)
 
+# metadata = find_path_and_extract("./apvalidation/test/test_dept.zip")
+# print(metadata)

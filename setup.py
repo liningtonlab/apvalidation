@@ -25,20 +25,26 @@ requirements = [
     "rdkit-pypi>=2021.9.4",
     "requests==2.27.1",
     "patool==1.12",
+    "Unidecode==1.3.7",
 ]
 
 setuptools.setup(
     name="apvalidation",
-    version="0.5.57",
+    version="0.5.68",
     author="liningtonlabs",
     author_email="liningtonlabstest@gmail.com",
     description="Testing installation of Package",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/liningtonlab/ap_validation",
+    url="https://github.com/liningtonlab/apvalidation",
     license="MIT",
     package_data={
-        'apvalidation': ['metadata_standardizers/*.json'],
+        "apvalidation": [
+            "npmrd_data_exchange/standardization_files/*.json",
+            "npmrd_data_exchange/validation/validator.py",
+            "npmrd_data_exchange/standardization/standardizer.py",
+            "extract/*.py",
+        ],
     },
     include_package_data=True,
     packages=["apvalidation"],
