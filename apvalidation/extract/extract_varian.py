@@ -7,12 +7,17 @@ import sys
 import shutil
 import json
 
-with open('apvalidation/metadata_standardizers/experiment_standardizer.json', 'r') as file:
+current_dir = os.path.dirname(__file__)
+one_level_up = os.path.dirname(current_dir)
+submodule_dir = os.path.join(one_level_up, 'npmrd_data_exchange')
+
+experiment_standardizer_path = os.path.join(submodule_dir, 'standardization_files', 'experiment_standardizer.json')
+with open(experiment_standardizer_path, 'r') as file:
     exp_dict = json.load(file) 
-    
-with open('apvalidation/metadata_standardizers/solvent_standardizer.json', 'r') as file:
-    all_solvents = json.load(file)
-    
+
+solvent_standardizer_path = os.path.join(submodule_dir, 'standardization_files', 'solvent_standardizer.json')
+with open(solvent_standardizer_path, 'r') as file:
+    all_solvents = json.load(file) 
 
 class Varian:
     """
@@ -266,7 +271,12 @@ class Varian:
                     if type_str in exp_loc:
                         exp_type = exp_dict[type_str]
                         break
-            exp_type = f"1D {exp_type}".strip()
+            
+            if exp_type:
+                exp_type = f"1D_{exp_type}".strip()
+            else:
+                exp_type = "1D"
+                
             return exp_type
         else:
             exp_type = "FAILED_TO_DETECT"

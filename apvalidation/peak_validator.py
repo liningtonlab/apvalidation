@@ -25,6 +25,9 @@ class InvalidCharacters(Exception):
 class NoSplit(Exception):
     pass
 
+class MultipleSeparators(Exception):
+    pass
+
 class InvalidValueType(Exception):
     pass
 
@@ -70,22 +73,29 @@ class Validate:
             different list formats to try.
 
             :param valid_text: The text to split
-            :return: If works, return the split list. If split does not work, raise a NoSplit exception.
+            :return: If works, return the split list. If split does not work, raise a MultipleSeparators exception.
         """
         char_list = [",", ";", "\n", "\t", "\\t", "    "]
-        split = False
+        
+        # Raise error if more than one separator is being used
+        num_separators = 0
+        for char in char_list:
+            if char in valid_text:
+                num_separators += 1
+        if num_separators >= 2:
+            raise MultipleSeparators
+        
         for split_char in char_list:
             split_text = valid_text.split(split_char)
-            if split_text[-1] == "":
-                split_text.pop()
+            
+            # Remove empty strings using list comprehension
+            split_text = [value for value in split_text if value.strip() != ""]
+            
             if len(split_text) == 1:
                 continue
             else:
-                split = True
                 break
- 
-        if split == False:
-            raise NoSplit
+        
         return split_text
 
     @staticmethod
@@ -305,8 +315,8 @@ class Validate:
             # Parse the text blocks into lists based on the separators
             try:
                 H_list = Validate.parse_text_to_list(H_text_block)
-            except NoSplit:
-                return ("Failed to split H list, please check your separators.", "Error")
+            except MultipleSeparators:
+                return ("Multiple separators detected. Please ensure only one separateor type is used of: i.e. use only ',' or ';' to separate your values", "Error")
         else:
             H_list = None
                 
@@ -318,8 +328,8 @@ class Validate:
                     return ("Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error")
             try:
                 C_list = Validate.parse_text_to_list(C_text_block)
-            except NoSplit:
-                return ("Failed to split C list, please check your separators.", "Error")
+            except MultipleSeparators:
+                return ("Multiple separators detected. Please ensure only one separateor type is used of: i.e. use only ',' or ';' to separate your values.", "Error")
         else:
             C_list = None
         
@@ -378,9 +388,9 @@ class Validate:
                 error_list = Validate.check_data_type(C_list)
                 if sum(error_list) != len(C_list):
                     error_value_list = []
-                    for index, b_val in enumerate(H_list):
+                    for index, b_val in enumerate(C_list):
                         if b_val is False:
-                            error_value_list.append(H_list[index])
+                            error_value_list.append(C_list[index])
                         else:
                             continue
                     raise InvalidValueType

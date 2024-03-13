@@ -1,0 +1,3 @@
+[submodule "apvalidation/npmrd_data_exchange"]
+	path = apvalidation/npmrd_data_exchange
+	url = https://github.com/np-mrd/npmrd_data_exchange.git

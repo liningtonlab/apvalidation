@@ -3,11 +3,19 @@ import nmrglue as ng
 import json
 from collections import OrderedDict
 
-with open('apvalidation/metadata_standardizers/experiment_standardizer.json', 'r') as file:
+from .remove_unicode import remove_unicode_from_paramter_file
+
+current_dir = os.path.dirname(__file__)
+one_level_up = os.path.dirname(current_dir)
+submodule_dir = os.path.join(one_level_up, 'npmrd_data_exchange')
+
+experiment_standardizer_path = os.path.join(submodule_dir, 'standardization_files', 'experiment_standardizer.json')
+with open(experiment_standardizer_path, 'r') as file:
     exp_dict = json.load(file) 
-    
-with open('apvalidation/metadata_standardizers/solvent_standardizer.json', 'r') as file:
-    all_solvents = json.load(file)
+
+solvent_standardizer_path = os.path.join(submodule_dir, 'standardization_files', 'solvent_standardizer.json')
+with open(solvent_standardizer_path, 'r') as file:
+    all_solvents = json.load(file) 
     
     
 class Bruker:
@@ -47,7 +55,16 @@ class Bruker:
         param_dict_list = []
         for filepath in filepath_list:
             assert os.path.isfile(filepath)
-            param_dict = ng.bruker.read_jcamp(filename=filepath)
+            try:
+                param_dict = ng.bruker.read_jcamp(filename=filepath)
+            # If exception due to non-unicode character error remove it and try again
+            except Exception as e:
+                try:
+                    if str(e).startswith("'utf-8' codec can't decode byte"):
+                        remove_unicode_from_paramter_file(filepath)
+                        param_dict = ng.bruker.read_jcamp(filename=filepath)
+                except:
+                    pass
             param_dict_list.append(param_dict)
 
         return param_dict_list
@@ -65,6 +82,8 @@ class Bruker:
         param_dict = param_dict_list[0]
 
         exp_dim = Bruker.find_dim(param_dict_list)
+        # print("\n\n\n\nparam_dict in find_params is")
+        # print(param_dict)
         exp_type = Bruker.find_exp_type(param_dict, exp_dim)
         exp_nuc1, exp_nuc2 = Bruker.find_nuc(param_dict_list, exp_dim)
         exp_freq = Bruker.find_freq(param_dict, exp_dim)
@@ -143,6 +162,7 @@ class Bruker:
         :param exp_dim: dimension of the experiment
         :return: type of experiment in string. (1D experiments are not given a type)
         """
+        
         possible_exp_str_1 = param_dict["EXP"]
         possible_exp_str_2 = param_dict["PULPROG"]
 
@@ -162,7 +182,12 @@ class Bruker:
                 if entry in possible_exp_str_1 or entry in possible_exp_str_2:
                     exp_type = exp_dict[entry]
                     break
-            exp_type = f"1D {exp_type}".strip()
+                
+            if exp_type:
+                exp_type = f"1D_{exp_type}".strip()
+            else:
+                exp_type = "1D"
+                
             return exp_type
 
     @staticmethod

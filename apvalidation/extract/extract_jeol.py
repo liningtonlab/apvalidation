@@ -2,11 +2,17 @@ import os
 import nmrglue as ng
 import json
 
-with open('apvalidation/metadata_standardizers/experiment_standardizer.json', 'r') as file:
+current_dir = os.path.dirname(__file__)
+one_level_up = os.path.dirname(current_dir)
+submodule_dir = os.path.join(one_level_up, 'npmrd_data_exchange')
+
+experiment_standardizer_path = os.path.join(submodule_dir, 'standardization_files', 'experiment_standardizer.json')
+with open(experiment_standardizer_path, 'r') as file:
     exp_dict = json.load(file) 
-    
-with open('apvalidation/metadata_standardizers/solvent_standardizer.json', 'r') as file:
-    all_solvents = json.load(file)
+
+solvent_standardizer_path = os.path.join(submodule_dir, 'standardization_files', 'solvent_standardizer.json')
+with open(solvent_standardizer_path, 'r') as file:
+    all_solvents = json.load(file) 
     
 
 class JEOL:
@@ -165,10 +171,20 @@ class JEOL:
         :param exp_dim: the dimension of the experiment
         :return: a single float or a tuple of floats depending on the dimension
         """
+        
+        # print("param_dict is")
+        # print(param_dict.keys())
+        # for key, value in param_dict.items():
+        #     if (key != "$PARAMETERFILE") and (key != "DATATABLE"):
+        #         # print(f"{key} - {value}")
+        #         pass
 
         if exp_dim == "2D":
             freq1 = round(float(param_dict["$XFREQ"][0]), 9)
-            freq2 = round(float(param_dict["$YFREQ"][0]), 9)
+            try:
+                freq2 = round(float(param_dict["$YFREQ"][0]), 9)
+            except:
+                freq2 = None
             freq = (freq1, freq2)
             return freq
         else:
@@ -188,22 +204,27 @@ class JEOL:
         """
         if exp_dim == "2D":
             try:
-                nuc_1 = param_dict[".NUCLEUS"][0].split(", ")[1]
-                nuc_2 = param_dict[".NUCLEUS"][0].split(", ")[0]
-            except:
-                pass
-            try:
-                nuc_1 = param_dict[".NUCLEUS"][0].split(",")[1]
-                nuc_2 = param_dict[".NUCLEUS"][0].split(",")[0]
+                nuc_values = param_dict[".NUCLEUS"][0].split(",")
+                nuc_1 = nuc_values[1]
+                nuc_2 = nuc_values[0]
             except:
                 pass
         else:
+        # If experiment is 1D then look 
             nuc_1 = param_dict[".OBSERVENUCLEUS"][0][1:]
             nuc_2 = None
-        
+            
         if isinstance(nuc_1, str):
             nuc_1 = nuc_1.strip()
+            if "proton" in nuc_1.lower():
+                nuc_1 = "1H"
+            if "carbon13" in nuc_1.lower():
+                nuc_1 = "13C"
         if isinstance(nuc_2, str):
             nuc_2 = nuc_2.strip()
+            if "proton" in nuc_2.lower():
+                nuc_2 = "1H"
+            if "carbon13" in nuc_2.lower():
+                nuc_2 = "13C"
 
         return nuc_1, nuc_2
