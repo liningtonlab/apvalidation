@@ -500,3 +500,20 @@ class Convert:
         return sorted_peak_list
         
 
+class Unconvert:
+    @staticmethod
+    def unconvert(value_list):
+        """
+        Used to covert "h_values" or "c_values" from a list encoded for storage back
+        into a string for the frontend to utilize.
+        
+        example:
+            [10, (11, 11.5), 12] -> "10, (11-11.5), 12"
+        """
+        result = []
+        for item in value_list:
+            if isinstance(item, tuple):
+                result.append(f"({item[0]}-{item[1]})")
+            else:
+                result.append(str(item))
+        return ", ".join(result)

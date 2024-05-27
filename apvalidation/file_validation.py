@@ -141,16 +141,6 @@ def find_path_and_extract(
                 if not is_second_time:
                     loc = separate_mnova_jdx(unzipped_path_name[0], loc, jcamp_file_extension)
 
-                # for path in os.listdir(loc):
-                #     if Path(path).suffix == '.jdx':
-                #         full_path = os.path.join(loc, path)
-                #         param_dict = jcampdx_extractor.read([full_path])
-                #         manuf = jcampdx_extractor.find_manuf(param_dict=param_dict)
-                #         print(f"manuf: {manuf}")
-                #         params = jcampdx_extractor.find_params(param_dict)[0]
-                #         print(params)
-                #         add_path_vendor(path, params, manuf, res_dict)
-
             os.unlink(tf.name)  # Delete temporary file
         
         if jcamp:
