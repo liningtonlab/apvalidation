@@ -508,11 +508,11 @@ class Unconvert:
         into a string for the frontend to utilize.
         
         example:
-            [10, (11, 11.5), 12] -> "10, (11-11.5), 12"
+            [10, [11, 11.5], 12] -> "10, (11-11.5), 12"
         """
         result = []
         for item in value_list:
-            if isinstance(item, tuple):
+            if isinstance(item, list) or isinstance(item, tuple):
                 result.append(f"({item[0]}-{item[1]})")
             else:
                 result.append(str(item))
