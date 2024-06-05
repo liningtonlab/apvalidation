@@ -18,9 +18,10 @@ These are custom exception classes to help annotate what error we are handling.
 #         self.error = "EmptyList"
 
 class InvalidCharacters(Exception):
-    def __init__(self):
+    def __init__(self, invalid_chars):
         self.error_type = "error"
         self.error = "InvalidCharacters"
+        self.invalid_chars = invalid_chars
 
 class NoSplit(Exception):
     pass
@@ -64,7 +65,14 @@ class Validate:
         if re.search(accepted_pattern, clean_text):
             return "Valid String"
         else:
-            raise InvalidCharacters
+            try:
+                # If error values detected , identify invalid characters and return error message
+                invalid_chars = ''.join(char for char in text_block if not (char.isdigit() or char in '.-,;'))
+                invalid_chars = f'`{" ".join(invalid_chars.split())}`.'
+            except:
+                # If invalid_chars filer crashes then return none.
+                invalid_chars = None
+            raise InvalidCharacters(invalid_chars)
     
     @staticmethod
     def parse_text_to_list(valid_text):
@@ -309,9 +317,11 @@ class Validate:
         if H_text_block:
             try:
                 Validate.check_valid_characters(H_text_block)
-            except Exception as exc:
-                if exc.error == "InvalidCharacters":
-                    return ("Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error")
+            except InvalidCharacters as e:
+                return (
+                    f"Invalid Characters in H List:{e.invalid_chars} " 
+                    f"Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error"
+                )
             # Parse the text blocks into lists based on the separators
             try:
                 H_list = Validate.parse_text_to_list(H_text_block)
@@ -323,9 +333,11 @@ class Validate:
         if C_text_block:
             try:
                 Validate.check_valid_characters(C_text_block)
-            except Exception as exc:
-                if exc.error == "InvalidCharacters":
-                    return ("Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error")
+            except InvalidCharacters as e:
+                return (
+                    f"Invalid Characters in C List: {e.invalid_chars} " 
+                    f"Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error"
+                )
             try:
                 C_list = Validate.parse_text_to_list(C_text_block)
             except MultipleSeparators:
@@ -467,29 +479,8 @@ class Convert:
                 range_tuple = (split_values[0], split_values[1])
                 output_list.append(range_tuple)
             else:
-                try:
-                    # Try converting the string to a float
-                    float_value = float(value)
-                except ValueError:
-                    # If conversion fails, identify invalid characters and return error message
-                    invalid_chars = ''.join(char for char in peak_string if not (char.isdigit() or char in '.-,;'))
-                    return (
-                        (
-                            f"Unrecognized character(s) `{' '.join(invalid_chars.split())}`. "
-                            f"Please enter peak values (numbers) separated by commas (`,`)",
-                            "Error"
-                        )
-                    )
-                            
-                try:
-                    value = float(value)
-                except:
-                    return ((
-                        """Unrecognized.
-                        """,
-                        "Error"
-                    )
-                )
+                # Convert the string to a float
+                float_value = float(value)            
                 output_list.append(float_value)
         return output_list
 

@@ -18,17 +18,17 @@ from apvalidation.file_validation import find_path_and_extract
 #     print(f"find_paramoutput = {find_param_output}")
 
 
-# result = Peak_Validate.validate(
-#     H_text_block="13.0, (13.5-13.9), 12.4 - 14.6, 10.0",
-#     C_text_block="20, 20, 20",
-#     smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
-#     solvent="D2O",
-#     h_frequency=300,
-#     h_temperature=300,
-#     c_frequency=300,
-#     c_temperature=300,
-#     reference="DMSO",
-# )
+result = Peak_Validate.validate(
+    H_text_block="13.0, (13.5-13.9), 12.4 - 14.6, 10.0",
+    C_text_block="20, 20, 20",
+    smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
+    solvent="D2O",
+    h_frequency=400,
+    h_temperature=300,
+    c_frequency=300,
+    c_temperature=300,
+    reference="DMSO",
+)
 
 # result = Peak_Validate.validate(
 #     H_text_block="",
@@ -41,8 +41,8 @@ from apvalidation.file_validation import find_path_and_extract
 #     c_temperature=300,
 #     reference="DMSO",
 # )
-# print("peak result")
-# print(result)
+print("peak result")
+print(result)
 
 # from apvalidation.extract_varian import Varian
 
@@ -131,10 +131,6 @@ from apvalidation.file_validation import find_path_and_extract
 # metadata = find_path_and_extract("./apvalidation/test/original_data_LELBFTMXCIIKKX-QVRQZEMUSA-N.zip")
 # print(metadata)
 
-
-c_value_list = apvalidation.peak_validator.Convert.convert("23.0, 2f2.0 , 22.ds0")
-print(type(c_value_list))
-print(c_value_list)
 
 
 # metadata = find_path_and_extract("./apvalidation/test/test_dept.zip")
