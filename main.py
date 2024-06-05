@@ -131,18 +131,10 @@ from apvalidation.file_validation import find_path_and_extract
 # metadata = find_path_and_extract("./apvalidation/test/original_data_LELBFTMXCIIKKX-QVRQZEMUSA-N.zip")
 # print(metadata)
 
-h_list = [
-          12.0,
-          [
-            11.5,
-            12.0
-          ],
-          11.0,
-          10.0
-        ]
 
-h_list_str = apvalidation.peak_validator.Unconvert.unconvert(h_list)
-print(h_list_str)
+c_value_list = apvalidation.peak_validator.Convert.convert("23.0, 2f2.0 , 22.ds0")
+print(type(c_value_list))
+print(c_value_list)
 
 
 # metadata = find_path_and_extract("./apvalidation/test/test_dept.zip")

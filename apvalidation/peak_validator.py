@@ -461,13 +461,36 @@ class Convert:
         output_list = []
         for value in peak_list:
             if Validate.is_valid_range(value) is True:
+                # Split on an dash values
                 split_values = re.split("[\u002D\u05BE\u1806\u2010\u2011\u2012\u2013\u2014\u2015\u207B\u208B\u2212\uFE58\uFE63\uFF0D]",value)
                 split_values = [float(re.sub("[ ()]", "", sub_str)) for sub_str in split_values]
                 range_tuple = (split_values[0], split_values[1])
                 output_list.append(range_tuple)
             else:
-                value = float(value)
-                output_list.append(value)
+                try:
+                    # Try converting the string to a float
+                    float_value = float(value)
+                except ValueError:
+                    # If conversion fails, identify invalid characters and return error message
+                    invalid_chars = ''.join(char for char in peak_string if not (char.isdigit() or char in '.-,;'))
+                    return (
+                        (
+                            f"Unrecognized character(s) `{' '.join(invalid_chars.split())}`. "
+                            f"Please enter peak values (numbers) separated by commas (`,`)",
+                            "Error"
+                        )
+                    )
+                            
+                try:
+                    value = float(value)
+                except:
+                    return ((
+                        """Unrecognized.
+                        """,
+                        "Error"
+                    )
+                )
+                output_list.append(float_value)
         return output_list
 
     @staticmethod
