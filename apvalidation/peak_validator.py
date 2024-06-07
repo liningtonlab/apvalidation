@@ -68,7 +68,7 @@ class Validate:
             try:
                 # If error values detected , identify invalid characters and return error message
                 invalid_chars = ''.join(char for char in text_block if not (char.isdigit() or char in '.-,;'))
-                invalid_chars = f'`{" ".join(invalid_chars.split())}`.'
+                invalid_chars = f'"{" ".join(invalid_chars.split())}".'
             except:
                 # If invalid_chars filer crashes then return none.
                 invalid_chars = None
@@ -320,7 +320,7 @@ class Validate:
             except InvalidCharacters as e:
                 return (
                     f"Invalid Characters in H List:{e.invalid_chars} " 
-                    f'Please make sure that only contains the following allowed characters ["0-9" "," "." "-" ";" "(" ")"]', "Error"
+                    f'Please make sure that only contains the following allowed characters [`0-9` `()` `,` `.` `-` `;`]', "Error"
                 )
             # Parse the text blocks into lists based on the separators
             try:
@@ -336,7 +336,7 @@ class Validate:
             except InvalidCharacters as e:
                 return (
                     f"Invalid Characters in C List: {e.invalid_chars} " 
-                    f'Please make sure that only contains the following allowed characters ["0-9" "," "." "-" ";" "(" ")"]', "Error"
+                    f'Please make sure that only contains the following allowed characters [`0-9` `()` `,` `.` `-` `;`]', "Error"
                 )
             try:
                 C_list = Validate.parse_text_to_list(C_text_block)

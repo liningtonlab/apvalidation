@@ -19,7 +19,7 @@ from apvalidation.file_validation import find_path_and_extract
 
 
 result = Peak_Validate.validate(
-    H_text_block="13.0, (13.5-13.9), 12.4 - 14.6, 10.0",
+    H_text_block="13.0,dhg (13.5-13.9), 12.4sdf - 14.6, 10.0",
     C_text_block="20, 20, 20",
     smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
     solvent="D2O",
@@ -29,6 +29,8 @@ result = Peak_Validate.validate(
     c_temperature=300,
     reference="DMSO",
 )
+
+
 
 # result = Peak_Validate.validate(
 #     H_text_block="",
@@ -53,9 +55,8 @@ print(result)
 # print(metadata)
 
 
-# metadata = find_path_and_extract("./apvalidation/test/Lagriamide_B.zip", is_second_time = False)
-# print(metadata)
-
+metadata = find_path_and_extract("./apvalidation/test/Verticilactam_B_NMR_RAW.zip", is_second_time = False)
+print(metadata)
 
 # regular_jdx = ng.jcampdx.read(filename="/workspaces/apvalidation/apvalidation/test/JEOL/ I1_85_02_ PULSE ACQUISITION_exp_1.jdx")
 # print("regular_jdx is")

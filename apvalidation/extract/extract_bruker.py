@@ -122,8 +122,8 @@ class Bruker:
         solv_str = param_dict["SOLVENT"]
 
         if solv_str.upper() in all_solvents.keys():
-            exp_solv = all_solvents[solv_str.upper()]
-        elif solv_str.upper() in all_solvents.values():
+            exp_solv = all_solvents[solv_str]
+        elif solv_str.upper() in all_solvents:
             exp_solv = solv_str
         else:
             exp_solv = "FAILED_TO_DETECT"

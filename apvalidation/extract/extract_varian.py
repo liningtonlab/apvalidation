@@ -164,9 +164,9 @@ class Varian:
             solv_str = None
 
         if solv_str in all_solvents.keys():
-            exp_solv = all_solvents[solv_str].upper()
+            exp_solv = all_solvents[solv_str]
         elif solv_str in all_solvents.values():
-            exp_solv = solv_str.upper()
+            exp_solv = solv_str
         else:
             exp_solv = "FAILED_TO_DETECT"
         return exp_solv
