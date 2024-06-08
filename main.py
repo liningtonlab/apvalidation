@@ -86,9 +86,9 @@ print(metadata)
 # print(metadata)
 
 
-# print("\n\n\n-------Granaticin_C.zip-------")
-# metadata = find_path_and_extract("./apvalidation/test/Granaticin_C.zip", is_second_time = False)
-# print(metadata)
+print("\n\n\n-------Granaticin_C.zip-------")
+metadata = find_path_and_extract("./apvalidation/test/Granaticin_C.zip", is_second_time = False)
+print(metadata)
 
 
 # print("\n\n\n-------JEOL_DX.zip-------")
