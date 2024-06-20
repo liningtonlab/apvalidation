@@ -76,7 +76,7 @@ class JEOL:
             "nuc_1": exp_nuc_1,
             "nuc_2": exp_nuc_2,
             "frequency": exp_freq,
-            "solvent": exp_solv.upper(),
+            "solvent": exp_solv,
             "temperature": exp_temp,
         }
 
@@ -103,6 +103,9 @@ class JEOL:
         :return: The solvent in string format.
         """
         solv_str = param_dict["$SOLVENT"][0]
+        
+        print("all_solvents is")
+        print(all_solvents)
 
         if solv_str.upper() in all_solvents.keys():
             exp_solv = all_solvents[solv_str.upper()]
@@ -110,6 +113,9 @@ class JEOL:
             exp_solv = solv_str
         else:
             exp_solv = "FAILED_TO_DETECT"
+        
+        print("exp_solve is")
+        print(exp_solv)
         return exp_solv
 
     @staticmethod

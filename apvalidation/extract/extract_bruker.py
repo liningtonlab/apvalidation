@@ -127,6 +127,7 @@ class Bruker:
             exp_solv = solv_str
         else:
             exp_solv = "FAILED_TO_DETECT"
+        
         return exp_solv
 
     @staticmethod
