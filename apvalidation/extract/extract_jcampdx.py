@@ -57,9 +57,6 @@ class Jcampdx:
                 param_dict = param_dict_list[0][0]["_datatype_NDNMRSPECTRUM"]
             except:
                 param_dict = param_dict_list[0]
-        
-        # print("param_dict is")
-        # print(param_dict[0].keys())
 
         return param_dict
 
@@ -72,6 +69,7 @@ class Jcampdx:
         :return: the name of the manufacturer
         """
 
+        # Path lcoations to check for manufacturer name
         try:
             manuf_name = param_dict[0]["_datatype_LINK"][0]["$ORIGINALFORMAT"][0]
         except (KeyError, TypeError):
@@ -83,19 +81,24 @@ class Jcampdx:
                 try:
                     manuf_name = param_dict[0]["ORIGIN"][0]
                 except (KeyError, TypeError):
-                    manuf_name = "Not found"
+                    try:
+                        manuf_name = param_dict[0]["SpecInfo"][0]["OrigFileFormat.str"]
+                    except:
+                        manuf_name = "Not found"
 
-        if manuf_name == "Varian":
-            return manuf_name
-        elif "Bruker" in manuf_name:
-            manuf_name = "Bruker"
-            return manuf_name
-        elif manuf_name in ["JCAMP-DX NMR", "JEOL Delta", "DELTA2_NMR", "DELTA_NMR"]:
-            manuf_name = "JEOL"
-            return manuf_name
-        else:
-            manuf_name = "Not found"
-            return manuf_name
+        # Try to match manufacturer name
+        manuf_name_lower = manuf_name.lower()
+        manufacturer_keywords = {
+            "varian": "Varian",
+            "bruker": "Bruker",
+            "jeol": "JEOL",
+            "delta": "JEOL"
+        }
+        for keyword, label in manufacturer_keywords.items():
+            if keyword in manuf_name_lower:
+                return label
+        
+        return "Not found"
 
     @staticmethod
     def find_params(param_dict):
@@ -119,9 +122,24 @@ class Jcampdx:
             bruker_structured_dict_list = Jcampdx.format_bruker(param_dict) # THIS IS WHAT'S BREAKING THE .DX (probably)!!!!!!!
             output_list.append(Bruker.find_params(bruker_structured_dict_list))
 
-        elif manuf == "JEOL":
-            jeol_structured_dict_list = Jcampdx.format_jeol_combined(param_dict)
+        # Assume jeol as fallback if we can't find manufacturer
+        elif manuf == "JEOL" or manuf == "Not found":
+            jeol_structured_dict_list = Jcampdx.format_jeol_combined(param_dict)            
             output_list.append(JEOL.find_params(jeol_structured_dict_list))
+
+            # As final fallback try to extract from other other manufacturers
+            if not output_list and manuf == "Not found":
+                try:
+                    varian_structured_dict_list = Jcampdx.format_varian(param_dict)
+                    output_list.append(Varian.find_params(varian_structured_dict_list))
+                except:
+                    pass
+                if not output_list:
+                    try:
+                        bruker_structured_dict_list = Jcampdx.format_bruker(param_dict)
+                        output_list.append(Bruker.find_params(bruker_structured_dict_list))
+                    except:
+                        pass
 
         return output_list
 

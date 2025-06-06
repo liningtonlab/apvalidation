@@ -186,9 +186,13 @@ def extract_jcamp(loc):
     for path in os.listdir(loc):
         if Path(path).suffix == ".jdx" or Path(path).suffix == ".dx":
             full_path = os.path.join(loc, path)
+            print(f"extracting full_path {full_path}")
             param_dict = jcampdx_extractor.read([full_path])
             manuf = jcampdx_extractor.find_manuf(param_dict=param_dict)
-            params = jcampdx_extractor.find_params(param_dict)[0]
+            found_params = jcampdx_extractor.find_params(param_dict)
+            print("found_params is")
+            print(found_params)
+            params = found_params[0]
             add_path_vendor(path, params, manuf, "Jcampdx", res_dict)
     
     print("res_dict is")

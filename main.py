@@ -6,6 +6,7 @@ from apvalidation.extract_core import extract_jdx
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 from apvalidation.peak_validator import Validate as Peak_Validate
 from apvalidation.file_validation import find_path_and_extract
+from apvalidation.smiles_to_inchikey import to_inchikey
 
 # input_file = "test_files/MNOVA_jdx/Combined JEOL jdx/combinedJEOLpart2.jdx"
 # save_location = "test_files/testing_save_singles/test_folder_6"
@@ -55,7 +56,10 @@ from apvalidation.file_validation import find_path_and_extract
 # print(metadata)
 
 
-metadata = find_path_and_extract("./apvalidation/test/Verticilactam_B_NMR_RAW.zip", is_second_time = False)
+# metadata = find_path_and_extract("./apvalidation/test/test_roger_jdx.zip", is_second_time = False)
+# print(metadata)
+# print("---------------------------------------------------------")
+metadata = find_path_and_extract("./apvalidation/test/error_jdx.zip", is_second_time = False)
 print(metadata)
 
 # regular_jdx = ng.jcampdx.read(filename="/workspaces/apvalidation/apvalidation/test/JEOL/ I1_85_02_ PULSE ACQUISITION_exp_1.jdx")
@@ -86,9 +90,9 @@ print(metadata)
 # print(metadata)
 
 
-print("\n\n\n-------RGL1617G1B.zip-------")
-metadata = find_path_and_extract("./apvalidation/test/RGL1617G1B.zip", is_second_time = False)
-print(metadata)
+# print("\n\n\n-------RGL1617G1B.zip-------")
+# metadata = find_path_and_extract("./apvalidation/test/RGL1617G1B.zip", is_second_time = False)
+# print(metadata)
 
 
 # print("\n\n\n-------JEOL_DX.zip-------")
@@ -136,3 +140,7 @@ print(metadata)
 
 # metadata = find_path_and_extract("./apvalidation/test/test_dept.zip")
 # print(metadata)
+
+
+print("test to_inchikey(smiles)")
+to_inchikey("CC=CCC=CC/CCC=CC\CC=CC/CC=CC\CC=CCCCC/CC=CCCC\CC=CC/CCC")
