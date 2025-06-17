@@ -139,7 +139,7 @@ class Jcampdx:
 
         # Assume jeol as fallback if we can't find manufacturer
         elif manuf == "JEOL" or manuf == "Not found":
-            jeol_structured_dict_list = Jcampdx.format_jeol_combined(param_dict)            
+            jeol_structured_dict_list = Jcampdx.get_jeol_structured_dict_list(param_dict)            
             output_list.append(JEOL.find_params(
                 jeol_structured_dict_list,
                 json_nmr_data_dict=json_nmr_data_dict
@@ -290,7 +290,7 @@ class Jcampdx:
             return [param_dict_dim1, param_dict_dim2]
 
     @staticmethod
-    def format_jeol_combined(jdx_read_output):
+    def get_jeol_structured_dict_list(jdx_read_output):
         """
         Take the output produced from Jcamp read and format it to be passed into the Varian Class methods.
 
@@ -312,13 +312,26 @@ class Jcampdx:
             param_dict[0]["$XFREQ"] = [freq_list[0]]
             param_dict[0]["$YFREQ"] = [freq_list[1]]
         except:
-            freq_list = param_dict[0][".OBSERVEFREQUENCY"][0]
-            param_dict[0]["$XFREQ"] = [freq_list]
+            try:
+                freq_list = param_dict[0][".OBSERVEFREQUENCY"][0]
+                param_dict[0]["$XFREQ"] = [freq_list]
+            except:
+                param_dict[0].setdefault("$XFREQ", [])
         
         # add SOLVENT keys
-        param_dict[0]["$SOLVENT"] = param_dict[0][".SOLVENTNAME"]
+        try:
+            param_dict[0]["$SOLVENT"] = param_dict[0][".SOLVENTNAME"]
+        except:
+            param_dict[0].setdefault("$SOLVENT", [])
 
-        # set the temperature to None for now
-        param_dict[0]["$TEMPSET"] = [None]
+        # Add Temperature values
+        try:
+            param_dict[0]["$TEMPSET"] = param_dict[0][".TEMPSET"]
+        except:
+            param_dict[0].setdefault("$TEMPSET", [])
+        try:
+            param_dict[0]["$TEMPGET"] = param_dict[0][".TEMPGET"]
+        except:
+            param_dict[0].setdefault("$TEMPGET", [])
 
         return [jdx_read_output]
