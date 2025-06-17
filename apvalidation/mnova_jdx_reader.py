@@ -78,12 +78,10 @@ def make_filename(group, group_num, jcamp_file_extension):
         if item["value"].startswith("##TITLE="):
             group_title = item["value"].split("=")[1]
             group_title = group_title.split("/")[-1]
-            print(f"group_title is {group_title}")
 
         for st in seq_titles:
             if item["value"].startswith(st):
                 seq_title = item["value"].split("=")[1]
-                print(f"seq_title is {seq_title}")
                 done = True
 
         if done is True:

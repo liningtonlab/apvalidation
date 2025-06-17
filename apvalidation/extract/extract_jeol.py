@@ -278,32 +278,50 @@ class JEOL:
 
         :param param_dict: a large dictionary containing all the parameters.
                              Probably returned from the read method.
-         :param exp_dim: the dimension of the experiment
-         :return: nucleus 1 and nucleus 2 in string format
+        :param exp_dim: the dimension of the experiment
+        :return: tuple of (nuc_1, nuc_2)
         """
-        if exp_dim == "2D":
-            try:
-                nuc_values = param_dict[".NUCLEUS"][0].split(",")
-                nuc_1 = nuc_values[1]
-                nuc_2 = nuc_values[0]
-            except:
-                pass
-        else:
-        # If experiment is 1D then look 
-            nuc_1 = param_dict[".OBSERVENUCLEUS"][0][1:]
-            nuc_2 = None
-            
-        if isinstance(nuc_1, str):
-            nuc_1 = nuc_1.strip()
-            if "proton" in nuc_1.lower():
-                nuc_1 = "1H"
-            if "carbon13" in nuc_1.lower():
-                nuc_1 = "13C"
-        if isinstance(nuc_2, str):
-            nuc_2 = nuc_2.strip()
-            if "proton" in nuc_2.lower():
-                nuc_2 = "1H"
-            if "carbon13" in nuc_2.lower():
-                nuc_2 = "13C"
+        nuc_1, nuc_2 = None, None
+
+        # Primary method: param_dict
+        try:
+            if exp_dim == "2D":
+                nuc_values = param_dict.get(".NUCLEUS", [None])[0]
+                if nuc_values:
+                    nuc_values = nuc_values.split(",")
+                    nuc_1 = nuc_values[1].strip() if len(nuc_values) > 1 else None
+                    nuc_2 = nuc_values[0].strip() if len(nuc_values) > 0 else None
+            else:  # 1D
+                nuc_1 = param_dict.get(".OBSERVENUCLEUS", [None])[0]
+                if nuc_1:
+                    nuc_1 = nuc_1[1:].strip()  # Skip first char
+        except Exception:
+            pass
+
+        # Normalize param_dict values
+        def normalize_nucleus(nuc):
+            if isinstance(nuc, str):
+                nuc = nuc.strip()
+                if "proton" in nuc.lower():
+                    return "1H"
+                if "carbon13" in nuc.lower():
+                    return "13C"
+            return nuc
+
+        nuc_1 = normalize_nucleus(nuc_1)
+        nuc_2 = normalize_nucleus(nuc_2)
+
+        # Fallback: use json_nmr_data_dict if needed
+        if not nuc_1 or (exp_dim == "2D" and not nuc_2):
+            nucleides = json_nmr_data_dict.get("SpecInfo", {}).get("Nucleides", [])
+
+            # Filter out empty isotopes
+            valid_nucleides = [nuc for nuc in nucleides if nuc.get("Isotope", 0) != 0]
+
+            if valid_nucleides:
+                if not nuc_1 and len(valid_nucleides) > 0:
+                    nuc_1 = f"{valid_nucleides[0]['Isotope']}{valid_nucleides[0]['Name']}"
+                if exp_dim == "2D" and not nuc_2 and len(valid_nucleides) > 1:
+                    nuc_2 = f"{valid_nucleides[1]['Isotope']}{valid_nucleides[1]['Name']}"
 
         return nuc_1, nuc_2
