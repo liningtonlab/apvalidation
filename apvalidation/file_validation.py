@@ -62,7 +62,7 @@ zip_file_extention = [
 
 def find_path_and_extract(
     submitted_zip_file: str,
-    is_second_time=False
+    is_second_time: bool = False
 ) -> json:
     """
     This function integrates file_finder and paramExtractor.
@@ -178,20 +178,16 @@ def find_path_and_extract(
 
 def extract_jcamp(loc):
     res_dict = []
-    
-    print("loc / os.listdir(loc) is")
-    print(loc)
-    print(os.listdir(loc))
-    
     for path in os.listdir(loc):
         if Path(path).suffix == ".jdx" or Path(path).suffix == ".dx":
             full_path = os.path.join(loc, path)
-            print(f"extracting full_path {full_path}")
-            param_dict = jcampdx_extractor.read([full_path])
-            manuf = jcampdx_extractor.find_manuf(param_dict=param_dict)
-            found_params = jcampdx_extractor.find_params(param_dict)
-            print("found_params is")
-            print(found_params)
+            param_dict, json_nmr_data_dict = jcampdx_extractor.read([full_path])
+            manuf = jcampdx_extractor.find_manuf(param_dict=param_dict, json_nmr_data_dict=json_nmr_data_dict)
+            found_params = jcampdx_extractor.find_params(
+                param_dict,
+                json_nmr_data_dict=json_nmr_data_dict,
+                manuf=manuf
+            )
             params = found_params[0]
             add_path_vendor(path, params, manuf, "Jcampdx", res_dict)
     
@@ -214,7 +210,7 @@ def add_path_vendor(path, params, vendor_type, filetype, res_dict):
     file_root_without_file_name = str(path)
     if file_root_without_file_name == ".":
         file_root_without_file_name = "/"
-    params["original_data_path"] = file_root_without_file_name
+    params["original_data_path"] = file_root_without_file_name.strip()
     params["vendor"] = vendor_type
     params["filetype"] = filetype
     res_dict.append(params)

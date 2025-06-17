@@ -58,17 +58,26 @@ class Jcampdx:
             except:
                 param_dict = param_dict_list[0]
 
-        return param_dict
+        # Try to get the JSONNMRDATA as a dictionary (if it exists in the file)
+        try:
+            json_nmr_str = param_dict[0]['_datatype_NA'][0]['$JASONNMRDATA'][0]
+            json_nmr_start = json_nmr_str.find('{')  # find where the JSON starts
+            json_nmr_str_clean = json_nmr_str[json_nmr_start:]
+            json_nmr_data_dict = json.loads(json_nmr_str_clean)
+        except:
+            json_nmr_data_dict = {}
+
+        return param_dict, json_nmr_data_dict
 
     @staticmethod
-    def find_manuf(param_dict):
+    def find_manuf(param_dict, json_nmr_data_dict={}):
         """
         find the manufacturer that produced the data file that is being inspected.
 
         :param param_dict_list: a list of dictionaries read in from the read function
         :return: the name of the manufacturer
         """
-
+        
         # Path lcoations to check for manufacturer name
         try:
             manuf_name = param_dict[0]["_datatype_LINK"][0]["$ORIGINALFORMAT"][0]
@@ -82,7 +91,8 @@ class Jcampdx:
                     manuf_name = param_dict[0]["ORIGIN"][0]
                 except (KeyError, TypeError):
                     try:
-                        manuf_name = param_dict[0]["SpecInfo"][0]["OrigFileFormat.str"]
+                        if json_nmr_data_dict:
+                            manuf_name = json_nmr_data_dict['SpecInfo']['OrigFileFormat.str']
                     except:
                         manuf_name = "Not found"
 
@@ -101,7 +111,11 @@ class Jcampdx:
         return "Not found"
 
     @staticmethod
-    def find_params(param_dict):
+    def find_params(
+        param_dict,
+        json_nmr_data_dict: dict = {},
+        manuf: str = None
+    ):
         """
         Searches a dictionary of all the parameters from a given experiment to find specific parameters needed
         to fill the database. The parameters needed are experiment_type, nucleus 1 and 2, frequency,
@@ -112,7 +126,8 @@ class Jcampdx:
         """
 
         output_list = []
-        manuf = Jcampdx.find_manuf(param_dict)
+        if not manuf:
+            manuf = Jcampdx.find_manuf(param_dict)
 
         if manuf == "Varian":
             varian_structured_dict_list = Jcampdx.format_varian(param_dict)
@@ -125,7 +140,10 @@ class Jcampdx:
         # Assume jeol as fallback if we can't find manufacturer
         elif manuf == "JEOL" or manuf == "Not found":
             jeol_structured_dict_list = Jcampdx.format_jeol_combined(param_dict)            
-            output_list.append(JEOL.find_params(jeol_structured_dict_list))
+            output_list.append(JEOL.find_params(
+                jeol_structured_dict_list,
+                json_nmr_data_dict=json_nmr_data_dict
+            ))
 
             # As final fallback try to extract from other other manufacturers
             if not output_list and manuf == "Not found":
@@ -296,7 +314,7 @@ class Jcampdx:
         except:
             freq_list = param_dict[0][".OBSERVEFREQUENCY"][0]
             param_dict[0]["$XFREQ"] = [freq_list]
-
+        
         # add SOLVENT keys
         param_dict[0]["$SOLVENT"] = param_dict[0][".SOLVENTNAME"]
 

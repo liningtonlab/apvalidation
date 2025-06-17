@@ -43,7 +43,10 @@ class JEOL:
         return param_dict_list
 
     @staticmethod
-    def find_params(param_dict_list):
+    def find_params(
+        param_dict_list,
+        json_nmr_data_dict:dict = {},
+    ):
         """
         Searches a dictionary of all the parameters from a given experiment to find specific parameters needed
         to fill the database. The parameters needed are experiment_type, nucleus 1 and 2 frequency,
@@ -65,11 +68,11 @@ class JEOL:
                 param_dict = param_dict
 
         exp_dim = JEOL.find_dim(param_dict)
-        exp_freq = JEOL.find_freq(param_dict, exp_dim)
-        exp_nuc_1, exp_nuc_2 = JEOL.find_nuc(param_dict, exp_dim)
-        exp_type = JEOL.find_exp_type(param_dict, exp_dim)
-        exp_solv = JEOL.find_solvent(param_dict)
-        exp_temp = JEOL.find_temp(param_dict)
+        exp_freq = JEOL.find_freq(param_dict, exp_dim, json_nmr_data_dict)
+        exp_nuc_1, exp_nuc_2 = JEOL.find_nuc(param_dict, exp_dim, json_nmr_data_dict)
+        exp_type = JEOL.find_exp_type(param_dict, exp_dim, json_nmr_data_dict)
+        exp_solv = JEOL.find_solvent(param_dict, json_nmr_data_dict)
+        exp_temp = JEOL.find_temp(param_dict, json_nmr_data_dict)
 
         pref_params = {
             "experiment_type": exp_type,
@@ -83,18 +86,44 @@ class JEOL:
         return pref_params
 
     @staticmethod
-    def find_temp(param_dict):
+    def find_temp(param_dict, json_nmr_data_dict={}):
+        """
+        Helper function to determine the experimental temperature.
+        Checks both param_dict and json_nmr_data_dict as fallback.
+
+        :param param_dict: Dictionary containing experiment parameters.
+        :param json_nmr_data_dict: Dictionary containing JSON NMR data (optional).
+        :return: Temperature in Kelvin as integer, or None if not found.
+        """
+        temp_number = None
+        
+        # First attempt: param_dict
         try:
-            temp_number = int(param_dict["$TEMPSET"][0])
-            if temp_number >= 250:
-                return temp_number
-            else:
-                return temp_number + 273
-        except TypeError:
-            return None
+            temp_number = float(param_dict["$TEMPSET"][0])
+        except:
+            try:
+                temp_number = float(param_dict["$TEMPGET"][0])
+            except:
+                pass  # proceed to JSON fallback
+
+        # Fallback: json_nmr_data_dict
+        if temp_number is None and json_nmr_data_dict:
+            try:
+                json_temp = json_nmr_data_dict.get("SpecInfo", {}).get("Temperature", None)
+                if json_temp is not None:
+                    temp_number = int(float(json_temp))
+            except (TypeError, ValueError):
+                pass
+
+        # If temp found, standardize to Kelvin
+        if temp_number is not None:
+            # if under 250 assume C. Otherwise assume K and adjust.
+            return temp_number if temp_number >= 250 else temp_number + 273
+
+        return None  # Failed to detect temperature
 
     @staticmethod
-    def find_solvent(param_dict):
+    def find_solvent(param_dict, json_nmr_data_dict={}):
         """
         Helper function. Find the solvent involved in the experiment. This is done by checking possible
         english names for the solvent against their chemical formulas.
@@ -102,20 +131,27 @@ class JEOL:
         :param param_dict: Dictionary containing all the parameters for the experiment.
         :return: The solvent in string format.
         """
-        solv_str = param_dict["$SOLVENT"][0]
-        
-        print("all_solvents is")
-        print(all_solvents)
+        exp_solv = "FAILED_TO_DETECT"
 
-        if solv_str.upper() in all_solvents.keys():
-            exp_solv = all_solvents[solv_str.upper()]
-        elif solv_str in all_solvents.values():
-            exp_solv = solv_str
-        else:
-            exp_solv = "FAILED_TO_DETECT"
-        
-        print("exp_solve is")
-        print(exp_solv)
+        # First attempt: param_dict
+        solv_str = param_dict.get("$SOLVENT", [None])[0]
+        if solv_str:
+            solv_upper = solv_str.upper()
+            if solv_upper in all_solvents:
+                exp_solv = all_solvents[solv_upper]
+            elif solv_str in all_solvents.values():
+                exp_solv = solv_str
+
+        # Fallback: json_nmr_data_dict
+        if exp_solv == "FAILED_TO_DETECT" and json_nmr_data_dict:
+            json_solv = json_nmr_data_dict.get("SpecInfo", {}).get("Solvent", "")
+            if json_solv:
+                json_solv_upper = json_solv.upper()
+                if json_solv_upper in all_solvents:
+                    exp_solv = all_solvents[json_solv_upper]
+                elif json_solv in all_solvents.values():
+                    exp_solv = json_solv
+
         return exp_solv
 
     @staticmethod
@@ -142,31 +178,48 @@ class JEOL:
         return exp_dim
 
     @staticmethod
-    def find_exp_type(param_dict, exp_dim):
+    def find_exp_type(param_dict, exp_dim, json_nmr_data_dict={}):
         """
         Helper function.
         Determine the type of experiment that was conducted. Ex. COSY, HSQC etc...
 
         :param param_dict: dictionary containing all the parameter data
         :param exp_dim: dimension of the experiment
-        :return: type of experiment in string. (1D experiments are not given a type)
+        :param json_nmr_data_dict: dict containing JSON NMR data (optional)
+        :return: experiment type as string ("1D", "COSY", etc.), or 'FAILED_TO_DETECT' if unknown
         """
-        exp_str = param_dict[".PULSESEQUENCE"][0].upper()
-
         exp_type = "FAILED_TO_DETECT"
 
+        def standardize_exp_type(exp_string):
+            """Standardize the experiment string using exp_dict mappings."""
+            if not exp_string:
+                return None
+            exp_string = exp_string.upper()
+            for key, val in exp_dict.items():
+                if key.upper() in exp_string:
+                    return val
+            return None
+
+        # For 2D experiments: first try param_dict
         if exp_dim == "2D":
-            for entry in exp_dict:
-                if entry in exp_str.upper():
-                    exp_type = exp_dict[entry]
-                    return exp_type
-            return exp_type
-        else:
-            exp_type = "1D"
-            return exp_type
+            pulse_seq = param_dict.get(".PULSESEQUENCE", [None])[0]
+            exp_type_from_pulse = standardize_exp_type(pulse_seq)
+            if exp_type_from_pulse:
+                return exp_type_from_pulse
+
+            # Fallback: try JSON NMR data
+            json_exp_type = json_nmr_data_dict.get("SpecInfo", {}).get("ExperimentType.str", "")
+            exp_type_from_json = standardize_exp_type(json_exp_type)
+            if exp_type_from_json:
+                return exp_type_from_json
+
+            return exp_type  # Failed to detect
+
+        # For 1D experiments
+        return "1D"
 
     @staticmethod
-    def find_freq(param_dict, exp_dim):
+    def find_freq(param_dict, exp_dim, json_nmr_data_dict={}):
         """
         Helper function.
         Find the frequency parameter given a dictionary of parameters and the
@@ -184,21 +237,41 @@ class JEOL:
         #     if (key != "$PARAMETERFILE") and (key != "DATATABLE"):
         #         # print(f"{key} - {value}")
         #         pass
+        def get_safe_freq(key):
+            try:
+                return round(float(param_dict[key][0]), 9)
+            except (KeyError, IndexError, ValueError, TypeError):
+                return None
+
+        def get_json_freqs(n=2):
+            freq_list = json_nmr_data_dict.get("SpecInfo", {}).get("SpectrometerFrequencies", [])
+            return freq_list[:n] if freq_list else []
 
         if exp_dim == "2D":
-            freq1 = round(float(param_dict["$XFREQ"][0]), 9)
-            try:
-                freq2 = round(float(param_dict["$YFREQ"][0]), 9)
-            except:
-                freq2 = None
-            freq = (freq1, freq2)
-            return freq
-        else:
-            freq = round(float(param_dict["$XFREQ"][0]), 9)
+            freq1 = get_safe_freq("$XFREQ")
+            freq2 = get_safe_freq("$YFREQ")
+
+            if freq1 is not None and freq2 is not None:
+                return (freq1, freq2)
+
+            # Try json_nmr_data_dict as fallback
+            exp_freq = get_json_freqs(2)
+            if exp_freq:
+                return exp_freq
+
+            return [freq1, freq2]  # Will contain None if missing
+
+        else:  # "1D" or other
+            freq = get_safe_freq("$XFREQ")
+
+            if freq is None:
+                exp_freq = get_json_freqs(1)
+                return exp_freq[0] if exp_freq else None
+
             return [freq]
 
     @staticmethod
-    def find_nuc(param_dict, exp_dim):
+    def find_nuc(param_dict, exp_dim, json_nmr_data_dict={}):
         """
          Helper function.
          Determine the nuclei that are used in the experiment.
