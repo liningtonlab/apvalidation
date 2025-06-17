@@ -85,6 +85,8 @@ def find_path_and_extract(
                 }
             }))
 
+    print("submitted_zip_file is", submitted_zip_file)
+
     meta = MetaFinder(
         submitted_zip_file,
         zip_file_extention
@@ -93,6 +95,7 @@ def find_path_and_extract(
     assert meta.error_message == {}, json.dumps(meta.error_message)
 
     meta_file = meta.meta_info
+    print("meta_file is", meta_file)
     vendor_type = meta_file["vendor_name"]
     filetype = meta_file["filetype"]
     file_root = meta_file["file_root"]
@@ -182,7 +185,10 @@ def extract_jcamp(loc):
         if Path(path).suffix == ".jdx" or Path(path).suffix == ".dx":
             full_path = os.path.join(loc, path)
             param_dict, json_nmr_data_dict = jcampdx_extractor.read([full_path])
+            print("json_nmr_data_dict.keys() is")
+            print(json_nmr_data_dict.keys())
             manuf = jcampdx_extractor.find_manuf(param_dict=param_dict, json_nmr_data_dict=json_nmr_data_dict)
+            print("manuf is", manuf)
             found_params = jcampdx_extractor.find_params(
                 param_dict,
                 json_nmr_data_dict=json_nmr_data_dict,

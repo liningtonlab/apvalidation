@@ -82,6 +82,9 @@ class JEOL:
             "solvent": exp_solv,
             "temperature": exp_temp,
         }
+        
+        print("pref_params is")
+        print(pref_params)
 
         return pref_params
 

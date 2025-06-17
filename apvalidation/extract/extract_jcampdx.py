@@ -139,7 +139,7 @@ class Jcampdx:
 
         # Assume jeol as fallback if we can't find manufacturer
         elif manuf == "JEOL" or manuf == "Not found":
-            jeol_structured_dict_list = Jcampdx.get_jeol_structured_dict_list(param_dict)            
+            jeol_structured_dict_list = Jcampdx.get_jeol_structured_dict_list(param_dict)
             output_list.append(JEOL.find_params(
                 jeol_structured_dict_list,
                 json_nmr_data_dict=json_nmr_data_dict
