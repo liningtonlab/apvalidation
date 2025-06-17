@@ -180,10 +180,12 @@ def find_path_and_extract(
 
 
 def extract_jcamp(loc):
+    print("loc is", loc)
     res_dict = []
     for path in os.listdir(loc):
         if Path(path).suffix == ".jdx" or Path(path).suffix == ".dx":
             full_path = os.path.join(loc, path)
+            print("full_path is", full_path)
             param_dict, json_nmr_data_dict = jcampdx_extractor.read([full_path])
             print("json_nmr_data_dict.keys() is")
             print(json_nmr_data_dict.keys())

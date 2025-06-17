@@ -44,6 +44,7 @@ class Jcampdx:
 
         param_dict_list = []
         for filepath in filepath_list:
+            print("checking filepath", filepath)
             assert os.path.isfile(filepath)
             param_dict = ng.jcampdx.read(filename=filepath)
             param_dict_list.append(param_dict)
