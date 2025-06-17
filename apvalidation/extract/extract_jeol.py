@@ -67,7 +67,7 @@ class JEOL:
             except KeyError:
                 param_dict = param_dict
 
-        exp_dim = JEOL.find_dim(param_dict)
+        exp_dim = JEOL.find_dim(param_dict, json_nmr_data_dict)
         exp_freq = JEOL.find_freq(param_dict, exp_dim, json_nmr_data_dict)
         exp_nuc_1, exp_nuc_2 = JEOL.find_nuc(param_dict, exp_dim, json_nmr_data_dict)
         exp_type = JEOL.find_exp_type(param_dict, exp_dim, json_nmr_data_dict)
@@ -134,7 +134,8 @@ class JEOL:
         exp_solv = "FAILED_TO_DETECT"
 
         # First attempt: param_dict
-        solv_str = param_dict.get("$SOLVENT", [None])[0]
+        solv_list = param_dict.get("$SOLVENT", [None])
+        solv_str = solv_list[0] if solv_list else None
         if solv_str:
             solv_upper = solv_str.upper()
             if solv_upper in all_solvents:
@@ -155,7 +156,7 @@ class JEOL:
         return exp_solv
 
     @staticmethod
-    def find_dim(param_dict):
+    def find_dim(param_dict, json_nmr_data_dict={}):
         """
         Helper function.
         Find the dimension of the experiment given a dictionary of parameters.
@@ -164,16 +165,27 @@ class JEOL:
                             Probably returned from the read method.
         :return: dimension of the experiment.
         """
+        exp_dim = None
 
+        # Try to get from param_dict
         try:
             exp_dim = param_dict["NUMDIM"][0] + "D"
-        except KeyError:
-            exp_dim = None
+        except:
+            pass
         if exp_dim == None:
             try:
                 exp_dim = param_dict["$DIMENSIONS"][0] + "D"
-            except KeyError:
-                exp_dim = None
+            except:
+                pass
+        
+        # FALLBACK: check json_nmr_data_dict
+        if not exp_dim and json_nmr_data_dict:
+            try:
+                n_dim = json_nmr_data_dict.get("nDim", "")
+                if n_dim and n_dim <= 2:
+                    exp_dim = str(n_dim) + "D"
+            except:
+                pass
 
         return exp_dim
 
@@ -202,10 +214,12 @@ class JEOL:
 
         # For 2D experiments: first try param_dict
         if exp_dim == "2D":
-            pulse_seq = param_dict.get(".PULSESEQUENCE", [None])[0]
-            exp_type_from_pulse = standardize_exp_type(pulse_seq)
-            if exp_type_from_pulse:
-                return exp_type_from_pulse
+            pulse_list = param_dict.get(".PULSESEQUENCE", [None])
+            pulse_seq = pulse_list[0] if pulse_list else None
+            if pulse_seq:
+                exp_type_from_pulse = standardize_exp_type(pulse_seq)
+                if exp_type_from_pulse:
+                    return exp_type_from_pulse
 
             # Fallback: try JSON NMR data
             json_exp_type = json_nmr_data_dict.get("SpecInfo", {}).get("ExperimentType.str", "")

@@ -316,22 +316,22 @@ class Jcampdx:
                 freq_list = param_dict[0][".OBSERVEFREQUENCY"][0]
                 param_dict[0]["$XFREQ"] = [freq_list]
             except:
-                param_dict[0].setdefault("$XFREQ", [])
+                param_dict[0].setdefault("$XFREQ", [None])
         
         # add SOLVENT keys
         try:
             param_dict[0]["$SOLVENT"] = param_dict[0][".SOLVENTNAME"]
         except:
-            param_dict[0].setdefault("$SOLVENT", [])
+            param_dict[0].setdefault("$SOLVENT", [None])
 
         # Add Temperature values
         try:
             param_dict[0]["$TEMPSET"] = param_dict[0][".TEMPSET"]
         except:
-            param_dict[0].setdefault("$TEMPSET", [])
+            param_dict[0].setdefault("$TEMPSET", [None])
         try:
             param_dict[0]["$TEMPGET"] = param_dict[0][".TEMPGET"]
         except:
-            param_dict[0].setdefault("$TEMPGET", [])
+            param_dict[0].setdefault("$TEMPGET", [None])
 
         return [jdx_read_output]

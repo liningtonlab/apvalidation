@@ -61,6 +61,9 @@ from apvalidation.smiles_to_inchikey import to_inchikey
 # print("---------------------------------------------------------")
 metadata = find_path_and_extract("./apvalidation/test/error_jdx.zip", is_second_time = False)
 print(metadata)
+print("---------------------------------------------------------")
+metadata = find_path_and_extract("./apvalidation/test/error_jdx.zip", is_second_time = True)
+print(metadata)
 
 
 # regular_jdx = ng.jcampdx.read(filename="/workspaces/apvalidation/apvalidation/test/JEOL/ I1_85_02_ PULSE ACQUISITION_exp_1.jdx")
