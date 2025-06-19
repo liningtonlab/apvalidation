@@ -218,7 +218,7 @@ def add_path_vendor(path, params, vendor_type, filetype, res_dict):
     file_root_without_file_name = str(path)
     if file_root_without_file_name == ".":
         file_root_without_file_name = "/"
-    params["original_data_path"] = file_root_without_file_name.strip()
+    params["original_data_path"] = file_root_without_file_name # DO NOT STRIP, BREAKS FILE PATH
     params["vendor"] = vendor_type
     params["filetype"] = filetype
     res_dict.append(params)
