@@ -262,7 +262,7 @@ class JEOL:
 
         def get_json_freqs(n=2):
             freq_list = json_nmr_data_dict.get("SpecInfo", {}).get("SpectrometerFrequencies", [])
-            return [freq_list[:n]] if freq_list else []
+            return freq_list[:n] if freq_list else []
 
         if exp_dim == "2D":
             freq1 = get_safe_freq("$XFREQ")
@@ -283,7 +283,7 @@ class JEOL:
 
             if freq is None:
                 exp_freq = get_json_freqs(1)
-                return exp_freq[0] if exp_freq else None
+                return [exp_freq[0]] if exp_freq else None
 
             return [freq]
 
