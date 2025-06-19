@@ -2,6 +2,7 @@ import os
 import re
 import nmrglue as ng
 import json
+import traceback
 
 from apvalidation.extract.extract_varian import Varian
 from apvalidation.extract.extract_bruker import Bruker
@@ -33,40 +34,55 @@ class Jcampdx:
         pass
 
     @staticmethod
-    def read(filepath_list):
+    def read(filepath):
         """
         Given the raw file path to a parameter file, read the file
-        and return a python dictionary with all the parameters.
-
-        :param filepath: string formatted filepath to the acqu file
-        :return: dictionary containing all parameters found in the acqu file
+        and return a python dictionary with all the parameters and
+        optionally embedded JSON NMR data.
         """
+        assert os.path.isfile(filepath)
 
-        param_dict_list = []
-        for filepath in filepath_list:
-            print("checking filepath", filepath)
-            assert os.path.isfile(filepath)
-            param_dict = ng.jcampdx.read(filename=filepath)
-            param_dict_list.append(param_dict)
+        read_dict, read_np_array = ng.jcampdx.read(filepath)
 
-        # Band-aid to make para_dict consistent since some .jdx files produce a
-        # nested tuple/dict and some don't.
+        # Defensive helper to flatten nested lists/tuples if necessary
+        def flatten_first_entry(obj):
+            while isinstance(obj, (list, tuple)) and len(obj) > 0:
+                obj = obj[0]
+            return obj
+
+        flat_read_dict = flatten_first_entry(read_dict)
+
+        # Try extracting param_dict following your old key hierarchy
+        param_dict = {}
         try:
-            param_dict = param_dict_list[0][0]["_datatype_NMRSPECTRUM"]
-        except:
+            param_dict = flat_read_dict["_datatype_NMRSPECTRUM"]
+        except (KeyError, TypeError):
             try:
-                param_dict = param_dict_list[0][0]["_datatype_NDNMRSPECTRUM"]
-            except:
-                param_dict = param_dict_list[0]
+                param_dict = flat_read_dict["_datatype_NDNMRSPECTRUM"]
+            except (KeyError, TypeError):
+                param_dict = flat_read_dict
 
-        # Try to get the JSONNMRDATA as a dictionary (if it exists in the file)
+        # If param_dict is still nested list/tuple, flatten again
+        param_dict = flatten_first_entry(param_dict)
+
+        # Attempt to extract JSON NMR data from param_dict
+        json_nmr_data_dict = {}
         try:
-            json_nmr_str = param_dict[0]['_datatype_NA'][0]['$JASONNMRDATA'][0]
-            json_nmr_start = json_nmr_str.find('{')  # find where the JSON starts
+            # Try to get JSON NMR string
+            json_nmr_str = read_dict['_datatype_LINK'][0]['$JASONNMRDATA'][0]
+
+            # Extract JSON from string start
+            json_nmr_start = json_nmr_str.find('{')
             json_nmr_str_clean = json_nmr_str[json_nmr_start:]
             json_nmr_data_dict = json.loads(json_nmr_str_clean)
-        except:
+            json_nmr_data_dict = flatten_first_entry(json_nmr_data_dict)
+            print("Successfully extracted embedded JSON NMR data")
+
+        except (KeyError, IndexError, TypeError, json.JSONDecodeError) as e:
             json_nmr_data_dict = {}
+
+        print("json_nmr_data_dict.keys() is:", json_nmr_data_dict.keys())
+        print("param_dict keys are:", getattr(param_dict, 'keys', lambda: [])())
 
         return param_dict, json_nmr_data_dict
 
@@ -81,15 +97,15 @@ class Jcampdx:
         
         # Path lcoations to check for manufacturer name
         try:
-            manuf_name = param_dict[0]["_datatype_LINK"][0]["$ORIGINALFORMAT"][0]
+            manuf_name = param_dict["_datatype_LINK"][0]["$ORIGINALFORMAT"][0]
         except (KeyError, TypeError):
             manuf_name = "Not found"
             try:
-                manuf_name = param_dict[0]["$ORIGINALFORMAT"][0]
+                manuf_name = param_dict["$ORIGINALFORMAT"][0]
             except (KeyError, TypeError):
                 manuf_name = "Not found"
                 try:
-                    manuf_name = param_dict[0]["ORIGIN"][0]
+                    manuf_name = param_dict["ORIGIN"][0]
                 except (KeyError, TypeError):
                     try:
                         if json_nmr_data_dict:
@@ -171,7 +187,7 @@ class Jcampdx:
         """
         errored = False
         try:
-            line_list = jdx_read_output[0]["_datatype_LINK"][0]["_comments"]
+            line_list = jdx_read_output["_datatype_LINK"][0]["_comments"]
         except KeyError or TypeError:
             errored = True
         if errored == True:
@@ -212,7 +228,7 @@ class Jcampdx:
         :return: list of dictionaries, these are formatted for the Bruker Class methods.
         """
 
-        param_dict = read_jdx_output[0]
+        param_dict = read_jdx_output
 
         line_list = []
         try:
@@ -299,40 +315,43 @@ class Jcampdx:
         :return: list of dictionaries, these are formatted for the Varian Class methods.
         """
         try:
-            param_dict = jdx_read_output[0]["_datatype_LINK"]
-        except KeyError:
+            param_dict = jdx_read_output["_datatype_LINK"][0]
+        except:
             try:
-                param_dict = jdx_read_output
-            except KeyError:
-                param_dict = "None"
+                param_dict = jdx_read_output["_datatype_LINK"]
+            except:
+                try:
+                    param_dict = jdx_read_output
+                except:
+                    param_dict = {}
 
         # re-name and format frequency keys so they match the delta version of JEOL data.
         try:
-            freq_list = param_dict[0][".OBSERVEFREQUENCY"][1]
+            freq_list = param_dict[".OBSERVEFREQUENCY"][1]
             freq_list = freq_list.split(",")
-            param_dict[0]["$XFREQ"] = [freq_list[0]]
-            param_dict[0]["$YFREQ"] = [freq_list[1]]
+            param_dict["$XFREQ"] = [freq_list[0]]
+            param_dict["$YFREQ"] = [freq_list[1]]
         except:
             try:
-                freq_list = param_dict[0][".OBSERVEFREQUENCY"][0]
-                param_dict[0]["$XFREQ"] = [freq_list]
+                freq_list = param_dict[".OBSERVEFREQUENCY"][0]
+                param_dict["$XFREQ"] = [freq_list]
             except:
-                param_dict[0].setdefault("$XFREQ", [None])
+                param_dict.setdefault("$XFREQ", [None])
         
         # add SOLVENT keys
         try:
-            param_dict[0]["$SOLVENT"] = param_dict[0][".SOLVENTNAME"]
+            param_dict["$SOLVENT"] = param_dict[".SOLVENTNAME"]
         except:
-            param_dict[0].setdefault("$SOLVENT", [None])
+            param_dict.setdefault("$SOLVENT", [None])
 
         # Add Temperature values
         try:
-            param_dict[0]["$TEMPSET"] = param_dict[0][".TEMPSET"]
+            param_dict["$TEMPSET"] = param_dict[".TEMPSET"]
         except:
-            param_dict[0].setdefault("$TEMPSET", [None])
+            param_dict.setdefault("$TEMPSET", [None])
         try:
-            param_dict[0]["$TEMPGET"] = param_dict[0][".TEMPGET"]
+            param_dict["$TEMPGET"] = param_dict[".TEMPGET"]
         except:
-            param_dict[0].setdefault("$TEMPGET", [None])
+            param_dict.setdefault("$TEMPGET", [None])
 
         return [jdx_read_output]

@@ -59,22 +59,17 @@ from apvalidation.smiles_to_inchikey import to_inchikey
 # metadata = find_path_and_extract("./apvalidation/test/test_roger_jdx.zip", is_second_time = False)
 # print(metadata)
 # print("---------------------------------------------------------")
-metadata = find_path_and_extract("./apvalidation/test/error_jdx.zip", is_second_time = False)
-print(metadata)
-print("---------------------------------------------------------")
-metadata = find_path_and_extract("./apvalidation/test/error_jdx.zip", is_second_time = True)
-print(metadata)
-
-
-# regular_jdx = ng.jcampdx.read(filename="/workspaces/apvalidation/apvalidation/test/JEOL/ I1_85_02_ PULSE ACQUISITION_exp_1.jdx")
-# print("regular_jdx is")
-# print(regular_jdx)
-
-# print("\n--------------------\n")
-
-# regular_jdx = ng.jcampdx.read(filename="/workspaces/apvalidation/apvalidation/test/JEOL_DX/1H NMR to check_ zg30_exp_1.dx")
-# print("DX is")
-# print(regular_jdx)
+# metadata = find_path_and_extract("./apvalidation/test/error_jdx.zip", is_second_time = False)
+# print(metadata)
+# print("---------------------------------------------------------")
+# metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
+# print(metadata)
+# print("---------------------------------------------------------")
+# metadata = find_path_and_extract("./apvalidation/test/test_double_jdx_no_space_params.zip", is_second_time = False)
+# print(metadata)
+# print("---------------------------------------------------------")
+# metadata = find_path_and_extract("./apvalidation/test/error_jdx.zip", is_second_time = True)
+# print(metadata)
 
 
 # print("\n\n\n-------JEOL.zip-------")
@@ -109,42 +104,36 @@ print(metadata)
 #     "./apvalidation/test/output/",
 # )
 
-# metadata = find_path_and_extract("./apvalidation/test/JEOL.zip")
-# print(metadata)
-
-# print("----")
-
 # metadata = find_path_and_extract("./apvalidation/test/salarin_C_failed_exp_type.zip")
 # print(metadata)
 
 # metadata = find_path_and_extract("./apvalidation/test/endolide_E_NMR_RAW_HMBC_ONLY.zip")
 # print(metadata)
 
-# test_dir_path = "./apvalidation/test"
-# for filename in os.listdir(test_dir_path):
-#     file_path = os.path.join(test_dir_path, filename)
+test_dir_path = "./apvalidation/test"
+for filename in os.listdir(test_dir_path):
+    file_path = os.path.join(test_dir_path, filename)
+    
+    if any(sub in file_path for sub in ["JEOL_DX", "JEOL_as_FAKE_dx", "ycld34"]):
+        continue
+    
+    # if not any(sub in file_path for sub in ["test_1d_1h", "test_inmr", "original_data"]):
+    #     continue
 
-#     # Check if the file ends with ".zip"
-#     if filename.endswith(".zip") and os.path.isfile(file_path):
-#         # Execute the code on the ZIP file
-#         print("--------------------------------")
-#         print(f"processing file {file_path}")
-#         try:
-#             metadata = find_path_and_extract(file_path, is_second_time = False)
-#             print("VVVVVVVVVVVV sucessfully processed VVVVVVVVVVV")
-#             print(metadata)
-#         except Exception as e:
-#             print("FFFFFFFFFFFFF failed to process FFFFFFFFFFFFF")
-#             print(e)
-
-# metadata = find_path_and_extract("./apvalidation/test/original_data_LELBFTMXCIIKKX-QVRQZEMUSA-N.zip")
-# print(metadata)
+    # Check if the file ends with ".zip"
+    if filename.endswith(".zip") and os.path.isfile(file_path):
+        # Execute the code on the ZIP file
+        print("--------------------------------")
+        print(f"processing file {file_path}")
+        try:
+            metadata = find_path_and_extract(file_path, is_second_time = False)
+            print("VVVVVVVVVVVV sucessfully processed VVVVVVVVVVV")
+            print(metadata)
+        except Exception as e:
+            print("-------------- failed to process ---------------")
+            print(e)
 
 
 
 # metadata = find_path_and_extract("./apvalidation/test/test_dept.zip")
 # print(metadata)
-
-
-print("test to_inchikey(smiles)")
-to_inchikey("CC=CCC=CC/CCC=CC\CC=CC/CC=CC\CC=CCCCC/CC=CCCC\CC=CC/CCC")
