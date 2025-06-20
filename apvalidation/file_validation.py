@@ -15,6 +15,7 @@ from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 # from patoolutil import is_zip, repack_to_zip
 # from mnova_jdx_reader import separate_mnova_jdx
 
+import shutil
 import sys
 import os
 import zipfile
@@ -85,8 +86,6 @@ def find_path_and_extract(
                 }
             }))
 
-    print("submitted_zip_file is", submitted_zip_file)
-
     meta = MetaFinder(
         submitted_zip_file,
         zip_file_extention
@@ -95,12 +94,12 @@ def find_path_and_extract(
     assert meta.error_message == {}, json.dumps(meta.error_message)
 
     meta_file = meta.meta_info
-    print("meta_file is", meta_file)
     vendor_type = meta_file["vendor_name"]
     filetype = meta_file["filetype"]
     file_root = meta_file["file_root"]
     existing_folder_names = []
     jcamp = False
+    is_first_loop = True
 
     with zipfile.ZipFile(submitted_zip_file, "r") as zipObj:
         # Extract all the contents of zip file in current directory
@@ -138,10 +137,15 @@ def find_path_and_extract(
                 jcamp = True
                 jcamp_file_extension = path_list[0].split(".")[-1]
                 
-                # spilit_file_dir = f"{str(Path(submitted_zip_file).parent)}/jdx_spilt"
                 loc = os.path.splitext(submitted_zip_file)[0]
                 
                 if not is_second_time:
+                    # Delete the directory if it exists from previous run
+                    if is_first_loop:
+                        is_first_loop = False
+                        if os.path.exists(loc):
+                            shutil.rmtree(loc)
+                    
                     loc = separate_mnova_jdx(unzipped_path_name[0], loc, jcamp_file_extension)
 
             os.unlink(tf.name)  # Delete temporary file
@@ -180,17 +184,12 @@ def find_path_and_extract(
 
 
 def extract_jcamp(loc):
-    print("loc is", loc)
     res_dict = []
     for path in os.listdir(loc):
         if Path(path).suffix == ".jdx" or Path(path).suffix == ".dx":
             full_path = os.path.join(loc, path)
-            print("full_path is", full_path)
             param_dict, json_nmr_data_dict = jcampdx_extractor.read(full_path)
-            print("json_nmr_data_dict.keys() is")
-            print(json_nmr_data_dict.keys())
             manuf = jcampdx_extractor.find_manuf(param_dict=param_dict, json_nmr_data_dict=json_nmr_data_dict)
-            print("manuf is", manuf)
             found_params = jcampdx_extractor.find_params(
                 param_dict,
                 json_nmr_data_dict=json_nmr_data_dict,
@@ -199,8 +198,6 @@ def extract_jcamp(loc):
             params = found_params[0]
             add_path_vendor(path, params, manuf, "Jcampdx", res_dict)
     
-    print("res_dict is")
-    print(res_dict)
     return res_dict
 
 

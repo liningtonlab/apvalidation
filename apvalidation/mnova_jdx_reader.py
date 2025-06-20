@@ -61,12 +61,16 @@ def find_deep_groups(line_level_list, max_depth):
 
     return groups
 
-def make_filename(group, group_num, jcamp_file_extension):
+
+def make_filename(group, group_num, jcamp_file_extension, save_path):
     """
-        determine the name of the single experiment jdx file being saved.
-        :param item: a single line in the group being checked
-        :param group_num: the number of the group being saved
-        :return: the title of the file or None if not found yet
+    Determine a unique name of the single experiment jdx file being saved.
+    
+    :param group: The group of JCAMP data lines
+    :param group_num: The group index
+    :param jcamp_file_extension: The desired file extension (e.g., 'jdx')
+    :param save_path: Directory where the file will be saved
+    :return: A unique filename (not full path)
     """
     done = False
     group_title = None
@@ -84,12 +88,22 @@ def make_filename(group, group_num, jcamp_file_extension):
                 seq_title = item["value"].split("=")[1]
                 done = True
 
-        if done is True:
-            final_title = f"{group_title}_{seq_title}_exp_{group_num+1}.{jcamp_file_extension}"
+        if done:
+            base_title = f"{group_title}_{seq_title}_exp_{group_num+1}"
+            final_title = f"{base_title}.{jcamp_file_extension}"
+            file_path = os.path.join(save_path, final_title)
+            
+            # Check for existence and adjust name if needed
+            counter = 1
+            while os.path.exists(file_path):
+                final_title = f"{base_title}_{counter}.{jcamp_file_extension}"
+                file_path = os.path.join(save_path, final_title)
+                counter += 1
+
             return final_title
 
+    # fallback if no titles found
     return f"FailedToDetectTitle_{uuid.uuid4().hex[:5]}.{jcamp_file_extension}"
-
 
 
 def save_separate_files(merged_groups, save_path, jcamp_file_extension):
@@ -114,15 +128,15 @@ def save_separate_files(merged_groups, save_path, jcamp_file_extension):
     #         except Exception as e:
     #             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    for index, group in enumerate(merged_groups):
 
-        group_title = make_filename(group, index, jcamp_file_extension)
-        
+    for index, group in enumerate(merged_groups):
+        group_title = make_filename(group, index, jcamp_file_extension, save_path)
         single_file = open(f"{save_path}/{group_title}", "w+")
         for index, item in enumerate(group):
             # print(f"writing to {group_title} item #{index} being {item}....")
             single_file.write(item["value"]+"\n")
         single_file.close()
+        
     return save_path
 
     

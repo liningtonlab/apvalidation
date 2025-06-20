@@ -30,7 +30,7 @@ requirements = [
 
 setuptools.setup(
     name="apvalidation",
-    version="0.5.78",
+    version="0.5.79",
     author="liningtonlabs",
     author_email="liningtonlabstest@gmail.com",
     description="Testing installation of Package",

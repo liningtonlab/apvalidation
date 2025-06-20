@@ -58,9 +58,14 @@ from apvalidation.smiles_to_inchikey import to_inchikey
 
 # metadata = find_path_and_extract("./apvalidation/test/test_roger_jdx.zip", is_second_time = False)
 # print(metadata)
-print("---------------------------------------------------------")
-metadata = find_path_and_extract("./apvalidation/test/error_jdx.zip", is_second_time = False)
-print(metadata)
+# print("---------------------------------------------------------")
+# metadata = find_path_and_extract("./apvalidation/test/error_jdx.zip", is_second_time = False)
+# print(metadata)
+
+# print("---------------------------------------------------------")
+# metadata = find_path_and_extract("./apvalidation/test/dinemaxanthone_a_jdx.zip", is_second_time = False)
+# print(metadata)
+
 # print("---------------------------------------------------------")
 # metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
 # print(metadata)
@@ -110,28 +115,28 @@ print(metadata)
 # metadata = find_path_and_extract("./apvalidation/test/endolide_E_NMR_RAW_HMBC_ONLY.zip")
 # print(metadata)
 
-# test_dir_path = "./apvalidation/test"
-# for filename in os.listdir(test_dir_path):
-#     file_path = os.path.join(test_dir_path, filename)
+test_dir_path = "./apvalidation/test"
+for filename in os.listdir(test_dir_path):
+    file_path = os.path.join(test_dir_path, filename)
     
-#     if any(sub in file_path for sub in ["JEOL_DX", "JEOL_as_FAKE_dx", "ycld34"]):
-#         continue
+    if any(sub in file_path for sub in ["JEOL_DX", "JEOL_as_FAKE_dx", "ycld34"]):
+        continue
     
-#     # if not any(sub in file_path for sub in ["test_1d_1h", "test_inmr", "original_data"]):
-#     #     continue
+    # if not any(sub in file_path for sub in ["test_1d_1h", "test_inmr", "original_data"]):
+    #     continue
 
-#     # Check if the file ends with ".zip"
-#     if filename.endswith(".zip") and os.path.isfile(file_path):
-#         # Execute the code on the ZIP file
-#         print("--------------------------------")
-#         print(f"processing file {file_path}")
-#         try:
-#             metadata = find_path_and_extract(file_path, is_second_time = False)
-#             print("VVVVVVVVVVVV sucessfully processed VVVVVVVVVVV")
-#             print(metadata)
-#         except Exception as e:
-#             print("-------------- failed to process ---------------")
-#             print(e)
+    # Check if the file ends with ".zip"
+    if filename.endswith(".zip") and os.path.isfile(file_path):
+        # Execute the code on the ZIP file
+        print("--------------------------------")
+        print(f"processing file {file_path}")
+        try:
+            metadata = find_path_and_extract(file_path, is_second_time = False)
+            print("VVVVVVVVVVVV sucessfully processed VVVVVVVVVVV")
+            print(metadata)
+        except Exception as e:
+            print("-------------- failed to process ---------------")
+            print(e)
 
 
 

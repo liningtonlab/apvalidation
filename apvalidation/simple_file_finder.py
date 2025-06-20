@@ -81,15 +81,9 @@ class MetaFinder:
             if lst:
                 vendor_name_list += lst
         
-        # print("vendor_name_list is")
-        # print(vendor_name_list)
-        
         if not vendor_name_list:
             print("CHECKING FOR UNUSPPORTED EXTENSION")
             self.check_for_unsupported_file(self, all_path_list)
-
-        print("vendor_name_list is")
-        print(vendor_name_list)
 
         # Set Filetype to native for the manuf and fix later if neccesary
         filetype_list = []

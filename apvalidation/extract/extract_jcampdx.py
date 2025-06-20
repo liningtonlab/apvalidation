@@ -76,13 +76,9 @@ class Jcampdx:
             json_nmr_str_clean = json_nmr_str[json_nmr_start:]
             json_nmr_data_dict = json.loads(json_nmr_str_clean)
             json_nmr_data_dict = flatten_first_entry(json_nmr_data_dict)
-            print("Successfully extracted embedded JSON NMR data")
 
         except (KeyError, IndexError, TypeError, json.JSONDecodeError) as e:
             json_nmr_data_dict = {}
-
-        print("json_nmr_data_dict.keys() is:", json_nmr_data_dict.keys())
-        print("param_dict keys are:", getattr(param_dict, 'keys', lambda: [])())
 
         return param_dict, json_nmr_data_dict
 

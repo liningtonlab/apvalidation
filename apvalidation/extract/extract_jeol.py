@@ -83,9 +83,6 @@ class JEOL:
             "temperature": exp_temp,
         }
         
-        print("pref_params is")
-        print(pref_params)
-
         return pref_params
 
     @staticmethod
@@ -248,8 +245,6 @@ class JEOL:
         :return: a single float or a tuple of floats depending on the dimension
         """
         
-        # print("param_dict is")
-        # print(param_dict.keys())
         # for key, value in param_dict.items():
         #     if (key != "$PARAMETERFILE") and (key != "DATATABLE"):
         #         # print(f"{key} - {value}")
