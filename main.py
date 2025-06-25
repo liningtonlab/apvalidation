@@ -112,7 +112,13 @@ from apvalidation.smiles_to_inchikey import to_inchikey
 # metadata = find_path_and_extract("./apvalidation/test/salarin_C_failed_exp_type.zip")
 # print(metadata)
 
-# metadata = find_path_and_extract("./apvalidation/test/endolide_E_NMR_RAW_HMBC_ONLY.zip")
+# metadata = find_path_and_extract("./apvalidation/test/cpd10_G13_8_MeOD.zip")
+# print(metadata)
+
+# metadata = find_path_and_extract("./apvalidation/test/cpd10_G13_8_MeOD.zip")
+# print(metadata)
+
+# metadata = find_path_and_extract("./apvalidation/test/TEST_BRUKER.zip")
 # print(metadata)
 
 test_dir_path = "./apvalidation/test"

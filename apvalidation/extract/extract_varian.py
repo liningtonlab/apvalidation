@@ -139,11 +139,15 @@ class Varian:
 
     @staticmethod
     def find_temp(param_dict):
-        temp_number = int(param_dict["temp"]["values"][0])
-        if temp_number >= 250:
-            return temp_number
-        else:
-            return temp_number + 273
+        try:
+            temp_val = param_dict["temp"]["values"][0]
+            temp_number = float(temp_val)
+            if temp_number >= 250:
+                return temp_number
+            else:
+                return temp_number + 273
+        except:
+            return None
 
     @staticmethod
     def find_solvent(param_dict):
@@ -295,13 +299,16 @@ class Varian:
         :return: a single float or a tuple of floats depending on the dimension
         """
 
-        if exp_dim == "2D":
-            freq1 = round(float(param_dict["reffrq"]["values"][0]), 9)
-            freq2 = round(float(param_dict["reffrq1"]["values"][0]), 9)
-            freq_val = (freq1, freq2)
-        else:
-            freq_val = [round(float(param_dict["reffrq"]["values"][0]), 9)]
-        return freq_val
+        try:
+            if exp_dim == "2D":
+                freq1 = round(float(param_dict["reffrq"]["values"][0]), 9)
+                freq2 = round(float(param_dict["reffrq1"]["values"][0]), 9)
+                return (freq1, freq2)
+            else:
+                freq = round(float(param_dict["reffrq"]["values"][0]), 9)
+                return [freq]
+        except:
+            return (None, None)
 
     @staticmethod
     def find_nuc(param_dict, exp_dim):
