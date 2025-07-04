@@ -15,6 +15,9 @@ with open(solvent_standardizer_path, 'r') as file:
     all_solvents = json.load(file) 
     
 
+
+
+
 class JEOL:
     """
     A class containing the methods to help with the extraction of
@@ -44,7 +47,7 @@ class JEOL:
 
     @staticmethod
     def find_params(
-        param_dict_list,
+        param_dict,
         json_nmr_data_dict:dict = {},
     ):
         """
@@ -55,18 +58,6 @@ class JEOL:
         :param param_dict: dictionary containing all the parameters retrieved from the file
         :return: dictionary containing only those parameters that are preferred
         """
-        try:
-            param_dict = param_dict_list[0][0]
-        except:
-            param_dict = param_dict_list[0]
-        try:
-            param_dict = param_dict["_datatype_NMRSPECTRUM"][0]
-        except KeyError:
-            try:
-                param_dict = param_dict["_datatype_LINK"][0]
-            except KeyError:
-                param_dict = param_dict
-
         exp_dim = JEOL.find_dim(param_dict, json_nmr_data_dict)
         exp_freq = JEOL.find_freq(param_dict, exp_dim, json_nmr_data_dict)
         exp_nuc_1, exp_nuc_2 = JEOL.find_nuc(param_dict, exp_dim, json_nmr_data_dict)
@@ -244,11 +235,6 @@ class JEOL:
         :param exp_dim: the dimension of the experiment
         :return: a single float or a tuple of floats depending on the dimension
         """
-        
-        # for key, value in param_dict.items():
-        #     if (key != "$PARAMETERFILE") and (key != "DATATABLE"):
-        #         # print(f"{key} - {value}")
-        #         pass
         def get_safe_freq(key):
             try:
                 return round(float(param_dict[key][0]), 9)

@@ -310,17 +310,18 @@ class Jcampdx:
         :param jdx_read_output: a nested list object, the output from the Jcamp read method.
         :return: list of dictionaries, these are formatted for the Varian Class methods.
         """
-        try:
-            param_dict = jdx_read_output["_datatype_LINK"][0]
-        except:
+        # If entry is a list then iterate through until you get to dict
+        while type(jdx_read_output) == list:
             try:
-                param_dict = jdx_read_output["_datatype_LINK"]
+                jdx_read_output = jdx_read_output[0]
             except:
-                try:
-                    param_dict = jdx_read_output
-                except:
-                    param_dict = {}
-
+                break
+        
+        param_dict = flatten_dict(jdx_read_output, exclude_keys=["$PARAMETERFILE"])
+        
+        print("param_dict is")
+        print(param_dict)
+        
         # re-name and format frequency keys so they match the delta version of JEOL data.
         try:
             freq_list = param_dict[".OBSERVEFREQUENCY"][1]
@@ -350,4 +351,36 @@ class Jcampdx:
         except:
             param_dict.setdefault("$TEMPGET", [None])
 
-        return [jdx_read_output]
+        return param_dict
+    
+    
+def flatten_dict(d, parent_key='', sep='.', exclude_keys=None):
+    """
+    Recursively flattens a nested dictionary. Handles nested lists of dicts.
+    Skips any keys in `exclude_keys`.
+    """
+    items = []
+    exclude_keys = set(exclude_keys or [])
+    
+    if isinstance(d, dict):
+        for k, v in d.items():
+            if k in exclude_keys:
+                continue
+            new_key = f"{parent_key}{sep}{k}" if parent_key else k
+            if isinstance(v, dict):
+                items.extend(flatten_dict(v, new_key, sep, exclude_keys).items())
+            elif isinstance(v, list):
+                for i, item in enumerate(v):
+                    if isinstance(item, dict):
+                        # Include index in the key to make it unique
+                        items.extend(flatten_dict(item, f"{new_key}[{i}]", sep, exclude_keys).items())
+                    else:
+                        items.append((new_key, v))  # keep the whole list if not dicts
+                        break
+            else:
+                items.append((new_key, v))
+    else:
+        # If it's not a dict, just return it as is
+        items.append((parent_key, d))
+    
+    return dict(items)
