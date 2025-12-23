@@ -2,6 +2,7 @@ import os
 import re
 import nmrglue as ng
 import json
+import traceback
 
 from apvalidation.extract.extract_varian import Varian
 from apvalidation.extract.extract_bruker import Bruker
@@ -33,72 +34,101 @@ class Jcampdx:
         pass
 
     @staticmethod
-    def read(filepath_list):
+    def read(filepath):
         """
         Given the raw file path to a parameter file, read the file
-        and return a python dictionary with all the parameters.
-
-        :param filepath: string formatted filepath to the acqu file
-        :return: dictionary containing all parameters found in the acqu file
+        and return a python dictionary with all the parameters and
+        optionally embedded JSON NMR data.
         """
+        assert os.path.isfile(filepath)
 
-        param_dict_list = []
-        for filepath in filepath_list:
-            assert os.path.isfile(filepath)
-            param_dict = ng.jcampdx.read(filename=filepath)
-            param_dict_list.append(param_dict)
+        read_dict, read_np_array = ng.jcampdx.read(filepath)
 
-        # Band-aid to make para_dict consistent since some .jdx files produce a
-        # nested tuple/dict and some don't.
+        # Defensive helper to flatten nested lists/tuples if necessary
+        def flatten_first_entry(obj):
+            while isinstance(obj, (list, tuple)) and len(obj) > 0:
+                obj = obj[0]
+            return obj
+
+        flat_read_dict = flatten_first_entry(read_dict)
+
+        # Try extracting param_dict following your old key hierarchy
+        param_dict = {}
         try:
-            param_dict = param_dict_list[0][0]["_datatype_NMRSPECTRUM"]
-        except:
+            param_dict = flat_read_dict["_datatype_NMRSPECTRUM"]
+        except (KeyError, TypeError):
             try:
-                param_dict = param_dict_list[0][0]["_datatype_NDNMRSPECTRUM"]
-            except:
-                param_dict = param_dict_list[0]
-        
-        # print("param_dict is")
-        # print(param_dict[0].keys())
+                param_dict = flat_read_dict["_datatype_NDNMRSPECTRUM"]
+            except (KeyError, TypeError):
+                param_dict = flat_read_dict
 
-        return param_dict
+        # If param_dict is still nested list/tuple, flatten again
+        param_dict = flatten_first_entry(param_dict)
+
+        # Attempt to extract JSON NMR data from param_dict
+        json_nmr_data_dict = {}
+        try:
+            # Try to get JSON NMR string
+            json_nmr_str = read_dict['_datatype_LINK'][0]['$JASONNMRDATA'][0]
+
+            # Extract JSON from string start
+            json_nmr_start = json_nmr_str.find('{')
+            json_nmr_str_clean = json_nmr_str[json_nmr_start:]
+            json_nmr_data_dict = json.loads(json_nmr_str_clean)
+            json_nmr_data_dict = flatten_first_entry(json_nmr_data_dict)
+
+        except (KeyError, IndexError, TypeError, json.JSONDecodeError) as e:
+            json_nmr_data_dict = {}
+
+        return param_dict, json_nmr_data_dict
 
     @staticmethod
-    def find_manuf(param_dict):
+    def find_manuf(param_dict, json_nmr_data_dict={}):
         """
         find the manufacturer that produced the data file that is being inspected.
 
         :param param_dict_list: a list of dictionaries read in from the read function
         :return: the name of the manufacturer
         """
-
+        
+        # Path lcoations to check for manufacturer name
         try:
-            manuf_name = param_dict[0]["_datatype_LINK"][0]["$ORIGINALFORMAT"][0]
+            manuf_name = param_dict["_datatype_LINK"][0]["$ORIGINALFORMAT"][0]
         except (KeyError, TypeError):
             manuf_name = "Not found"
             try:
-                manuf_name = param_dict[0]["$ORIGINALFORMAT"][0]
+                manuf_name = param_dict["$ORIGINALFORMAT"][0]
             except (KeyError, TypeError):
                 manuf_name = "Not found"
                 try:
-                    manuf_name = param_dict[0]["ORIGIN"][0]
+                    manuf_name = param_dict["ORIGIN"][0]
                 except (KeyError, TypeError):
-                    manuf_name = "Not found"
+                    try:
+                        if json_nmr_data_dict:
+                            manuf_name = json_nmr_data_dict['SpecInfo']['OrigFileFormat.str']
+                    except:
+                        manuf_name = "Not found"
 
-        if manuf_name == "Varian":
-            return manuf_name
-        elif "Bruker" in manuf_name:
-            manuf_name = "Bruker"
-            return manuf_name
-        elif manuf_name in ["JCAMP-DX NMR", "JEOL Delta", "DELTA2_NMR", "DELTA_NMR"]:
-            manuf_name = "JEOL"
-            return manuf_name
-        else:
-            manuf_name = "Not found"
-            return manuf_name
+        # Try to match manufacturer name
+        manuf_name_lower = manuf_name.lower()
+        manufacturer_keywords = {
+            "varian": "Varian",
+            "bruker": "Bruker",
+            "jeol": "JEOL",
+            "delta": "JEOL"
+        }
+        for keyword, label in manufacturer_keywords.items():
+            if keyword in manuf_name_lower:
+                return label
+        
+        return "Not found"
 
     @staticmethod
-    def find_params(param_dict):
+    def find_params(
+        param_dict,
+        json_nmr_data_dict: dict = {},
+        manuf: str = None
+    ):
         """
         Searches a dictionary of all the parameters from a given experiment to find specific parameters needed
         to fill the database. The parameters needed are experiment_type, nucleus 1 and 2, frequency,
@@ -109,7 +139,8 @@ class Jcampdx:
         """
 
         output_list = []
-        manuf = Jcampdx.find_manuf(param_dict)
+        if not manuf:
+            manuf = Jcampdx.find_manuf(param_dict)
 
         if manuf == "Varian":
             varian_structured_dict_list = Jcampdx.format_varian(param_dict)
@@ -119,9 +150,27 @@ class Jcampdx:
             bruker_structured_dict_list = Jcampdx.format_bruker(param_dict) # THIS IS WHAT'S BREAKING THE .DX (probably)!!!!!!!
             output_list.append(Bruker.find_params(bruker_structured_dict_list))
 
-        elif manuf == "JEOL":
-            jeol_structured_dict_list = Jcampdx.format_jeol_combined(param_dict)
-            output_list.append(JEOL.find_params(jeol_structured_dict_list))
+        # Assume jeol as fallback if we can't find manufacturer
+        elif manuf == "JEOL" or manuf == "Not found":
+            jeol_structured_dict_list = Jcampdx.get_jeol_structured_dict_list(param_dict)
+            output_list.append(JEOL.find_params(
+                jeol_structured_dict_list,
+                json_nmr_data_dict=json_nmr_data_dict
+            ))
+
+            # As final fallback try to extract from other other manufacturers
+            if not output_list and manuf == "Not found":
+                try:
+                    varian_structured_dict_list = Jcampdx.format_varian(param_dict)
+                    output_list.append(Varian.find_params(varian_structured_dict_list))
+                except:
+                    pass
+                if not output_list:
+                    try:
+                        bruker_structured_dict_list = Jcampdx.format_bruker(param_dict)
+                        output_list.append(Bruker.find_params(bruker_structured_dict_list))
+                    except:
+                        pass
 
         return output_list
 
@@ -134,7 +183,7 @@ class Jcampdx:
         """
         errored = False
         try:
-            line_list = jdx_read_output[0]["_datatype_LINK"][0]["_comments"]
+            line_list = jdx_read_output["_datatype_LINK"][0]["_comments"]
         except KeyError or TypeError:
             errored = True
         if errored == True:
@@ -175,7 +224,7 @@ class Jcampdx:
         :return: list of dictionaries, these are formatted for the Bruker Class methods.
         """
 
-        param_dict = read_jdx_output[0]
+        param_dict = read_jdx_output
 
         line_list = []
         try:
@@ -254,35 +303,84 @@ class Jcampdx:
             return [param_dict_dim1, param_dict_dim2]
 
     @staticmethod
-    def format_jeol_combined(jdx_read_output):
+    def get_jeol_structured_dict_list(jdx_read_output):
         """
         Take the output produced from Jcamp read and format it to be passed into the Varian Class methods.
 
         :param jdx_read_output: a nested list object, the output from the Jcamp read method.
         :return: list of dictionaries, these are formatted for the Varian Class methods.
         """
-        try:
-            param_dict = jdx_read_output[0]["_datatype_LINK"]
-        except KeyError:
+        # If entry is a list then iterate through until you get to dict
+        while type(jdx_read_output) == list:
             try:
-                param_dict = jdx_read_output
-            except KeyError:
-                param_dict = "None"
-
+                jdx_read_output = jdx_read_output[0]
+            except:
+                break
+        
+        param_dict = flatten_dict(jdx_read_output, exclude_keys=["$PARAMETERFILE"])
+        
+        print("param_dict is")
+        print(param_dict)
+        
         # re-name and format frequency keys so they match the delta version of JEOL data.
         try:
-            freq_list = param_dict[0][".OBSERVEFREQUENCY"][1]
+            freq_list = param_dict[".OBSERVEFREQUENCY"][1]
             freq_list = freq_list.split(",")
-            param_dict[0]["$XFREQ"] = [freq_list[0]]
-            param_dict[0]["$YFREQ"] = [freq_list[1]]
+            param_dict["$XFREQ"] = [freq_list[0]]
+            param_dict["$YFREQ"] = [freq_list[1]]
         except:
-            freq_list = param_dict[0][".OBSERVEFREQUENCY"][0]
-            param_dict[0]["$XFREQ"] = [freq_list]
-
+            try:
+                freq_list = param_dict[".OBSERVEFREQUENCY"][0]
+                param_dict["$XFREQ"] = [freq_list]
+            except:
+                param_dict.setdefault("$XFREQ", [None])
+        
         # add SOLVENT keys
-        param_dict[0]["$SOLVENT"] = param_dict[0][".SOLVENTNAME"]
+        try:
+            param_dict["$SOLVENT"] = param_dict[".SOLVENTNAME"]
+        except:
+            param_dict.setdefault("$SOLVENT", [None])
 
-        # set the temperature to None for now
-        param_dict[0]["$TEMPSET"] = [None]
+        # Add Temperature values
+        try:
+            param_dict["$TEMPSET"] = param_dict[".TEMPSET"]
+        except:
+            param_dict.setdefault("$TEMPSET", [None])
+        try:
+            param_dict["$TEMPGET"] = param_dict[".TEMPGET"]
+        except:
+            param_dict.setdefault("$TEMPGET", [None])
 
-        return [jdx_read_output]
+        return param_dict
+    
+    
+def flatten_dict(d, parent_key='', sep='.', exclude_keys=None):
+    """
+    Recursively flattens a nested dictionary. Handles nested lists of dicts.
+    Skips any keys in `exclude_keys`.
+    """
+    items = []
+    exclude_keys = set(exclude_keys or [])
+    
+    if isinstance(d, dict):
+        for k, v in d.items():
+            if k in exclude_keys:
+                continue
+            new_key = f"{parent_key}{sep}{k}" if parent_key else k
+            if isinstance(v, dict):
+                items.extend(flatten_dict(v, new_key, sep, exclude_keys).items())
+            elif isinstance(v, list):
+                for i, item in enumerate(v):
+                    if isinstance(item, dict):
+                        # Include index in the key to make it unique
+                        items.extend(flatten_dict(item, f"{new_key}[{i}]", sep, exclude_keys).items())
+                    else:
+                        items.append((new_key, v))  # keep the whole list if not dicts
+                        break
+            else:
+                items.append((new_key, v))
+    else:
+        # If it's not a dict, just return it as is
+        items.append((parent_key, d))
+    
+    return dict(items)

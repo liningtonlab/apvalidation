@@ -82,9 +82,7 @@ class Bruker:
         param_dict = param_dict_list[0]
 
         exp_dim = Bruker.find_dim(param_dict_list)
-        # print("\n\n\n\nparam_dict in find_params is")
-        # print(param_dict)
-        exp_type = Bruker.find_exp_type(param_dict, exp_dim)
+        exp_type = Bruker.find_exp_type(param_dict, exp_dim)        
         exp_nuc1, exp_nuc2 = Bruker.find_nuc(param_dict_list, exp_dim)
         exp_freq = Bruker.find_freq(param_dict, exp_dim)
         exp_solv = Bruker.find_solvent(param_dict)
@@ -103,11 +101,18 @@ class Bruker:
 
     @staticmethod
     def find_temp(param_dict):
-        temp_number = round(float(param_dict["TE"]))
-        if temp_number >= 250:
-            return temp_number
-        else:
-            return temp_number + 273
+        try:
+            te_value = param_dict.get("TE")
+            if te_value is None:
+                return None
+
+            temp_number = round(float(te_value))
+            if temp_number >= 250:
+                return temp_number
+            else:
+                return temp_number + 273
+        except (ValueError, TypeError):
+            return None
 
     @staticmethod
     def find_solvent(param_dict):
@@ -118,17 +123,19 @@ class Bruker:
         :param param_dict: Dictionary containing all the parameters for the experiment.
         :return: The solvent in string format.
         """
+        solv_str = param_dict.get("SOLVENT")
+        
+        if not solv_str:
+            return "FAILED_TO_DETECT"
 
-        solv_str = param_dict["SOLVENT"]
-
-        if solv_str.upper() in all_solvents.keys():
-            exp_solv = all_solvents[solv_str.upper()]
-        elif solv_str.upper() in all_solvents.values():
-            exp_solv = solv_str
+        solv_upper = solv_str.upper()
+        if solv_upper in all_solvents:
+            return all_solvents[solv_upper]
+        elif solv_str in all_solvents:
+            return solv_str
         else:
-            exp_solv = "FAILED_TO_DETECT"
-        return exp_solv
-
+            return "FAILED_TO_DETECT"
+        
     @staticmethod
     def find_dim(param_dict_list):
         """
@@ -161,8 +168,7 @@ class Bruker:
         :param param_dict: dictionary containing all the parameter data
         :param exp_dim: dimension of the experiment
         :return: type of experiment in string. (1D experiments are not given a type)
-        """
-        
+        """    
         possible_exp_str_1 = param_dict["EXP"]
         possible_exp_str_2 = param_dict["PULPROG"]
 
@@ -202,14 +208,22 @@ class Bruker:
         :param exp_dim: the dimension of the experiment
         :return: a single float or a tuple of floats depending on the dimension
         """
-        if exp_dim == "1D":
-            freq_val = round(float(param_dict["SFO1"]), 9)
-            return [freq_val]
-        else:
-            freq1 = round(float(param_dict["SFO1"]), 9)
-            freq2 = round(float(param_dict["SFO2"]), 9)
-            freq_val = (freq1, freq2)
-            return freq_val
+        try:
+            if exp_dim == "1D":
+                sfo1 = param_dict.get("SFO1")
+                if sfo1 is not None:
+                    return [round(float(sfo1), 9)]
+                else:
+                    return None
+            else:
+                sfo1 = param_dict.get("SFO1")
+                sfo2 = param_dict.get("SFO2")
+                if sfo1 is not None and sfo2 is not None:
+                    return (round(float(sfo1), 9), round(float(sfo2), 9))
+                else:
+                    return None
+        except (ValueError, TypeError):
+            return None
 
     @staticmethod
     def find_nuc(param_dict_list, exp_dim):
@@ -221,20 +235,22 @@ class Bruker:
                              Probably returned from the read method.
          :param exp_dim: the dimension of the experiment
          :return: nucleus 1 and nucleus 2 in string format
-        """
+        """        
         param_dict_1D = param_dict_list[0]
         
+        param_dict_2D = {}
         if exp_dim == "2D":
             param_dict_2D = param_dict_list[1]
-            
+        
+        exp_nuc1 = "FAILED_TO_DETECT"
         exp_nuc2 = None
+
         if exp_dim == "1D":
-            exp_nuc1 = param_dict_1D["NUC1"]
+            exp_nuc1 = param_dict_1D.get("NUC1", "FAILED_TO_DETECT")
+
         elif exp_dim == "2D":
-            exp_nuc1 = param_dict_1D["NUC1"]
-            exp_nuc2 = param_dict_2D["NUC1"]
-        else:
-            exp_nuc1 = None
+            exp_nuc1 = param_dict_1D.get("NUC1", "FAILED_TO_DETECT")
+            exp_nuc2 = param_dict_2D.get("NUC1", "FAILED_TO_DETECT")
 
         return exp_nuc1, exp_nuc2
 

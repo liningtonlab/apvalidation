@@ -15,6 +15,7 @@ from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 # from patoolutil import is_zip, repack_to_zip
 # from mnova_jdx_reader import separate_mnova_jdx
 
+import shutil
 import sys
 import os
 import zipfile
@@ -62,7 +63,7 @@ zip_file_extention = [
 
 def find_path_and_extract(
     submitted_zip_file: str,
-    is_second_time=False
+    is_second_time: bool = False
 ) -> json:
     """
     This function integrates file_finder and paramExtractor.
@@ -98,6 +99,7 @@ def find_path_and_extract(
     file_root = meta_file["file_root"]
     existing_folder_names = []
     jcamp = False
+    is_first_loop = True
 
     with zipfile.ZipFile(submitted_zip_file, "r") as zipObj:
         # Extract all the contents of zip file in current directory
@@ -135,21 +137,16 @@ def find_path_and_extract(
                 jcamp = True
                 jcamp_file_extension = path_list[0].split(".")[-1]
                 
-                # spilit_file_dir = f"{str(Path(submitted_zip_file).parent)}/jdx_spilt"
                 loc = os.path.splitext(submitted_zip_file)[0]
                 
                 if not is_second_time:
+                    # Delete the directory if it exists from previous run
+                    if is_first_loop:
+                        is_first_loop = False
+                        if os.path.exists(loc):
+                            shutil.rmtree(loc)
+                    
                     loc = separate_mnova_jdx(unzipped_path_name[0], loc, jcamp_file_extension)
-
-                # for path in os.listdir(loc):
-                #     if Path(path).suffix == '.jdx':
-                #         full_path = os.path.join(loc, path)
-                #         param_dict = jcampdx_extractor.read([full_path])
-                #         manuf = jcampdx_extractor.find_manuf(param_dict=param_dict)
-                #         print(f"manuf: {manuf}")
-                #         params = jcampdx_extractor.find_params(param_dict)[0]
-                #         print(params)
-                #         add_path_vendor(path, params, manuf, res_dict)
 
             os.unlink(tf.name)  # Delete temporary file
         
@@ -188,21 +185,19 @@ def find_path_and_extract(
 
 def extract_jcamp(loc):
     res_dict = []
-    
-    print("loc / os.listdir(loc) is")
-    print(loc)
-    print(os.listdir(loc))
-    
     for path in os.listdir(loc):
         if Path(path).suffix == ".jdx" or Path(path).suffix == ".dx":
             full_path = os.path.join(loc, path)
-            param_dict = jcampdx_extractor.read([full_path])
-            manuf = jcampdx_extractor.find_manuf(param_dict=param_dict)
-            params = jcampdx_extractor.find_params(param_dict)[0]
+            param_dict, json_nmr_data_dict = jcampdx_extractor.read(full_path)
+            manuf = jcampdx_extractor.find_manuf(param_dict=param_dict, json_nmr_data_dict=json_nmr_data_dict)
+            found_params = jcampdx_extractor.find_params(
+                param_dict,
+                json_nmr_data_dict=json_nmr_data_dict,
+                manuf=manuf
+            )
+            params = found_params[0]
             add_path_vendor(path, params, manuf, "Jcampdx", res_dict)
     
-    print("res_dict is")
-    print(res_dict)
     return res_dict
 
 
@@ -220,7 +215,7 @@ def add_path_vendor(path, params, vendor_type, filetype, res_dict):
     file_root_without_file_name = str(path)
     if file_root_without_file_name == ".":
         file_root_without_file_name = "/"
-    params["original_data_path"] = file_root_without_file_name
+    params["original_data_path"] = file_root_without_file_name # DO NOT STRIP, BREAKS FILE PATH
     params["vendor"] = vendor_type
     params["filetype"] = filetype
     res_dict.append(params)
