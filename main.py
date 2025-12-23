@@ -1,10 +1,12 @@
 import os
 import nmrglue as ng
+import apvalidation
 from apvalidation.extract.extract_jcampdx import Jcampdx
 from apvalidation.extract_core import extract_jdx
 from apvalidation.mnova_jdx_reader import separate_mnova_jdx
 from apvalidation.peak_validator import Validate as Peak_Validate
 from apvalidation.file_validation import find_path_and_extract
+from apvalidation.smiles_to_inchikey import to_inchikey
 
 # input_file = "test_files/MNOVA_jdx/Combined JEOL jdx/combinedJEOLpart2.jdx"
 # save_location = "test_files/testing_save_singles/test_folder_6"
@@ -18,16 +20,18 @@ from apvalidation.file_validation import find_path_and_extract
 
 
 # result = Peak_Validate.validate(
-#     H_text_block="13.0, (13.5-13.9), 12.4 - 14.6, 10.0",
+#     H_text_block="13.0,dhg (13.5-13.9), 12.4sdf - 14.6, 10.0",
 #     C_text_block="20, 20, 20",
 #     smiles="CCCC=CCCC=CCC\CCC/CCC\CCCC",
 #     solvent="D2O",
-#     h_frequency=300,
+#     h_frequency=400,
 #     h_temperature=300,
 #     c_frequency=300,
 #     c_temperature=300,
 #     reference="DMSO",
 # )
+
+
 
 # result = Peak_Validate.validate(
 #     H_text_block="",
@@ -52,30 +56,38 @@ from apvalidation.file_validation import find_path_and_extract
 # print(metadata)
 
 
-# metadata = find_path_and_extract("./apvalidation/test/Lagriamide_B.zip", is_second_time = False)
+# metadata = find_path_and_extract("./apvalidation/test/test_roger_jdx.zip", is_second_time = False)
+# print(metadata)
+# print("---------------------------------------------------------")
+# metadata = find_path_and_extract("./apvalidation/test/error_jdx.zip", is_second_time = False)
+# print(metadata)
+
+# print("---------------------------------------------------------")
+# metadata = find_path_and_extract("./apvalidation/test/dinemaxanthone_a_jdx.zip", is_second_time = False)
+# print(metadata)
+
+# print("---------------------------------------------------------")
+# metadata = find_path_and_extract("./apvalidation/test/test_bruker_jdx.zip", is_second_time = False)
+# print(metadata)
+# print("---------------------------------------------------------")
+# metadata = find_path_and_extract("./apvalidation/test/test_double_jdx_no_space_params.zip", is_second_time = False)
+# print(metadata)
+# print("---------------------------------------------------------")
+# metadata = find_path_and_extract("./apvalidation/test/error_jdx.zip", is_second_time = True)
 # print(metadata)
 
 
-# regular_jdx = ng.jcampdx.read(filename="/workspaces/apvalidation/apvalidation/test/JEOL/ I1_85_02_ PULSE ACQUISITION_exp_1.jdx")
-# print("regular_jdx is")
-# print(regular_jdx)
+print("\n\n\n-------JEOL_4-deoxynivalenol.zip-------")
+metadata = find_path_and_extract("./apvalidation/test/JEOL_4-deoxynivalenol.zip", is_second_time = False)
+print(metadata)
 
-# print("\n--------------------\n")
-
-# regular_jdx = ng.jcampdx.read(filename="/workspaces/apvalidation/apvalidation/test/JEOL_DX/1H NMR to check_ zg30_exp_1.dx")
-# print("DX is")
-# print(regular_jdx)
-
-
-# print("\n\n\n-------JEOL.zip-------")
-# metadata = find_path_and_extract("./apvalidation/test/JEOL.zip", is_second_time = False)
+# print("\n\n\n-------JEOL_15-Acetyldeoxynivalenol.zip-------")
+# metadata = find_path_and_extract("./apvalidation/test/JEOL_15-Acetyldeoxynivalenol.zip", is_second_time = False)
 # print(metadata)
-# extract_jdx(
-#     "./apvalidation/test/",
-#     "JEOL.zip",
-#     "jeol_output",
-#     "./apvalidation/test/output/",
-# )
+
+# print("\n\n\n-------JEOL_Acetylaszonalenin.zip-------")
+# metadata = find_path_and_extract("./apvalidation/test/JEOL_Acetylaszonalenin.zip", is_second_time = False)
+# print(metadata)
 
 
 
@@ -84,8 +96,8 @@ from apvalidation.file_validation import find_path_and_extract
 # print(metadata)
 
 
-# print("\n\n\n-------Granaticin_C.zip-------")
-# metadata = find_path_and_extract("./apvalidation/test/Granaticin_C.zip", is_second_time = False)
+# print("\n\n\n-------RGL1617G1B.zip-------")
+# metadata = find_path_and_extract("./apvalidation/test/RGL1617G1B.zip", is_second_time = False)
 # print(metadata)
 
 
@@ -99,20 +111,27 @@ from apvalidation.file_validation import find_path_and_extract
 #     "./apvalidation/test/output/",
 # )
 
-# metadata = find_path_and_extract("./apvalidation/test/JEOL.zip")
-# print(metadata)
-
-# print("----")
-
 # metadata = find_path_and_extract("./apvalidation/test/salarin_C_failed_exp_type.zip")
 # print(metadata)
 
-# metadata = find_path_and_extract("./apvalidation/test/endolide_E_NMR_RAW_HMBC_ONLY.zip")
+# metadata = find_path_and_extract("./apvalidation/test/cpd10_G13_8_MeOD.zip")
+# print(metadata)
+
+# metadata = find_path_and_extract("./apvalidation/test/cpd10_G13_8_MeOD.zip")
+# print(metadata)
+
+# metadata = find_path_and_extract("./apvalidation/test/TEST_BRUKER.zip")
 # print(metadata)
 
 # test_dir_path = "./apvalidation/test"
 # for filename in os.listdir(test_dir_path):
 #     file_path = os.path.join(test_dir_path, filename)
+    
+#     if any(sub in file_path for sub in ["JEOL_DX", "JEOL_as_FAKE_dx", "ycld34"]):
+#         continue
+    
+#     # if not any(sub in file_path for sub in ["test_1d_1h", "test_inmr", "original_data"]):
+#     #     continue
 
 #     # Check if the file ends with ".zip"
 #     if filename.endswith(".zip") and os.path.isfile(file_path):
@@ -124,11 +143,10 @@ from apvalidation.file_validation import find_path_and_extract
 #             print("VVVVVVVVVVVV sucessfully processed VVVVVVVVVVV")
 #             print(metadata)
 #         except Exception as e:
-#             print("FFFFFFFFFFFFF failed to process FFFFFFFFFFFFF")
+#             print("xxxxxxxxxxxxxxx failed to process xxxxxxxxxxxxxxx")
 #             print(e)
 
-metadata = find_path_and_extract("./apvalidation/test/original_data_OUOOPZLKXKPBSH-ZFPZKZBNSA-N.zip")
-print(metadata)
+
 
 # metadata = find_path_and_extract("./apvalidation/test/test_dept.zip")
 # print(metadata)

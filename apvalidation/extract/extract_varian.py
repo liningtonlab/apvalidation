@@ -139,11 +139,15 @@ class Varian:
 
     @staticmethod
     def find_temp(param_dict):
-        temp_number = int(param_dict["temp"]["values"][0])
-        if temp_number >= 250:
-            return temp_number
-        else:
-            return temp_number + 273
+        try:
+            temp_val = param_dict["temp"]["values"][0]
+            temp_number = float(temp_val)
+            if temp_number >= 250:
+                return temp_number
+            else:
+                return temp_number + 273
+        except:
+            return None
 
     @staticmethod
     def find_solvent(param_dict):
@@ -163,10 +167,10 @@ class Varian:
         except KeyError:
             solv_str = None
 
-        if solv_str in all_solvents.keys():
-            exp_solv = all_solvents[solv_str].upper()
+        if solv_str.upper() in all_solvents.keys():
+            exp_solv = all_solvents[solv_str.upper()]
         elif solv_str in all_solvents.values():
-            exp_solv = solv_str.upper()
+            exp_solv = solv_str
         else:
             exp_solv = "FAILED_TO_DETECT"
         return exp_solv
@@ -295,13 +299,16 @@ class Varian:
         :return: a single float or a tuple of floats depending on the dimension
         """
 
-        if exp_dim == "2D":
-            freq1 = round(float(param_dict["reffrq"]["values"][0]), 9)
-            freq2 = round(float(param_dict["reffrq1"]["values"][0]), 9)
-            freq_val = (freq1, freq2)
-        else:
-            freq_val = [round(float(param_dict["reffrq"]["values"][0]), 9)]
-        return freq_val
+        try:
+            if exp_dim == "2D":
+                freq1 = round(float(param_dict["reffrq"]["values"][0]), 9)
+                freq2 = round(float(param_dict["reffrq1"]["values"][0]), 9)
+                return (freq1, freq2)
+            else:
+                freq = round(float(param_dict["reffrq"]["values"][0]), 9)
+                return [freq]
+        except:
+            return (None, None)
 
     @staticmethod
     def find_nuc(param_dict, exp_dim):

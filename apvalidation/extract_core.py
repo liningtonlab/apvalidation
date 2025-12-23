@@ -53,7 +53,6 @@ def extract_to_folder(extract_files, zipObject, folder_name, parent_dir):
 
 def search_keyword(all_paths, indiv_exp_path, vendor):
     unzip_path = []
-    # print(indiv_exp_path)
     # indiv_exp_path = re.search("^(.+)/([^/]+)$", indiv_exp_path)[1]
     for path in all_paths:
         for item in vendor:

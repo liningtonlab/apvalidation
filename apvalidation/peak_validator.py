@@ -18,9 +18,10 @@ These are custom exception classes to help annotate what error we are handling.
 #         self.error = "EmptyList"
 
 class InvalidCharacters(Exception):
-    def __init__(self):
+    def __init__(self, invalid_chars):
         self.error_type = "error"
         self.error = "InvalidCharacters"
+        self.invalid_chars = invalid_chars
 
 class NoSplit(Exception):
     pass
@@ -64,7 +65,14 @@ class Validate:
         if re.search(accepted_pattern, clean_text):
             return "Valid String"
         else:
-            raise InvalidCharacters
+            try:
+                # If error values detected , identify invalid characters and return error message
+                invalid_chars = ''.join(char for char in text_block if not (char.isdigit() or char in '.-,;'))
+                invalid_chars = f'"{" ".join(invalid_chars.split())}".'
+            except:
+                # If invalid_chars filer crashes then return none.
+                invalid_chars = None
+            raise InvalidCharacters(invalid_chars)
     
     @staticmethod
     def parse_text_to_list(valid_text):
@@ -309,9 +317,11 @@ class Validate:
         if H_text_block:
             try:
                 Validate.check_valid_characters(H_text_block)
-            except Exception as exc:
-                if exc.error == "InvalidCharacters":
-                    return ("Invalid Characters in H List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error")
+            except InvalidCharacters as e:
+                return (
+                    f"Invalid Characters in H List:{e.invalid_chars} " 
+                    f'Please make sure that only contains the following allowed characters [`0-9` `()` `,` `.` `-` `;`]', "Error"
+                )
             # Parse the text blocks into lists based on the separators
             try:
                 H_list = Validate.parse_text_to_list(H_text_block)
@@ -323,9 +333,11 @@ class Validate:
         if C_text_block:
             try:
                 Validate.check_valid_characters(C_text_block)
-            except Exception as exc:
-                if exc.error == "InvalidCharacters":
-                    return ("Invalid Characters in C List: Please make sure that only contains the following allowed characters 0-9 , . - ; ()", "Error")
+            except InvalidCharacters as e:
+                return (
+                    f"Invalid Characters in C List: {e.invalid_chars} " 
+                    f'Please make sure that only contains the following allowed characters [`0-9` `()` `,` `.` `-` `;`]', "Error"
+                )
             try:
                 C_list = Validate.parse_text_to_list(C_text_block)
             except MultipleSeparators:
@@ -461,13 +473,15 @@ class Convert:
         output_list = []
         for value in peak_list:
             if Validate.is_valid_range(value) is True:
+                # Split on an dash values
                 split_values = re.split("[\u002D\u05BE\u1806\u2010\u2011\u2012\u2013\u2014\u2015\u207B\u208B\u2212\uFE58\uFE63\uFF0D]",value)
                 split_values = [float(re.sub("[ ()]", "", sub_str)) for sub_str in split_values]
                 range_tuple = (split_values[0], split_values[1])
                 output_list.append(range_tuple)
             else:
-                value = float(value)
-                output_list.append(value)
+                # Convert the string to a float
+                float_value = float(value)            
+                output_list.append(float_value)
         return output_list
 
     @staticmethod
@@ -500,3 +514,20 @@ class Convert:
         return sorted_peak_list
         
 
+class Unconvert:
+    @staticmethod
+    def unconvert(value_list):
+        """
+        Used to covert "h_values" or "c_values" from a list encoded for storage back
+        into a string for the frontend to utilize.
+        
+        example:
+            [10, [11, 11.5], 12] -> "10, (11-11.5), 12"
+        """
+        result = []
+        for item in value_list:
+            if isinstance(item, list) or isinstance(item, tuple):
+                result.append(f"({item[0]}-{item[1]})")
+            else:
+                result.append(str(item))
+        return ", ".join(result)
